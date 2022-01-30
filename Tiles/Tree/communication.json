@@ -1,0 +1,16 @@
+{
+	"receives":[
+		{
+			"type":"data",
+			"value_type":"Tr",
+			"description":"tree to be visualized"
+		},
+		{
+			"type":"configuration",
+			"value_type":"Object"
+		}
+	],
+	"sends":[
+		
+	]
+}

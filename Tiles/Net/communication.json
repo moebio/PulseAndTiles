@@ -1,0 +1,38 @@
+{
+	"description":"Net visualizes a network, based on simulated forces. Allows for hovering and selecting nodes (with different associated behaviors).",
+	"instructions_developer":"",
+	"instructions_user":"Hover and click on nodes for expanding information and selecting",
+	"authors":["Santiago Ortiz"],
+	"tags":["networks", "visualization"],
+	"images":[],
+	"receives":[
+		{
+			"type":"network",
+			"description":"network to be visualized",
+			"value_type":"Net",
+			"kind":"data",
+			"optional":"false"
+		},
+		{
+			"type":"configuration",
+			"description":"tile configuration object, configures nodes and relations appearance, phyisics simulation parameters",
+			"value_type":"Object",
+			"kind":"configuration",
+			"optional":"true"
+		}
+	],
+	"sends":[
+		{
+			"type":"over",
+			"description":"hovered node, sends every time a new node is hovered",
+			"value_type":"Nd",
+			"kind":"command"
+		},
+		{
+			"type":"select",
+			"description":"selected node, sends every time a new node is selected",
+			"value_type":"Nd",
+			"kind":"command"
+		}
+	]
+}

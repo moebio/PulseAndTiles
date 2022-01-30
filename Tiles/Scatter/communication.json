@@ -1,0 +1,21 @@
+{
+	"receives":[
+		{
+			"type":"data",
+			"value_type":"L",
+			"description":"nL, dL (or sL describing dates), with values to be positioned in the axis"
+		},
+		{
+			"type":"colorList",
+			"value_type":"cL",
+			"description":"colors associated with values"
+		},
+		{
+			"type":"configuration",
+			"value_type":"Object"
+		}
+	],
+	"sends":[
+		
+	]
+}

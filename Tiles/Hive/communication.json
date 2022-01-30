@@ -1,0 +1,24 @@
+{
+	"receives":[
+		{
+			"type":"network",
+			"value_type":"Network"
+		},
+		{
+			"type":"configuration",
+			"value_type":"Object"
+		}
+	],
+	"sends":[
+		{
+			"type":"over",
+			"description":"hovered node",
+			"value_type":"Nd"
+		},
+		{
+			"type":"select",
+			"description":"selected node",
+			"value_type":"Nd"
+		}
+	]
+}

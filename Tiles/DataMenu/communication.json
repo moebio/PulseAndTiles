@@ -1,0 +1,12 @@
+{
+	"receives":[
+		
+	],
+	"sends":[
+		{
+			"type":"data",
+			"description":"object with two properties: value (the data object selected and downloaded) and url",
+			"value_type":"Object"
+		}
+	]
+}

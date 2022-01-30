@@ -1,0 +1,26 @@
+{
+	"receives":[
+		{
+			"type":"data",
+			"value_type":"StringList",
+			"description":"texts"
+		},
+		{
+			"type":"titles",
+			"value_type":"StringList",
+			"description":"titles"
+		},
+		{
+			"type":"dates",
+			"value_type":"StringList",
+			"description":"titles"
+		},
+		{
+			"type":"configuration",
+			"value_type":"Object"
+		}
+	],
+	"sends":[
+		
+	]
+}

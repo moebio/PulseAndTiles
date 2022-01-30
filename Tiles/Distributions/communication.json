@@ -1,0 +1,15 @@
+{
+	"receives":[
+		{
+			"type":"data",
+			"value_type":"Table"
+		}
+	],
+	"sends":[
+		{
+			"type":"over_cell",
+			"description":"object with information about hovered cell",
+			"value_type":"Object"
+		}
+	]
+}
