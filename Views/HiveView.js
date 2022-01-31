@@ -1,4 +1,4 @@
-import NetView from '../../_/Views/NetView/NetView.js'
+import NetView from '../Views/NetView/NetView.js'
 
 export default class HiveView extends NetView{
 

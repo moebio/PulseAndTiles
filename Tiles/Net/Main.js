@@ -1,5 +1,5 @@
-import '../../../_/assembled.js'
-import NetView from '../../../_/Views/NetView/NetView.js'
+import '../../pulse.js'
+import NetView from '../../Views/NetView/NetView.js'
 
 
 export default class Net{

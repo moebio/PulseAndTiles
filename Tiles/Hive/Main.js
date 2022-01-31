@@ -1,5 +1,5 @@
-import '../../../_/assembled.js'
-import HiveView from '../../../_/Views/HiveView.js'
+import '../../pulse.js'
+import HiveView from '../../Views/HiveView.js'
 
 export default class Hive{
 
