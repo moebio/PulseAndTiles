@@ -33,9 +33,8 @@ export default class Draw{
 			}
 		}
 		
-		
 		if(view.selectedNode || view.pairSelected || view.layoutClusters) view.net.nodes.forEach(n=>{n.x=0.95*n.x+0.05*n.xF; n.y=0.95*n.y+0.05*n.yF})
-		
+
 		let cursor_level
 		if(view.selectedNode && view.config.layout.selection_mode=="spanning_tree") cursor_level = this._drawSpanningCircles()
 

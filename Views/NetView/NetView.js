@@ -128,12 +128,8 @@ export default class NetView{
 				//this.overNode = dataObj.value
 				this.k.mX = node._px+2
 				this.k.mY = node._py+2
-
-				console.log(">>>>> node, node._px, node._py, this.k.mX, this.k.mY", node, node._px, node._py, this.k.mX, this.k.mY)
 				this.drawMethods.draw(true)
 				this.k.stop()
-
-				console.log("this.overNode?.name", this.overNode?.name)
 				break
 			case "unselect":
 				this.nodeUnSelected()
@@ -144,6 +140,7 @@ export default class NetView{
 			case "layout":
 				switch(dataObj.value){
 					case "clusters":
+						console.log("++++ clusters")
 						this.layouts.placeNodesInClusters()
 						break
 				}
