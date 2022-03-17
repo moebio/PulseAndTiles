@@ -45,7 +45,9 @@ Squarify.prototype.setCallBack = function(){
 
 Squarify.prototype.draw = function(){
 	if(this.mc==null || this.freqTable==null) return;
-	var recs = _.packingRectangles(this.freqTable[2], 0, new _.Rec(0,0,this.mc.W,this.mc.H));
+
+	//[!] change fillWithRectangles by squarify
+	var recs = _.fillWithRectangles(this.freqTable[2], 0, new _.Rec(0,0,this.mc.W,this.mc.H));
 	
 	this.mc.stroke('black', 1);
 	

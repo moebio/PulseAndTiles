@@ -17,7 +17,6 @@ export default class Draw{
 	///////GENERAL
 
 	draw(){
-		//console.log("[NV Dr]")
 		let view = this.view
 		if(this.k==null || view.net==null) return
 
@@ -32,19 +31,20 @@ export default class Draw{
 				view.forces.calculateAndApplyForces()
 			}
 		}
+
+		view.someLayout = view.selectedNode!=null || view.pairSelected!=null || view.layoutClusters
 		
-		if(view.selectedNode || view.pairSelected || view.layoutClusters) view.net.nodes.forEach(n=>{n.x=0.95*n.x+0.05*n.xF; n.y=0.95*n.y+0.05*n.yF})
+		if(view.someLayout) view.net.nodes.forEach(n=>{n.x=0.95*n.x+0.05*n.xF; n.y=0.95*n.y+0.05*n.yF})
 
 		let cursor_level
 		if(view.selectedNode && view.config.layout.selection_mode=="spanning_tree") cursor_level = this._drawSpanningCircles()
 
 		if(view.layoutClusters) this._drawClustersCircles()
+		if(view.fixedX && view.config.layout.draw_grid && !view.selectedNode) this._drawGrid(view.fixedX, "x", view.fixedY)
+		if(view.fixedY && view.config.layout.draw_grid && !view.selectedNode) this._drawGrid(view.fixedY, "y", view.fixedX)
 
-		//view.recMap.width /= (view.recMap.width/this.k.W)/(view.recMap.height/this.k.H)
-		//this.k.mapCanvas(view.recMap)
-		//view.zoom = this.k.W/view.recMap.width
+		view.someLayout = view.someLayout||view.fixedX!=null||view.fixedY!=null
 
-		//view.nodesSize = view.nodes_zoom*(view.NODES_DYNAMIC_ZOOM?view.zoom:1)
 		this.nodesSize = this.nodes_zoom*(view.NODES_DYNAMIC_ZOOM?this.zoom:1)
 
 		let prevNodeOver = view.overNode
@@ -55,6 +55,8 @@ export default class Draw{
 		view.closestNode = null
 		view.drawTooltip = false
 
+		//bakckground
+		this.drawBackground()
 
 		///////////projection and draw
 		
@@ -67,7 +69,10 @@ export default class Draw{
 			this.drawSuperPressedNode(this.superPressedNode0, this.superPressedNode1)
 		}
 
+		//draw relations
 		view.net.relations.forEach(r=>this.drawRelation(r, prevNodeOver, cursor_level))
+
+		//draw nodes
 		view.net.nodes.forEach(nd=>{if(nd._visible) this.drawNode(nd)})
 
 		if(view.overNode) view.overRelation = null
@@ -86,36 +91,24 @@ export default class Draw{
 		}
 		if(view.selectedNode) this.drawNodeSelected(view.selectedNode)
 
+		if(view.config.layout.draw_loops) this._drawLoops(view.net.loops[view.config.layout.draw_loops])
+
+		if(view.config.layout.simulation) this._drawImpacts()
+
 		//interaction 1
 		if(this.pressedNode && (this.k.SHIFT_PRESSED || view.config.nodes.draggable) ){
-			// this.pressedNode.x = this.k.invfX(this.k.mX)
-			// this.pressedNode.y = this.k.invfY(this.k.mY)
 			this.pressedNode.x = this.invfX(this.k.mX)
 			this.pressedNode.y = this.invfY(this.k.mY)
 			
 			this.pressedNode.vx = 0
 			this.pressedNode.vy = 0
 			view._FORCES_ACTIVE = true
-			view.forces.friction = 0.9
+			view.forces.friction = view.config.physics.friction
 		} else {
 			if(this.superPressedNode0){
 				if(!view.overNode) this.superPressedNode1 = null
-				//this.drawSuperPressedNode(this.superPressedNode0, this.superPressedNode1)
-			} else {
-				// var expansion = (!view.config.interaction.shift_nodes_zoom || !this.k.SHIFT_PRESSED)?Math.max(1-this.k.WHEEL_CHANGE*0.1, 0.1):1// !!!! expansion > 1 zoom decreases 
-				
-				// if(expansion!=1 && !(expansion<1 && view.zoom>view.ZOOM_MAX) && !(expansion>1 && view.zoom<view.ZOOM_MIN)){
-				// 	view.recMap = view.recMap.expand(expansion, view.zoomPoint)
-				// }
-				// view.recMap.x-=this.k.DX_MOUSE_PRESSED*view.recMap.width/this.k.W
-				// view.recMap.y-=this.k.DY_MOUSE_PRESSED*view.recMap.height/this.k.H
 			}
 		}
-
-		// view.zoomPoint.x = view.ZOOM_TO_CURSOR?this.k.invfX(this.k.mX):this.k.invfX(this.k.cX)
-		// view.zoomPoint.y = view.ZOOM_TO_CURSOR?this.k.invfY(this.k.mY):this.k.invfY(this.k.cY)
-		// view.zoomPoint.x = view.ZOOM_TO_CURSOR?this.invfX(this.k.mX):this.invfX(this.k.cX)
-		// view.zoomPoint.y = view.ZOOM_TO_CURSOR?this.invfY(this.k.mY):this.invfY(this.k.cY)
 
 		//interaction 2
 		if(view.overNode && this.k.MOUSE_DOWN){
@@ -125,7 +118,7 @@ export default class Draw{
 		}
 
 		//super pressing a node for connecting with another
-		if(this.pressedNode && view.overNode && this.k.T_MOUSE_PRESSED>200){
+		if(this.pressedNode && view.overNode && this.k.T_MOUSE_PRESSED>view.config.interaction.milliseconds_for_superpressing){
 			let dx_sincepressed = Math.abs(this.pressedNode._xWhenPressed - this.k.mX)
 			let dy_sincepressed = Math.abs(this.pressedNode._yWhenPressed - this.k.mY)
 			if(dx_sincepressed<2 && dy_sincepressed<2){
@@ -160,10 +153,11 @@ export default class Draw{
 				view.pairUnSelected()
 			} else if(view.layoutClusters){
 				view._FORCES_ACTIVE = true
-				view.forces.friction = 0.9
+				view.forces.friction = view.config.physics.friction
 				view._resetThickFactor()
 			}
 			view.layoutClusters = false
+			view.layout_value = null
 		}
 
 		if(this.k.WHEEL_CHANGE && !this.k.SHIFT_PRESSED){
@@ -171,27 +165,42 @@ export default class Draw{
 			this.MAX_ZOOM = 100
 
 			 let zoomChange = 1 + 0.3*this.k.WHEEL_CHANGE
-			 //console.log("this.zoom, zoomChange", this.zoom, this.k.WHEEL_CHANGE, zoomChange)
 		   if(this.zoom*zoomChange>=this.MAX_ZOOM || this.zoom*zoomChange<=this.MIN_ZOOM) zoomChange = 1;
 		   this.zoom *= zoomChange;
 		   this.zoom = Math.max(Math.min(this.zoom, this.MAX_ZOOM), this.MIN_ZOOM);
 		   this.x0 = (this.x0 - this.k.mX)*zoomChange + this.k.mX;
 		   this.y0 = (this.y0 - this.k.mY)*zoomChange + this.k.mY
-
-		   //console.log("this.zoom, ", this.zoom, this.nodesSize, this.nodes_zoom)
 		}
 		if(!this.pressedNode && !this.superPressedNode0 && this.k.MOUSE_PRESSED){
        this.x0+=this.k.DX_MOUSE_PRESSED
        this.y0+=this.k.DY_MOUSE_PRESSED
     }
 
-		//if(this.k.SHIFT_PRESSED && view.config.interaction.shift_nodes_zoom) view.nodes_zoom*=(1+this.k.WHEEL_CHANGE*0.1)
 		if(this.k.SHIFT_PRESSED && view.config.interaction.shift_nodes_zoom) this.nodes_zoom*=(1+this.k.WHEEL_CHANGE*0.1)
 		
 		
+		if(view.overNode!=prevNodeOver && !view.overNode) view.nodeOut()
 		if(view.overNode!=prevNodeOver && view.overNode) view.nodeOver(view.overNode)
 		if(view.overRelation!=prevRelationOver && view.overRelation) view.relationOver(view.overRelation)
+
+		//top
+		this.drawTop()
+
+		//tooltip
+		if(view.overRelation && view.config.relations.tooltip){
+			this.k.setCursor('pointer')
+			view.tooltip.setData(view.overRelation[view.config.relations.tooltip_property])
+			view.drawTooltip = true
+		}
 		if(view.drawTooltip) view.tooltip.draw()
+	}
+
+	//////Back and Top
+	drawBackground(){
+
+	}
+	drawTop(){
+
 	}
 
 	///////NODES
@@ -203,7 +212,13 @@ export default class Draw{
 		let view = this.view
 		let k = this.k
 
-		switch(view.config.nodes.color_mode){
+		let mode = view.config.nodes.color_mode
+		if(mode=="image" && !nd.image) mode="box"
+
+		switch(mode){
+			case 'image':
+				k.drawImage(nd.image, nd._px-nd._w*0.5, nd._py-nd._h*0.5, nd._w, nd._h)
+				break
 			case 'text':
 				if(nd._ts*view.zoom<5) return
 				k.setText(nd.color??view.config.nodes.text_color, nd._ts, null, 'center', 'middle')
@@ -213,7 +228,7 @@ export default class Draw{
 				return
 			case 'box':
 				k.setText(nd.color??view.config.nodes.text_color, nd._ts, null, 'center', 'middle')
-				if(view.config.nodes.useColorsTable && nd.colorsTable[0].length>1){
+				if(view.config.nodes.useColorsTable && nd.colorsTable && nd.colorsTable[0].length>0){
 					let x = nd._px-nd._w*0.5
 					let w
 					//console.log(nd.colorsTable[0].length)
@@ -229,10 +244,17 @@ export default class Draw{
 					k.fRect(nd._px-nd._w*0.5, nd._py-nd._h*0.5, nd._w, nd._h)
 				}
 				
-				k.fill(view.config.nodes.box_color)
 				if(nd._ts*view.zoom<5) return
-				k.context.font = nd._ts+"px "+view.config.nodes.font
-				k.fText(nd.name, nd._px, nd._py, 3)
+
+				if(view.config.nodes.fixed_width>0){
+					k.setText(view.config.nodes.box_color, nd._ts, null, "center", "middle")
+					k.fTextWidth(nd.name, nd._px, nd._py + nd._dyText*nd._ts, view.config.nodes.fixed_width, nd._ts)
+				} else {
+					k.fill(view.config.nodes.box_color)
+					k.context.font = nd._ts+"px "+view.config.nodes.font
+					k.fText(nd.name, nd._px, nd._py)//, 3)
+				}
+				
 				return
 		}
 
@@ -296,7 +318,8 @@ export default class Draw{
 	_dimensionsNode(nd){
 		nd._s = this.nodes_zoom*nd._size*(this.view.NODES_CLOSE_ZOOM?(0.5 + 0.6*5000/(4000+nd._distanceToCursor2))*this.nodesSize:this.nodesSize)
 		nd._w = nd._w_base*nd._s
-		nd._h = (this.view.config.nodes.text_size+this.view.config.nodes.box_padding*2)*nd._s
+		//nd._h = (this.view.config.nodes.text_size+this.view.config.nodes.box_padding*2)*nd._s
+		nd._h = nd._h_base*nd._s
 		nd._ts = 12*nd._s
 	}
 
@@ -342,7 +365,7 @@ export default class Draw{
 		let view = this.view
 	
 		//over node not in relation
-		
+		if(view.DRAW_ONLY_NODE_RELATIONS_ON_ROLLOVER && prevNodeOver && prevNodeOver!=rel.node0 && prevNodeOver!=rel.node1) return
 		
 		if(view.selectedNode){
 
@@ -351,7 +374,7 @@ export default class Draw{
 					//relation not in spanning tree
 					if(view.selectedNode && !rel._onTree) return
 					//cursor out of level in spanning tree
-					if(view.config.relations.show_mode_on_layout=="context" && cursor_level!=null && Math.abs(rel._minLevelOnTree-cursor_level)>1 ) return
+					if(view.config.relations.show_mode_on_layout=="context" && cursor_level!=null && Math.abs(rel._minLevelOnTree-cursor_level)>0.5 ) return
 					break
 				case "impact_to":
 					//relation not in impact to
@@ -359,7 +382,8 @@ export default class Draw{
 					break
 			}
 			
-		} else if(view.DRAW_ONLY_NODE_RELATIONS_ON_ROLLOVER && prevNodeOver && prevNodeOver!=rel.node0 && prevNodeOver!=rel.node1) return
+		}
+
 
 		/////////
 
@@ -400,7 +424,7 @@ export default class Draw{
 					pMx, pMy,
 					rel.node1._px, rel.node1._py,
 					a-1.5708,
-					(view.config.relations.arrow_size*view.zoom*rel._thickFactor*0.8+2)*rel._size
+					(view.config.relations.arrow_size*this.zoom*rel._thickFactor*0.8+2)*rel._size
 				)
 			}
 			if(view.config.relations.tooltip){
@@ -412,7 +436,7 @@ export default class Draw{
 						pMx, pMy,
 						rel.node1._px, rel.node1._py,
 						a-1.5708,
-						(view.config.relations.arrow_size*view.zoom*rel._thickFactor*0.8+4)*rel._size
+						(view.config.relations.arrow_size*this.zoom*rel._thickFactor*0.8+4)*rel._size
 					)
 				}
 			}
@@ -438,12 +462,13 @@ export default class Draw{
 			this.k.fill(color)
 			over = this.k.fCircleM(rel._pcenterx, rel._pcentery, Math.min(weight*2,7))
 		}
-		if(over && view.config.relations.tooltip){
-			this.k.setCursor('pointer')
-			view.tooltip.setData(rel[view.config.relations.tooltip_property])
-			view.drawTooltip = true
-			view.overRelation = rel
-		}
+		if(over) view.overRelation = rel
+		// if(over && view.config.relations.tooltip){
+		// 	this.k.setCursor('pointer')
+		// 	view.tooltip.setData(rel[view.config.relations.tooltip_property])
+		// 	view.drawTooltip = true
+		// 	view.overRelation = rel
+		// }
 	}
 
 
@@ -469,26 +494,32 @@ export default class Draw{
 		for(let i=1; i<this.view.layouts.N_LEVELS_TREE; i++){
 			this._drawDashedCircle(this.view.selectedNode._px, this.view.selectedNode._py, this.zoom*this.view.config.layout.r_spanning_circles*i)
 		}
-		let r_cursor = Math.sqrt((this.k.mX-this.view.selectedNode?._px)**2+(this.k.mY-this.view.selectedNode?._py)**2)/this.view.zoom
+		let r_cursor = Math.sqrt((this.k.mX-this.view.selectedNode?._px)**2+(this.k.mY-this.view.selectedNode?._py)**2)/this.zoom
 
 		return Math.floor(r_cursor/this.view.config.layout.r_spanning_circles)
 	}
 
 	_drawClustersCircles(){
-		if(!this.view.net.clusters) this.view.layouts.placeNodesInClusters()
+		if(!this.view.net.lastClusters) this.view.layouts.placeNodesInClusters()
 			let prev_iCircle = this.iCircle
 		this.iCircle=-1
 		let x, y, r
 		let inCluster
-		this.view.net.clusters.circles.forEach((circle,i)=>{
-			//console.log(this.fX(circle.x), this.fY(circle.y), circle.z*this.zoom)
+		let xIn, yIn, rIn
+		let inClusterInterior = false
+		this.view.net.lastClusters.circles.forEach((circle,i)=>{
 			x = this.fX(circle.x)
 			y = this.fY(circle.y)
 			r = circle.z*this.zoom
 			this._drawDashedCircle(x, y, r)
 			if((this.k.mX-x)**2+(this.k.mY-y)**2<r**2){
 				this.iCircle=i
-				inCluster = this.view.net.clusters[i]
+				xIn = x
+				yIn = y
+				rIn = r
+				inCluster = this.view.net.lastClusters[i]
+				inClusterInterior = (this.k.mX-x)**2+(this.k.mY-y)**2<(r*0.7)**2
+				if(inClusterInterior) this.iCircle+=0.5
 			}
 		})
 
@@ -496,7 +527,12 @@ export default class Draw{
 		if(prev_iCircle!=this.iCircle){
 			this.view.net.relations.forEach(r=>r._thickFactor=0)
 			inCluster?.forEach(n=>{
-				n.relations.forEach(r=>r._thickFactor=this.view.config.relations.max_thick)
+				n.relations.forEach(r=>{
+					//either cursor is niot in the interior, either the relation is all contained in cluster
+					if(!inClusterInterior || (inCluster.includes(r.node0) && inCluster.includes(r.node1))) {
+						r._thickFactor=this.view.config.relations.max_thick
+					}
+				})
 			})
 		}
 	}
@@ -509,6 +545,109 @@ export default class Draw{
 			this.k.sCircle(x, y, r);
 		//}
 		this.k.context.setLineDash([]);
+	}
+
+	_drawLoops = function(loops){
+		loops.forEach(loop=>{
+			let pol = new _.Pol()
+			let drawIt = !this.view.overNode && !this.view.overRelation
+			loop.forEach((node,i)=>{
+				pol.push(new _.P(node._px, node._py))
+				if(this.view.overNode==node) drawIt=true
+			})
+			if(this.view.overRelation) drawIt = loop.includes(this.view.overRelation.node0) && loop.includes(this.view.overRelation.node1)
+			if(!drawIt) return
+			this.k.stroke(loop.color, 24)
+			this.k.drawSmoothPolygon(pol, true, 60*this.zoom)
+		})
+	}
+
+	_drawImpacts = function(){
+		let r_base = 35*this.zoom
+		let thick_factor = 6
+		let r, dr
+		this.view.net.nodes.forEach(n=>{
+			r = r_base*n.impact
+			
+			if(n.impact>1){
+				dr = r-r_base
+				// + r_base*(n.impact-1)
+				this.k.stroke("rgba(0,0,255,0.2)", dr)
+				this.k.sCircle(n._px, n._py, r+dr*0.5)
+			} else if(n.impact<1){
+				dr = r_base-r
+				r = r_base*n.impact// + r_base*(n.impact-1)
+				this.k.stroke("rgba(255,0,0,0.2)", dr)
+				//console.log(n.name, (1-n.impact)*r_base)
+				this.k.sCircle(n._px, n._py, r-dr*0.5)
+			} else {
+				this.k.stroke("rgba(255,0,255,0.2)", 1)
+				//console.log(n.name, (1-n.impact)*r_base)
+				this.k.sCircle(n._px, n._py, r_base)
+			}
+
+			let d = Math.sqrt((this.k.mX-n._px)**2 + (this.k.mY-n._py)**2)
+			if(Math.abs(d-r)<15){
+				this.k.setCursor("pointer")
+				if(this.k.MOUSE_DOWN){
+					console.log("n.impact", n.impact)
+					this.k.MOUSE_DOWN=false
+					this.k.MOUSE_PRESSED=false
+					this.nodeChangingImpact = n
+				}
+			}
+
+			if(n==this.nodeChangingImpact){
+				this.k.setCursor("pointer")
+				n.impact = 1 + (d-r_base)/r_base
+				n.impact = Math.min(Math.max(n.impact, 0.1), 1.9)
+			}
+		})
+		if(this.k.MOUSE_UP && this.nodeChangingImpact) {
+			let impact = this.nodeChangingImpact.impact
+			this.view.net.nodes.forEach(n=>n.impact=1)
+			_.modelInfluence(this.view.net, this.nodeChangingImpact, impact)
+			this.nodeChangingImpact=null
+		}
+	}
+
+	_drawGrid = function(axis, type, other_axis){
+		let dx = axis.dx
+		let px, mx, my
+		this.k.setText("rgb(100,100,100)", 12, null, "right", "bottom")
+		for(var x=axis.x0; x<=axis.x1; x+=dx){
+			let bold = (Math.round(x*100000)/(dx*1000000))==Math.floor(Math.round(x*100000)/(dx*1000000))
+			this.k.stroke("rgb(200,200,200)",bold?2:1)
+			if(type=="x"){
+				px = this.fX(axis.projection(x))
+				mx = axis.inv_projection(this.invfX(this.k.mX))
+				if(other_axis){
+					this.k.line(px,this.fY(other_axis.projection(other_axis.x0)),px,this.fY(other_axis.projection(other_axis.x1)))
+					this.k.stroke("rgb(200,200,200)", 0.2)
+					this.k.line(this.k.mX,this.fY(other_axis.projection(other_axis.x0)),this.k.mX,this.fY(other_axis.projection(other_axis.x1)))
+					my = other_axis.inv_projection(this.invfY(this.k.mY))
+					this.k.fText(mx.toFixed(2)+","+my.toFixed(2), this.k.mX, this.k.mY)
+				} else {
+					this.k.line(px,0,px,this.k.H)
+					this.k.stroke("rgb(200,200,200)", 0.2)
+					this.k.line(this.k.mX,0,this.k.mX,this.k.H)
+					this.k.fText(mx.toFixed(2), this.k.mX, this.k.mY)
+				}
+			} else {
+				px = this.fY(axis.projection(x))
+				if(other_axis){
+					this.k.line(this.fX(other_axis.projection(other_axis.x0)),px,this.fX(other_axis.projection(other_axis.x1)),px)
+					this.k.stroke("rgb(200,200,200)", 0.2)
+					this.k.line(this.fX(other_axis.projection(other_axis.x0)),this.k.mY,this.fX(other_axis.projection(other_axis.x1)),this.k.mY)
+				} else {
+					this.k.line(0,px,this.k.W,px)
+					this.k.stroke("rgb(200,200,200)", 0.2)
+					this.k.line(0,this.k.mY,this.k.W,this.k.mY)
+					my = axis.inv_projection(this.invfY(this.k.mY))
+					this.k.fText(my.toFixed(2), this.k.mX, this.k.mY)
+				}
+			}
+		}
 	}
 
 }

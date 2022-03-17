@@ -4,7 +4,7 @@
 buildGuiFromObject = function(object, callBack){
 	let gui = new dat.GUI({autoPlace:false})
 
-	const meta_sufixes = ["_VALUES","_MIN","_MAX","_STEP","_LABEL","_TYPE","_IS_COLOR"]
+	const meta_sufixes = ["_VALUES","_MIN","_MAX","_STEP","_LABEL","_TYPE","_IS_COLOR","_IS_BUTTON"]
 	const valid_types = ["number", "string", "boolean", "array"]
 	const basicTypes = ['number', 'string', 'boolean']
 
@@ -13,8 +13,22 @@ buildGuiFromObject = function(object, callBack){
 
 		this._removeControllers()
 
+		
+
 		var _changeFunction = function(val, control){
-			let changesParamName
+			this.changedObject = ob
+
+			if(control=="button"){
+				callBack({
+					changedObject:ob,
+					changedPropertyName:val,
+					arrayValues:_getValuesArray(),
+					buttonPressed:true
+				})
+				return
+			}
+
+			let changedPropertyName
 			let changedParamValue
 			let newValue
 			let arrayValues = []
@@ -22,13 +36,14 @@ buildGuiFromObject = function(object, callBack){
 			let property = labels_dictionary[control.property]??control.property
 			if(labels_dictionary[control.property]) ob[labels_dictionary[control.property]] = ob[control.property]
 
-			this.changedObject = ob
+			
 
 			callBack({
 				changedObject:ob,
-				changesParamName:property,
+				changedPropertyName:property,
 				changedParamValue:val,
-				arrayValues:_getValuesArray()
+				arrayValues:_getValuesArray(),
+				buttonPressed:false
 			})
 		}
 
@@ -88,6 +103,14 @@ buildGuiFromObject = function(object, callBack){
 				case 'string':
 					if(ob[propName+"_IS_COLOR"]!=null){
 						control = this.addColor(ob, label)
+					} else if(ob[propName+"_IS_BUTTON"]){
+						let propNameForButton = ob[propName+"_LABEL"]||propName
+						let obj = {}
+						obj[propNameForButton] = function(){}//_changeFunction(propNameForButton, "button") }
+						//var obj = { add2:function(){console.log("2 propName", propNameForButton); _changeFunction(propNameForButton, "button") }};
+						control = this.add(obj, propNameForButton);
+
+						//control = this.addColor(ob, label)
 					} else {
 						control = this.add(ob, label)
 						if(ob[propName+"_VALUES"]) control = control.options(ob[propName+"_VALUES"])
@@ -97,6 +120,8 @@ buildGuiFromObject = function(object, callBack){
 					control = this.add(ob, label)
 					break
 				case 'function':
+
+					break
 				case 'array':
 					if(ob[propName+"_IS_COLOR"]!=null){
 						control = gui.addColor(ob, label)

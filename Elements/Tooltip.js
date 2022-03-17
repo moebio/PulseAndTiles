@@ -1,7 +1,7 @@
 class Tooltip extends Element{
 
 	/////////////////////////////////////////constructor
-	constructor(k, callBackSendData, config={font_size:16, marginW:10, marginH:6}){
+	constructor(k, callBackSendData, config={font_size:16, marginW:10, marginH:6, fixedWidth:200}){
 		super(k, callBackSendData, config)
 
 		this.text
@@ -12,9 +12,15 @@ class Tooltip extends Element{
 	setData(text){
 		this.text = text
 		this.k.setText('white', this.config.font_size)
-		let w = this.k.getTextW(text)
-		this.W = w + 2*this.config.marginW
-		this.H = this.config.font_size + 2*this.config.marginH
+		if(this.config.fixedWidth){
+			this.W = this.config.fixedWidth
+			let nLines = this.k.nLines(text, this.config.fixedWidth-2*this.config.marginW)
+			this.H = nLines*this.config.font_size + 2*this.config.marginH
+		} else {
+			let w = this.k.getTextW(text)
+			this.W = w + 2*this.config.marginW
+			this.H = this.config.font_size + 2*this.config.marginH
+		}
 	}
 
 	setConfig(){
@@ -27,19 +33,26 @@ class Tooltip extends Element{
 	
 
 	draw(){
+		if(!this.text) return
+		
   		super.draw()
 
-  		let x = Math.min( Math.max(this.k.mX - this.W*0.5, 4), this.k.W - this.W - 4 )
-  		let y = this.k.mY - this.H - 16
+  		let k = this.k
 
-  		this.k.fill('rgb(70,70,70)')
-  		// this.k._fRect(x, y, this.W, this.H)
-  		// this.k._fLines(this.k.mX, this.k.mY, this.k.mX-8, this.k.mY-16, this.k.mX+8, this.k.mY-16)
-  		this.k.fRect(x, y, this.W, this.H)
-  		this.k.fLines(this.k.mX, this.k.mY, this.k.mX-8, this.k.mY-16, this.k.mX+8, this.k.mY-16)
+  		let x = Math.min( Math.max(k.mX - this.W*0.5, 4), k.W - this.W - 4 )
+  		let y = k.mY - this.H - 16
 
-  		this.k.setText('white', this.config.font_size)
-  		//this.k._fText(this.text, x+this.config.marginW, y+this.config.marginH)
-  		this.k.fText(this.text, x+this.config.marginW, y+this.config.marginH)
+  		k.fill('rgb(70,70,70)')
+  		k.fRect(x, y, this.W, this.H)
+  		k.fLines(k.mX, k.mY, k.mX-8, k.mY-16, k.mX+8, k.mY-16)
+
+  		k.setText('white', this.config.font_size)
+  		
+  		if(this.config.fixedWidth){
+  			k.fTextWidth(this.text, x+this.config.marginW, y+this.config.marginH, this.W-2*this.config.marginW, this.config.font_size)
+  		} else {
+  			k.fText(this.text, x+this.config.marginW, y+this.config.marginH)
+  		}
+  		
 	}
 }

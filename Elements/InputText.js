@@ -32,6 +32,12 @@ class InputText extends Element{
 		this.textArea.autocapitalize="off"
 		this.textArea.spellcheck="false"
 
+		/////this should be managed with configuration
+		// this.textArea.style.border = "none";
+		// this.textArea.style.outline = "none";
+		// this.textArea.style.highlight = "none";
+		//////
+
 		this.ONLY_NUMBERS = false
 
 		//options for returning lowerCase, delay, send button
@@ -47,7 +53,7 @@ class InputText extends Element{
 		this.textArea.style.position = "absolute"
 		this.textArea.style.left = x+"px"
 		this.textArea.style.top = y+"px"
-		this.textArea.style.width = (w-wB-15)+"px"
+		this.textArea.style.width = (w-wB-6)+"px"
 		this.textArea.style.height = h+"px"
 
 		if(z) this.textArea.style.zIndex = z
@@ -122,7 +128,8 @@ class InputText extends Element{
 
 	    if(withButton){
 	    	var callBackOb = {
-				value:this.value
+				value:this.value,
+				input:it
 			}
 	    	callBackSendData(callBackOb)
 	    }

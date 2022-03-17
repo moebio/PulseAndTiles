@@ -1,8 +1,8 @@
 class HtmlArea extends Element{
 
 	/////////////////////////////////////////constructor
-	constructor(k, callBackSendData, config){
-		super(k, callBackSendData, config)
+	constructor(callBackSendData, config){
+		super(callBackSendData, config)
 
 		this.text
 

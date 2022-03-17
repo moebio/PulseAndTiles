@@ -490,10 +490,10 @@ function Nd(id, name) {
       this.relations = new relL();
 
       this.to = new ndL();
-      this.toRelationList = new relL();
+      this.toRelations = new relL();
 
       this.from = new ndL();
-      this.fromRelationList = new relL();
+      this.fromRelations = new relL();
 
       this.weight = 1;
       this.descentWeight = 1;
@@ -596,11 +596,15 @@ forceToNode = forceToNode == null ? false : forceToNode;
  list.getIds = ndL.prototype.getIds;
  list.getDegrees = ndL.prototype.getDegrees;
  list.getPolygon = ndL.prototype.getPolygon;
+
  list._push = Array.prototype.push;
- list.push = function(a) {
-   var k;
-   k.push(a);
- };
+ // list.push = function(a) {
+ //   var k;
+ //   k.push(a);
+ // };
+
+
+
   //overriden
  list.getWithoutRepetitions = ndL.prototype.getWithoutRepetitions;
  list.removeElements = ndL.prototype.removeElements;
@@ -793,6 +797,7 @@ nL.toL=function(array, forceToNumber) {
   //
  list.getNormalized = nL.prototype.getNormalized;
  list.getNormalizedToMax = nL.prototype.getNormalizedToMax;
+ list.getNormalizedToSum = nL.prototype.getNormalizedToSum;
   //math
  list.factor = nL.prototype.factor;
  list.add = nL.prototype.add;
@@ -2554,12 +2559,14 @@ T.prototype.getColumns=function(indexesOrNames, row0, row1, emptyListIfNotFound,
  }
   return newTable.downcast();
 }
+
 T.prototype.getWithoutColumn=function(indexListOrName){
  if(indexListOrName == null) return;
- var list = indexListOrName["isList"]?indexListOrName:this.get(indexListOrName);
- if(list==null) return this;
- return this.getWithoutElement(list);
+ var list = this.get(indexListOrName);
+ if(list==null) return this
+ return this.getWithoutElement(list)
 }
+
 T.prototype.getWithoutColumns=function(indexesOrNames){
  if(indexesOrNames == null) return;
  var lists = this.getColumns(indexesOrNames);
@@ -3165,9 +3172,9 @@ Nd.prototype.cleanRelations=function() {
  this.nodes = new ndL();
  this.relations = new relL();
   this.to = new ndL();
- this.toRelationList = new relL();
+ this.toRelations = new relL();
   this.from = new ndL();
- this.fromRelationList = new relL();
+ this.fromRelations = new relL();
 }
 Nd.prototype.getDegree=function() {
  return this.relations.length;
@@ -3641,25 +3648,26 @@ Net.prototype.get=function(id) {
  return this.nodes.get(id);
 }
 Net.prototype.createRelation=function(node0, node1, id, weight, content, name) {
- if(id==null) id = node0.id+"_"+node1.id
+    if(node0.type==null) node0 = this.createNode(node0)
+    if(node1.type==null) node1 = this.createNode(node1)
+    if(id==null) id = node0.id+"_"+node1.id
     var relation = this.relations.get(id)
- if(relation) return relation
- if(name==null) name = node0.name+"_"+node1.name
- 
- relation = new Rel(id, name, node0, node1, weight, content);
- this.addRelation(relation);
- return relation;
+    if(relation) return relation
+    if(name==null) name = node0.name+"_"+node1.name
+    relation = new Rel(id, name, node0, node1, weight, content);
+    this.addRelation(relation);
+    return relation;
 }
 Net.prototype.addRelation=function(relation) {
  this.relations.addNode(relation);
  relation.node0.nodes.addNode(relation.node1);
  relation.node0.relations.addNode(relation);
  relation.node0.to.addNode(relation.node1);
- relation.node0.toRelationList.addNode(relation);
+ relation.node0.toRelations.addNode(relation);
  relation.node1.nodes.addNode(relation.node0);
  relation.node1.relations.addNode(relation);
  relation.node1.from.addNode(relation.node0);
- relation.node1.fromRelationList.addNode(relation);
+ relation.node1.fromRelations.addNode(relation);
 }
 Net.prototype.connect=function(node0, node1, id, weight, content) {
  id = id || (node0.id + "_" + node1.id);
@@ -3688,11 +3696,11 @@ Net.prototype.removeRelation=function(relation) {
  relation.node0.nodes.removeNode(relation.node1);
  relation.node0.relations.removeRelation(relation);
  relation.node0.to.removeNode(relation.node1);
- relation.node0.toRelationList.removeRelation(relation);
+ relation.node0.toRelations.removeRelation(relation);
  relation.node1.nodes.removeNode(relation.node0);
  relation.node1.relations.removeRelation(relation);
  relation.node1.from.removeNode(relation.node0);
- relation.node1.fromRelationList.removeRelation(relation);
+ relation.node1.fromRelations.removeRelation(relation);
 }
 Net.prototype.removeIsolatedNodes=function(minDegree=1) {
  var i;
@@ -4603,6 +4611,12 @@ nL.prototype.getNormalized=function(factor) {
  newNumberList.interval = interval;
  return newNumberList;
 }
+
+//[!] redundant
+nL.prototype.getNormalizedToSum=function(factor,sum) {
+    return normalizeToSum(this, factor,sum)
+}
+
 nL.prototype.getNormalizedToMax=function(factor) {
  if(this==null) return;
   factor = factor == null ? 1 : factor;
@@ -4947,6 +4961,7 @@ MetaCanvas.prototype._init=function (autoStart) {
  this.KEY_PRESSED = null; //value of key pressed (value is not null while key is pressed)
  this.KEY_JUST_PRESSED = null; //value of key just pressed in current frame
  this.SHIFT_PRESSED = false; //true if SHIFT key is pressed
+ this.COMMAND_PRESSED = false
 
  this.IS_TOUCH = (('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0));
  this.force = 0; //in touchscreen cases, measures touch force, between 0 and 1
@@ -5011,7 +5026,9 @@ MetaCanvas.prototype._init=function (autoStart) {
  this.canvas.addEventListener("mousewheel", boundMouseOrKeyboard, { passive: false });//TEST as per Dani's request
  //}
   this.canvas.addEventListener("keydown", boundMouseOrKeyboard, false);
+  document.addEventListener("keydown", boundMouseOrKeyboard, false);
  this.canvas.addEventListener("keyup", boundMouseOrKeyboard, false);
+ document.addEventListener("keyup", boundMouseOrKeyboard, false);
   // Setup resize listeners
  var boundResize = this._onResize.bind(this);
  var elementDoc, elementWindow;
@@ -5115,15 +5132,18 @@ MetaCanvas.prototype._onMouseOrKeyBoard=function (e) {
    case "mouseleave":
      this.MOUSE_IN_DOCUMENT = false;
      this.SHIFT_PRESSED = false;
+     this.COMMAND_PRESSED = false
      break;
    case "keydown":
      this.SHIFT_PRESSED = e.shiftKey;
      this.KEY_PRESSED = e.key;
      this.KEY_JUST_PRESSED = e.key;
+     this.COMMAND_PRESSED = e.keyCode==91
      break;
    case "keyup":
      this.SHIFT_PRESSED = false;
      this.KEY_PRESSED = null;
+     this.COMMAND_PRESSED = false
      break;
    case "mousewheel":
      //stops propagation for mouse wheel
@@ -5393,7 +5413,9 @@ MetaCanvas.prototype.cycleOnMouseMovement=function (time) {
      this.canvas.addEventListener('mousewheel', this.cycleOnMouseMovementListener, { passive: false }); //TEST as per Dani's request
       this.canvas.addEventListener('mousedown', this.cycleOnMouseMovementListener, false);
      this.canvas.addEventListener('keydown', this.cycleOnMouseMovementListener, false);
+     document.addEventListener("keydown", boundMouseOrKeyboard, false);
      this.canvas.addEventListener('keyup', this.cycleOnMouseMovementListener, false);
+     document.addEventListener('keyup', this.cycleOnMouseMovementListener, false);
       if (this.IS_TOUCH) {
        this.canvas.addEventListener("touchstart", this.cycleOnMouseMovementListener, false);
        this.canvas.addEventListener("touchend", this.cycleOnMouseMovementListener, false);
@@ -5929,6 +5951,7 @@ MetaCanvas.prototype.fTextWidth=function (text, x, y, width, lineHeight=12) {
     let tInfo = this._textWidthSectionsInfo(text, width)
     let sections = tInfo.sections
     let prev_s = 0
+    text = tInfo.newText
     sections.forEach(s=>{
         this.context.fillText(text.substr(prev_s, s-prev_s), x, y)
         prev_s = s
@@ -5956,24 +5979,30 @@ MetaCanvas.prototype.nLines=function (text, width) {
 MetaCanvas.prototype._textWidthSectionsInfo=function (text, width) {
   if(this["sections_"+width+"_"+text]) return this["sections_"+width+"_"+text]
 
-  let words = text.split(/\s/)
+    let newText = text.replace(/[\s\n]+/g, " ").trim()
+  let words = newText.split(" ").filter(w=>w!="")
   let accumulatedSection = 0
   let sections = []
-  let n = 1
+  let nLines = 1
   let line = ""
+  let maxWidth = 0
   words.forEach(w=>{
     if(this.context.measureText(line+w).width>width){
-      n++
+      nLines++
       accumulatedSection+=line.length+1
       sections.push(accumulatedSection)
+      maxWidth = Math.max(this.context.measureText(line).width, maxWidth)
       line=""
     }
     line+=(line==""?"":" ")+w
   })
+  maxWidth = Math.max(this.context.measureText(line).width, maxWidth)
 
   this["sections_"+width+"_"+text]={
     sections,
-    nLines:n
+    nLines,
+    maxWidth,
+    newText
   }
   
   return this["sections_"+width+"_"+text];
@@ -6000,9 +6029,13 @@ MetaCanvas.prototype.captureCanvas=function (x0, y0, w, h) {
   im.src = canvas.toDataURL();
   return im;
 }
-MetaCanvas.prototype.setCursor=function (name="default") {
- this.canvas.style.cursor = name;
+MetaCanvas.prototype.setCursor=function(name="default") {
+ this.canvas.style.cursor = name
 }
+MetaCanvas.prototype.pointer=function() {
+ this.canvas.style.cursor = "pointer"
+}
+
 MetaCanvas.prototype.getFrame=function () {
  return new Rec(0, 0, this.W, this.H);
 }
@@ -6029,8 +6062,7 @@ MetaCanvas.prototype.fsLinesInFrame=function (axis2D, nlX, nlY) {
  this.context.stroke();
 }
 
-MetaCanvas.prototype.drawSmoothPolygon=function (polygon, closed, amount) { //TODO: add tx, ty
- amount = amount == null ? 30 : amount;
+MetaCanvas.prototype.drawSmoothPolygon=function (polygon, closed, amount=30) { //TODO: add tx, ty
  var controlPoints;
   if (polygon.length < 2) return null;
  this.context.beginPath();
@@ -6524,11 +6556,17 @@ Forces.prototype.applyForces=function() {
     var node;
     for(var i = 0; i<this.nodes.length; i++) {
       node = this.nodes[i]
-      if(node.fixed_x){
+      if(node.fixed_x!=null){
          node.x = 0.95*node.x + 0.05*node.fixed_x
+         node.ax=0
+         node.vx=0
+      }
+      if(node.fixed_y!=null){
          node.y = 0.95*node.y + 0.05*node.fixed_y
-         continue
-     }
+         node.ay=0
+         node.vy=0
+      }
+      if(node.fixed_x!=null && node.fixed_y!=null) continue
      node.vx += node.ax
      node.vy += node.ay
      node.vx *= this.friction
@@ -7304,13 +7342,14 @@ var covariance=function(nl0, nl1,bUseInfoObject) {
   var l = Math.min(nl0.length, nl1.length);
  var i,av0,av1,s=0;
  if(bUseInfoObject && nl0.infoObject)
-   av0 = nl0.infoObject.average;
+    av0 = nl0.infoObject.average;
  else
-   av0 = nl0.getMean();
+   av0 = nl0.mean!=null?nl0.mean:nl0.getMean();
+ 
  if(bUseInfoObject && nl1.infoObject)
    av1 = nl1.infoObject.average;
  else
-   av1 = nl1.getMean();
+   av1 = nl1.mean?nl1.mean:nl1.getMean();
   for(i = 0; i<l; i++) {
    s += (nl0[i] - av0)*(nl1[i] - av1);
  }
@@ -7326,18 +7365,17 @@ var standardDeviationTwoNumberLists=function(nl0, nl1) {
  }
   return s/l;
 }
-var numericCorrelation=function(nl0, nl1, sd0, sd1, bUseInfoObject) {
+var numericCorrelation=function(nl0, nl1, sd0, sd1) {
  if(nl0==null || nl1==null) return;
- if(sd0==null && bUseInfoObject && nl0.infoObject)
-   sd0 = nl0.infoObject.standardDeviation;
- if(sd1==null && bUseInfoObject && nl1.infoObject)
-   sd1 = nl1.infoObject.standardDeviation;
+ if(nl0?.infoObject?.standardDeviation) sd0 = nl0.infoObject.standardDeviation;
+ if(nl1?.infoObject?.standardDeviation) sd1 = nl1.infoObject.standardDeviation;
+ if(nl0?.standardDeviation) sd0 = nl0.standardDeviation;
+ if(nl1?.standardDeviation) sd1 = nl1.standardDeviation;
  if(sd0==null) sd0 = nl0.getStandardDeviation();
  if(sd1==null) sd1 = nl1.getStandardDeviation();
- 
  var stndDeviations = sd0*sd1;//nl0.getStandardDeviation() * nl1.getStandardDeviation();
  if(stndDeviations===0) return 0;
- return covariance(nl0, nl1,bUseInfoObject) / stndDeviations;
+ return covariance(nl0, nl1) / stndDeviations;
 }
 var slidingWindowCorrelation=function(nl0, nl1, nPoints) {
  if(nl0==null || nl1==null || nl0.length != nl1.length) return;
@@ -9336,19 +9374,19 @@ var getInformationGain=function(feature, supervised, reductionRatioNormalization
   //});
   return ig;
 }
-var groupElements=function(list, sortedByValue, mode, fillBlanks) {
- if(!list)
-   return;
- var result = _groupElements_Base(list, null, sortedByValue, mode, fillBlanks);
- return result;
-}
+// var groupElements=function(list, sortedByValue, mode, fillBlanks) {
+//  if(!list)
+//    return;
+//  var result = groupElementsByPropertyValue(list, null, sortedByValue, mode, fillBlanks);
+//  return result;
+// }
 var groupElementsByPropertyValue=function(list, propertyName, sortedByValue, mode, fillBlanks) {
- if(!list)
-   return;
- var result = _groupElements_Base(list, propertyName, sortedByValue, mode, fillBlanks);
- return result;
-}
-var _groupElements_Base=function(list, propertyName, sortedByValue, mode, fillBlanks) {
+//  if(!list)
+//    return;
+//  var result = _groupElements_Base(list, propertyName, sortedByValue, mode, fillBlanks);
+//  return result;
+// }
+// var _groupElements_Base=function(list, propertyName, sortedByValue, mode, fillBlanks) {
  if(!list)
    return;
  if(mode == undefined){
@@ -13840,15 +13878,12 @@ var removeTextsBetweenStrings=function(text, substring0, substring1, includeSubs
   
   return text;
 }
-var getWords=function(string, withoutRepetitions, stopWords, sortedByFrequency, includeLinks, limit, minSizeWords, wordDelimiter) {
+var getWords=function(string, withoutRepetitions=true, stopWords=true, sortedByFrequency=true, includeLinks=true, limit=0, minSizeWords=3, wordDelimiter = " ") {
  if(string == null) return null;
   var links;
-  minSizeWords = minSizeWords || 0;
- withoutRepetitions = withoutRepetitions == null ? true : withoutRepetitions;
- sortedByFrequency = sortedByFrequency == null ? true : sortedByFrequency;
- includeLinks = includeLinks == null ? true : includeLinks;
- limit = limit == null ? 0 : limit;
- wordDelimiter = (wordDelimiter == null || wordDelimiter == '') ? ' ' : wordDelimiter;
+
+ wordDelimiter = wordDelimiter == '' ? ' ' : wordDelimiter
+
   var regexlink = StringOperators_LINK_REGEX;
  var i, j, list;
  if(typeof string != 'string')
@@ -13914,7 +13949,7 @@ var getWords=function(string, withoutRepetitions, stopWords, sortedByFrequency, 
      nMatches = list.length;
    }
  }
-  if(minSizeWords > 0) {
+  if(minSizeWords > 1) {
    nMatches = list.length;
    for(i = 0; i<nMatches; i++) {
      if(list[i].length < minSizeWords) {
@@ -13936,15 +13971,29 @@ var getWords=function(string, withoutRepetitions, stopWords, sortedByFrequency, 
      }
      list = list2;
    }
-    if(limit !== 0) list = list.splice(0, limit);
+    if(limit > 0) list = list.splice(0, limit);
     return list;
  }
   if(withoutRepetitions) {
    list = list.getWithoutRepetitions();
  }
-  if(limit !== 0) list = list.splice(0, limit);
+  if(limit > 0) list = list.splice(0, limit);
  return list;
 }
+
+var getBigrams=function(string, withoutRepetitions=true, stopWords=true, sortedByFrequency=true, minSizeWords=3){
+    if(stopWords===true) stopWords = StringOperators_STOP_WORDS
+    string = cleanText(string, true, true, " ", true, true, stopWords, true, true)
+    let words = string.split(" ")
+    let bigrams = new sL()
+    let n = words.length-1
+    for(let i=0; i<n; i++){
+        if(words[i].length>=minSizeWords && words[i+1].length>=minSizeWords) bigrams.push(words[i]+" "+words[i+1])
+    }
+    if(withoutRepetitions) bigrams = bigrams.getWithoutRepetitions()
+    return bigrams
+}
+
 var substr=function(string, i0, length) {
  if(string == null) return null;
  i0 = i0 || 0;
@@ -14093,6 +14142,7 @@ var cleanText=function(string, rmvEnters, rmvTabs, replaceTabsAndEntersBy, rmvPu
  if(rmvPunctuation) string = removePunctuation(string);
  if(toLowerCase) string = string.toLowerCase();
   if(stopWords != null){
+    if(stopWords===true) stopWords=StringOperators_STOP_WORDS
    string = replaceStringsInText(string, stopWords, "", true);
  }
   if(rmveDoubleSpaces) string = removeDoubleSpaces(string);
@@ -14171,8 +14221,8 @@ var removeAccentsAndDiacritics=function(string) {
 var getWordsOccurrencesTable=function(string, stopWords, includeLinks, limit, minSizeWords, wordDelimiter) {
  if(string == null) return;
  if(string.length === 0) return new T(new sL(), new nL());
-  if(stopWords==1) stopWords = StringOperators_STOP_WORDS;
-  var words = getWords(string, false, stopWords, false, includeLinks, null, minSizeWords, wordDelimiter);
+  if(stopWords==1) stopWords = StringOperators_STOP_WORDS
+  var words = getWords(string, false, stopWords, false, includeLinks, null, minSizeWords, wordDelimiter)
  var table;
  if(limit != null)
    table = words.getFrequenciesTable(true).sliceRows(0, limit-1);
@@ -14267,6 +14317,20 @@ var validateEmail=function(text) {
 }
 var validateUrl=function(text) {
  return StringOperators_LINK_REGEX.test(text);
+}
+
+var getClosestLevenshtein = function(text, texts, mode=0){
+    let closest = texts[0]
+    let dMin = 99999
+    texts.forEach(other=>{
+        let d = getLevenshteinDistance(text, other)
+        if(d<dMin){
+            dMin = d
+            closest = other
+        }
+    })
+    if(mode==0) return closest
+    return {closest, distance:dMin}
 }
 
 var getLevenshteinDistance=function(a, b, bNormalized) {
@@ -14550,6 +14614,430 @@ var _replaceSpacesInLine=function(line) {
  return line;
 }
 
+
+////TextNet
+var decodeTextNet=function(code) {
+ if(code == null) return;
+ if(code === "") return new Net();
+  console.log('\n\n*************////////// decodeTextNet //////////*************');
+
+
+ //code = "\n"+code;
+  var i, j;
+ var line, simpleLine;
+ var id, id2;
+ var name;
+ var index, minIndex;
+ var lines;
+ var node, otherNode;
+ var relation;
+ var sep;
+ var colorLinesRelations = []; //for relations
+ var colorLinesGroups = [];
+ var colorSegments = [];
+ var regex;
+ var iEnd;
+ var propertyName;
+ var propertyValue;
+ var network = new Net();
+ var paragraphs = new sL();
+ var content;
+  network.nodesPropertiesNames = new sL();
+ network.relationsPropertiesNames = new sL();
+  lines = code.split(/\n/g);
+ lines.forEach(function(line, i) {
+   lines[i] = line.trim();
+ });
+  code = lines.join('\n');
+   var nLineParagraph = 0;
+ while(code.charAt(0) == '\n') {
+   code = code.substr(1);
+   nLineParagraph++;
+ }
+   var left = code;
+  index = left.search(/\n\n./g);
+  while(index != -1) {
+   paragraphs.push(left.substr(0, index));
+   left = left.substr(index + 2);
+   index = left.search(/\n\n./g);
+ }
+  paragraphs.push(left);
+  var firstLine;
+   paragraphs.forEach(function(paragraph) {
+    if(paragraph.indexOf('\n') == -1) {
+     line = paragraph;
+     lines = null;
+   } else {
+     lines = paragraph.split(/\n/g);
+     line = lines[0];
+   }
+   if(lines) lines = lines.filter(l=>l.trim()!="")
+
+    firstLine = line;
+    //console.log('firstLine: ['+firstLine+']');
+    if(line == '\n' || line === '' || line == ' ' || line == '  ') { //use regex here
+    } else if(line.indexOf('//') === 0) {
+      if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
+      colorSegments[nLineParagraph].push({
+       type: 'comment',
+       iStart: 0,
+       iEnd: line.length
+     });
+    } else if(line == "relations colors:" || line == "groups colors:" || line == "categories colors:") {
+      if(lines) {
+       lines.slice(1).forEach(function(line, i) {
+          index = line.indexOf(':');
+         if(firstLine == "relations colors:" && index != -1 && colorStringToRGB(line.split(':')[1]) != null) {
+           //console.log('  more colors!');
+            colorLinesRelations.push(line);
+            if(colorSegments[nLineParagraph + i] == null) colorSegments[nLineParagraph + i] = [];
+            colorSegments[nLineParagraph + i].push({
+             type: 'relation_color',
+             iStart: 0,
+             iEnd: line.length
+           });
+          }
+          if((firstLine == "groups colors:" || firstLine == "categories colors:") && index != -1 && colorStringToRGB(line.split(':')[1]) != null) {
+           //console.log(line)
+           //console.log('  color to group!');
+            colorLinesGroups.push(line);
+            if(colorSegments[nLineParagraph + i] == null) colorSegments[nLineParagraph + i] = [];
+            colorSegments[nLineParagraph + i].push({
+             type: 'relation_color',
+             iStart: 0,
+             iEnd: line.length
+           });
+          }
+       });
+     }
+    } else { //node
+      minIndex = 99999999;
+      index = line.indexOf(NetworkEncodings_nodeNameSeparators[0]);
+      if(index != -1) {
+       minIndex = index;
+       sep = NetworkEncodings_nodeNameSeparators[0];
+     }
+      j = 1;
+      while(j < NetworkEncodings_nodeNameSeparators.length) {
+       index = line.indexOf(NetworkEncodings_nodeNameSeparators[j]);
+       if(index != -1) {
+         minIndex = Math.min(index, minIndex);
+         sep = NetworkEncodings_nodeNameSeparators[j];
+       }
+       j++;
+     }
+       index = minIndex == 99999999 ? -1 : minIndex;
+      name = index == -1 ? line : line.substr(0, index);
+     name = name.trim();
+      if(name !== "" && name != "---") {
+       id = _simplifyForTextNet(name);
+        node = network.nodes.get(id);
+        iEnd = index == -1 ? line.length : index;
+        if(node == null) {
+          node = new Nd(id, name);
+         node._nLine = nLineParagraph;
+         network.addNode(node);
+         node.content = index != -1 ? line.substr(index + sep.length).trim() : "";
+          node._lines = lines ? lines.slice(1) : new sL();
+          node.position = network.nodes.length - 1;
+          node.impact = 1
+          if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
+          colorSegments[nLineParagraph].push({
+           type: 'node_name',
+           iStart: 0,
+           iEnd: iEnd
+         });
+        } else {
+         if(lines != null) node._lines = node._lines.concat(lines.slice(1));
+          node.content += index != -1 ? (" | " + line.substr(index + sep.length).trim()) : "";
+          if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
+          colorSegments[nLineParagraph].push({
+           type: 'node_name_repeated',
+           iStart: 0,
+           iEnd: iEnd
+         });
+       }
+     } else {
+      }
+   }
+    node.content = node._lines.join(" / ");
+    nLineParagraph += (lines ? lines.length : 1) + 1;
+ });
+   //find equalities (synonyms)
+  var foundEquivalences = true;
+  while(foundEquivalences) {
+   foundEquivalences = false;
+    loop: for(i = 0; network.nodes[i] != null; i++) {
+     node = network.nodes[i];
+      loop2: for(j = 0; node._lines[j] != null; j++) {
+       line = node._lines[j];
+        if(line.indexOf('=') === 0) {
+          id2 = _simplifyForTextNet(line.substr(1));
+         otherNode = network.nodes.get(id2);
+          if(otherNode && node != otherNode) {
+            foundEquivalences = true;
+            node._lines = otherNode._lines.concat(otherNode._lines);
+            network.nodes.removeNode(otherNode);
+           network.nodes.ids[otherNode.id] = node;
+            break loop;
+         } else {
+           network.nodes.ids[id2] = otherNode;
+         }
+          if(!node._otherIds) node._otherIds = [];
+         node._otherIds.push(id2);
+       }
+     }
+   }
+ }
+    let categoryValues = new sL()
+   //build relations and nodes properties
+  network.nodes.forEach(function(node) {
+    nLineParagraph = node._nLine;
+    //console.log('node.nLineWeight', node.nLineWeight);
+    node._lines.forEach(function(line, i) {
+      if(line.indexOf('=') != -1) {
+      } else if(line.indexOf(':') > 0) {
+        simpleLine = line.trim();
+        propertyName = removeAccentsAndDiacritics(simpleLine.split(':')[0]).replace(/\s/g, "_");
+        propertyValue = line.split(':')[1].trim();
+       if(propertyValue == String(Number(propertyValue))) propertyValue = Number(propertyValue);
+        if(propertyValue != null) {
+            if(propertyName=="x") propertyName="_x"
+            if(propertyName=="y") propertyName="_y"
+            node[propertyName] = propertyValue;
+            if(propertyName=="category") categoryValues.pushIfUnique(String(propertyValue))
+            if(!network.nodesPropertiesNames.includes(propertyName)) network.nodesPropertiesNames.push(propertyName);
+       }
+      } else {
+       simpleLine = line;
+        network.nodes.forEach(function(otherNode) {
+         regex = _regexWordForTextNet(otherNode.id);
+         index = simpleLine.search(regex);
+          if(index == -1 && otherNode._otherIds) {
+           for(j = 0; otherNode._otherIds[j] != null; j++) {
+             regex = _regexWordForTextNet(otherNode._otherIds[j]);
+             index = simpleLine.search(regex);
+             if(index != -1) break;
+           }
+         }
+          if(index != -1) {
+
+           iEnd = index + simpleLine.substr(index).match(regex)[0].length;
+            relation = network.relations.getFirstRelationBetweenNodes(node, otherNode, true);
+            //console.log("1++", simpleLine, otherNode.name, relation)
+             if(relation != null) {
+              content = relation.node0.name + " " + line;
+              relation.content += " | " + content;
+              if(colorSegments[nLineParagraph + i + 1] == null) colorSegments[nLineParagraph + i + 1] = [];
+              colorSegments[nLineParagraph + i + 1].push({
+               type: 'node_name_in_repeated_relation',
+               iStart: index,
+               iEnd: iEnd
+             });
+            } else {
+             relation = network.relations.getFirstRelationBetweenNodes(otherNode, node, true);
+                //console.log("  2++", simpleLine, otherNode.name, relation)
+              //if(relation == null || relation.content != content) {
+                var relationName = line;
+                regex = _regexWordForTextNet(node.id);
+                index = relationName.search(regex);
+                if(index != -1) {
+                     relationName = relationName.substr(index);
+                     relationName = relationName.replace(regex, "").trim();
+                   }
+                //console.log(node.id, "*", line, "*", index, "*", line.substr(index));
+                //line = line.replace(regex, "").trim();
+                regex = _regexWordForTextNet(otherNode.id);
+               index = relationName.search(regex);
+               relationName = "… " + relationName.substr(0, index).trim() + " …";
+                id = line;
+               relation = new Rel(line, relationName, node, otherNode);
+                content = relation.node0.name + " " + line;
+                if(line.indexOf("- ")==0){
+                    relation.color = "red"
+                    relation.influence = -1
+                } else if(line.indexOf("+ ")==0){
+                    relation.color = "blue"
+                    relation.influence = 1
+                } else {
+                    relation.influence = 0
+                }
+                relation.content = content; //.substr(0,index);
+               network.addRelation(relation);
+                if(colorSegments[nLineParagraph + i + 1] == null) colorSegments[nLineParagraph + i + 1] = [];
+                colorSegments[nLineParagraph + i + 1].push({
+                 type: 'node_name_in_relation',
+                 iStart: index,
+                 iEnd: iEnd
+               });
+              //}
+           }
+         }
+       });
+     }
+   });
+    node.positionWeight = Math.pow(network.nodes.length - node.position - 1 / network.nodes.length, 2);
+   node.combinedWeight = node.positionWeight + node.nodes.length * 0.1;
+  });
+
+    if(categoryValues.length>0){
+        console.log("categories:", categoryValues)
+        let colors = createDefaultCategoricalColorList(categoryValues.length)
+        let colorDic = {}
+        categoryValues.forEach((category,i)=>colorDic[category]=interpolateColors( colors[i], "white", 0.8))
+        network.nodes.forEach(n=>n.color = colorDic[n.category])
+    }
+
+   //colors in relations and groups
+  colorLinesRelations.forEach(function(line) {
+   index = line.indexOf(':');
+   var texts = line.substr(0, index).split(',');
+   texts.forEach(function(text) {
+     var color = line.substr(index + 1);
+     network.relations.forEach(function(relation) {
+       if(relation.name.indexOf(text) != -1) relation.color = color;
+     });
+   });
+ });
+  colorLinesGroups.forEach(function(line) {
+   index = line.indexOf(':');
+   var texts = line.substr(0, index).split(',');
+   texts.forEach(function(text) {
+     var color = line.substr(index + 1);
+     network.nodes.forEach(function(node) {
+       if(node.group == text) node.color = color;
+       if(node.category == text) node.color = color;
+     });
+   });
+ });
+  network.colorSegments = colorSegments;
+  return network;
+}
+var _simplifyForTextNet=function(name) {
+ name = name.toLowerCase();
+ if(name.substr(name.length - 2) == 'es') {
+   name = name.substr(0, name.length - 1);
+ } else if(name.charAt(name.length - 1) == 's') name = name.substr(0, name.length - 1);
+ return name.trim();
+}
+var _regexWordForTextNet=function(word, global) {
+ global = global == null ? true : global;
+ try {
+   return new RegExp("(\\b)(" + word + "|" + word + "s|" + word + "es)(\\b)", global ? "gi" : "i");
+ } catch(err) {
+   return null;
+ }
+}
+var encodeTextNet=function(network, nodeContentSeparator, nodesPropertyNames, relationsPropertyNames) {
+ if(network == null) return;
+  var code = "";
+ var regex, lineRelation;
+  var codedRelationsContents;
+  nodeContentSeparator = nodeContentSeparator || ', ';
+ nodesPropertyNames = nodesPropertyNames || [];
+ relationsPropertyNames = relationsPropertyNames || [];
+  network.nodes.forEach(function(node) {
+   code += node.name;
+   if(node.content && node.content !== "") code += nodeContentSeparator + node.content;
+   code += "\n";
+    nodesPropertyNames.forEach(function(propName) {
+     if(node[propName] != null) code += propName + ":" + String(node[propName]) + "\n";
+   });
+    codedRelationsContents = new sL();
+    node.toRelations.forEach(function(relation) {
+      var content = ((relation.content == null ||  relation.content === "") && relation.description) ? relation.description : relation.content;
+      if(content && content !== "") {
+       regex = _regexWordForTextNet(relation.node1.name);
+       lineRelation = content + ((regex != null && content.search(regex) == -1) ? (" " + relation.node1.name) : "");
+     } else {
+       lineRelation = "connected with " + relation.node1.name;
+     }
+      if(codedRelationsContents.indexOf(lineRelation) == -1) {
+       code += lineRelation;
+       code += "\n";
+       codedRelationsContents.push(lineRelation);
+     }
+    });
+    code += "\n";
+  });
+  return code;
+}
+////
+
+
+var modelInfluence=function(network, node, impact=1, spread_strength=1){
+    if(node==null) return
+    if(typeof(node)=="string") node = network.get(node)
+
+    network.nodes.forEach(n=>n.impact=1)
+    network.relations.forEach(r=>r._impact_hits=0)
+    node.impact = impact
+
+    let _spread = function(node, level){
+        if(level>15) return
+
+        //let ratio = spread_strength/(level**2+1)
+
+        let impactFactor
+        let impactAddition
+
+        //+
+        //0.5 -> x1.05
+        //1 -> x1.2
+        //2 -> x2
+
+        //-
+        //0.5 -> x0.95
+        //1 -> x0.8
+        //2 -> x0.5
+        let prevImpact
+        //node.toRelations.forEach(relation=>{
+
+        for(var i=0; i<10000; i++){
+            let relation = network.relations.getRandomElement()
+
+            if(relation.influence==0) continue
+
+            let from = relation.node0
+            let affected = relation.node1
+
+            //if(from.id=="gras" && affected.id=="otter") console.log("gras otter")
+
+            impactAddition = spread_strength*((from.impact-1)**2)*(1/(1+0.9*relation._impact_hits))
+            impactFactor = (1 + impactAddition)//*Math.pow(from.impact, 0.02)
+            prevImpact = affected.impact
+
+            relation._impact_hits++
+
+            if(relation.influence>0){
+                if(from.impact>1){
+                    affected.impact*=(impactFactor**2)
+                } else {
+                    affected.impact/=impactFactor
+                }
+                if(from.id=="gras" && affected.id=="otter") console.log("1 grass otter | from.impact, impactFactor, prevImpact ---> affected.impact\n", from.impact, impactFactor, prevImpact, "-->", affected.impact)
+            } else if(relation.influence<0){
+                if(from.impact>1){
+                    affected.impact/=impactFactor
+                } else {
+                    affected.impact*=(impactFactor**2)
+                }
+                if(affected.id=="gras" && from.id=="deer") console.log("-1 deer grass | from.impact, impactFactor, prevImpact ---> affected.impact\n", from.impact, impactFactor, prevImpact, "-->", affected.impact)
+            }
+
+            affected.impact = 0*affected.impact + 1*( 2/(1+Math.pow(Math.E, -2*(affected.impact-1))) )
+            
+        }
+            
+        //})
+        //node.to.forEach(node_to=>_spread(node_to, level+1))
+    }
+
+    _spread(node, 0)
+
+    network.nodes.forEach(n=>console.log(n.name, n.impact))
+}
+
 var NetworkToTable=function(network, useIds, includeLabelsList, countMode){
  if(network==null) return;
   useIds = useIds==null?true:useIds;
@@ -14581,8 +15069,8 @@ var NetworkToTable=function(network, useIds, includeLabelsList, countMode){
  }
   return table;
 }
-var TableToNetworkPairs = function(table, nl, threshold=0, allowMultipleRelations, minRelationsInNode, sl, tagsSeparator = ",") {
- if(table == null || !table.isTable || table[0] == null || table[1] == null) return;
+var TableToNetworkPairs = function(table, nl, threshold=0, allowMultipleRelations=false, minRelationsInNode=0, sl, tagsSeparator = ",") {
+ if(table == null || table[0] == null || table[1] == null) return;
   var nElements;
  var node0;
  var node1;
@@ -14597,6 +15085,7 @@ var TableToNetworkPairs = function(table, nl, threshold=0, allowMultipleRelation
     nElements = table.length;
     for(i=0; i<nElements; i++){
         name0 = sl==null?( (table[i].name==null || table[i].name=="")?"node_"+i:table[i].name ):sl[i];
+        if(!name0) continue 
         node0 = new Nd(name0, name0);
         network.addNode(node0);
     }
@@ -14640,7 +15129,6 @@ if(table[0].join("").includes(tagsSeparator)){
  }
 
   //trace("••••••• createNetworkFromPairsTable", table);
- if(allowMultipleRelations == null) allowMultipleRelations = false;
  if(table.length < 2) return null;
  
  
@@ -14657,9 +15145,11 @@ if(table[0].join("").includes(tagsSeparator)){
   var provisionalRelations = new ndL();
  var id;
 
+
  for(i = 0; i < nElements; i++) {
-   name0 = "" + table[0][i];
-   name1 = "" + table[1][i];
+   name0 = ("" + table[0][i]).trim()
+   name1 = ("" + table[1][i]).trim()
+   if(!name0 || !name1 || name0=="undefined" || name1=="undefined") continue
    //trace("______________ i, name0, name1:", i, name0, name1);
    node0 = network.nodes.get(name0);
    if(node0 == null) {
@@ -14708,7 +15198,14 @@ if(table[0].join("").includes(tagsSeparator)){
     if(sl) relation.content = sl[i];
  }
 
- network.nodes.forEach(n=>n.indexes=n.indexes.getWithoutRepetitions())
+ var maxWeight = 0
+ network.nodes.forEach(n=>{
+    n.indexes=n.indexes.getWithoutRepetitions()
+    maxWeight = Math.max(maxWeight, n.weight)
+ })
+ 
+
+ 
 
   if(nl == null){
    if(allowMultipleRelations){
@@ -14721,7 +15218,7 @@ if(table[0].join("").includes(tagsSeparator)){
      }
    }
  }
-  if(minRelationsInNode) {
+  if(minRelationsInNode=0) {
    for(i = 0; network.nodes[i] != null; i++) {
      if(network.nodes[i].relations.length < minRelationsInNode) {
        network.removeNode(network.nodes[i]);
@@ -14729,6 +15226,15 @@ if(table[0].join("").includes(tagsSeparator)){
      }
    }
  }
+
+ network.nodes.forEach(n=>n.weight/=maxWeight)
+
+ maxWeight = 0
+ network.relations.forEach(r=>{
+    maxWeight = Math.max(maxWeight, r.weight)
+ })
+ network.relations.forEach(r=>r.weight/=maxWeight)
+
   return network;
 }
 
@@ -15736,6 +16242,19 @@ var getPropertyValues=function(object, propertyName, valueIfNull) {
  }
  return newList.downcast();
 }
+
+var getPropertyValuesInterval=function(array, propertyName) {
+ if(array == null) return
+ let min = Number.MAX_VALUE
+ let max = -Number.MAX_VALUE
+ array.forEach(ob=>{
+    if(ob[propertyName]==null) return
+    min = Math.min(min, ob[propertyName])
+    max = Math.max(max, ob[propertyName])
+ })
+ return new I(min, max)
+}
+
 var getMultiplePropertyValues=function() {
  if(arguments == null || arguments.length === 0 ||  arguments[0] == null) return null;
  var object = arguments[0];
@@ -16625,6 +17144,42 @@ var intersectionLines=function(line0, line1) {
  return new P(xx, line0.x * xx + line0.y);
 }
 
+var intersectionLineRectangle=function(point0, point1, rect, bLineInfinite){
+ bLineInfinite = bLineInfinite == null ? false : bLineInfinite;
+ var lineTest = lineFromTwoPoints(point0,point1);
+ // test each side of rectangle
+ var lineTop = lineFromTwoPoints(rect.getTopLeft(),rect.getTopRight());
+ var lineRight = lineFromTwoPoints(rect.getTopRight(),rect.getBottomRight());
+ var lineBottom = lineFromTwoPoints(rect.getBottomLeft(),rect.getBottomRight());
+ var lineLeft = lineFromTwoPoints(rect.getTopLeft(),rect.getBottomLeft());
+ var pt;
+ var polyResults = new Pol();
+ pt = intersectionLines(lineTest,lineTop);
+ if(pt != null && rect.pointIsOnBorder(pt)) polyResults.push(pt);
+ pt = intersectionLines(lineTest,lineRight);
+ if(pt != null && rect.pointIsOnBorder(pt)) polyResults.push(pt);
+ pt = intersectionLines(lineTest,lineBottom);
+ if(pt != null && rect.pointIsOnBorder(pt)) polyResults.push(pt);
+ pt = intersectionLines(lineTest,lineLeft);
+ if(pt != null && rect.pointIsOnBorder(pt)) polyResults.push(pt);
+ // Could be multiple results and may be intersection with infinite line
+ if(!bLineInfinite){
+   var polyKeep = new Pol();
+   for(var i=0;i<polyResults.length;i++){
+     pt = polyResults[i];
+     if(pt.x >= Math.min(point0.x,point1.x) &&
+        pt.x <= Math.max(point0.x,point1.x) &&
+        pt.y >= Math.min(point0.y,point1.y) &&
+        pt.y <= Math.max(point0.y,point1.y) ){
+       // inside the segment defined by point0 -> point1
+       polyKeep.push(pt);
+     }
+   }
+   polyResults = polyKeep;
+ }
+ return polyResults;
+}
+
 
 
 var numberTableToPolygon=function(numberTable) {
@@ -16909,9 +17464,61 @@ var minRect=function(){
   return frame;
 }
 
+var packingRectangles = function(rectangles, frame, margin=2) {
+    let _rectIntersectRectangles = function(rectangles, px, py, width, height, margin) {
+      var rect;
+      for(var i = 0; rectangles[i] != null; i++) {
+        rect = rectangles[i];
+        if(px + width > (rect.x - margin) && px < (rect.x + rect.width + margin) && (py + height) > (rect.y - margin) && py < (rect.y + rect.height + margin)) return true;
+      }
+      return false;
+    }
+
+    let center = frame.getCenter();
+    let prop = frame.width / frame.height;
+    let rectanglesPlaced = new L();
+    var newRectangles = new L();
+    let px, py
+    let w, h
+    let a, r, rMax = 0
+
+    for(let i = 0; i<rectangles.length; i++) {
+        w = rectangles[i].width
+        h = rectangles[i].height
+        if(i === 0) {
+          px = center.x - w * 0.5;
+          py = center.y - h * 0.5;
+        } else {
+          a = i * 0.1;
+          r = 0;
+          while(_rectIntersectRectangles(rectanglesPlaced, px, py, w, h, margin)) {
+            r += 1;
+            a += r * 0.005;
+
+            px = center.x + prop * r * Math.cos(a) - w * 0.5;
+            py = center.y + r * Math.sin(a) - h * 0.5;
+          }
+          rMax = Math.max(rMax, prop * r + w * 0.5);
+        }
+        newRectangles[i] = new Rec(px, py, w, h)
+        rectanglesPlaced.push(newRectangles[i])
+    }
+
+    let rectangle;
+    prop = 0.5 * frame.width / rMax;
+    for(let i = 0; i<newRectangles.length; i++) {
+      rectangle = newRectangles[i]
+      rectangle.x = center.x + (rectangle.x - center.x) * prop
+      rectangle.y = center.y + (rectangle.y - center.y) * prop
+      rectangle.width *= prop
+      rectangle.height *= prop
+    }
+
+    return newRectangles
+}
+
 var packingCircles = function(weights, frame, margin) {
   if(weights == null ||  weights.length === 0) return null;
-
     var _pointInCircles = function(circles, px, py, r, margin) {
       var circle;
       for(var i = 0; circles[i] != null; i++) {
@@ -16947,8 +17554,8 @@ var packingCircles = function(weights, frame, margin) {
       a = 0; //i*0.5;
       r = firstR + rCircle + margin + 0.1;
       while(_pointInCircles(circlesPlaced, px, py, rCircle, margin)) {
-        r += 0.1;
-        a += r * 0.005;
+        r += 0.06;
+        a += r * 0.003;
 
         px = center.x + prop * r * Math.cos(a);
         py = center.y + r * Math.sin(a);
@@ -16978,7 +17585,7 @@ var packingCircles = function(weights, frame, margin) {
 //3: continental quadrigram (Africa, Asia, Australasia, Europe, North America, South America)
 //4: europe quadrigram
 //5:vertical strips
-var packingRectangles=function(weights, packingMode, rectangle, param) {
+var fillWithRectangles=function(weights, packingMode, rectangle, param) {
  //TODO: return recL instead of L
  if(rectangle == null) rectangle = new Rec(0, 0, 1, 1);
  packingMode = packingMode ? packingMode : 0;
@@ -17065,10 +17672,10 @@ var packingRectangles=function(weights, packingMode, rectangle, param) {
      var weigthsCompleted = concat(weights, createListWithSameElement(nMissing, average));
      var table = slidingWindowOnList(weigthsCompleted, nRows, nRows, 0);
      var sumList = table.getSums();
-     var rectangleColumns = this.packingRectangles(sumList, 2, rectangle);
+     var rectangleColumns = this.fillWithRectangles(sumList, 2, rectangle);
       rectangleList = L(); //new recL();
       for(i = 0; i < nLists; i++) {
-       rectangleList = concat(rectangleList, this.packingRectangles(table[i], 1, rectangleColumns[i]));
+       rectangleList = concat(rectangleList, this.fillWithRectangles(table[i], 1, rectangleColumns[i]));
      }
       return rectangleList;
    case 6: //horizontal strips
@@ -17279,6 +17886,8 @@ var colorListFromColorScaleFunction=function(colorScaleFunction, nColors) {
  }
  return colorList;
 }
+
+//mixColors
 var colorsLinearCombination=function(colorList, weights) {
  if(colorList==null || colorList.length==0) return;
  if(colorList.length==1) return colorList[0];
@@ -17577,10 +18186,10 @@ var textWordWrapReturnLines=function(text, fitWidth, fitHeight, lineHeight, elli
   lines.width = lines.length == 1 ? w : fitWidth;
   return lines;
 }
-var getMaxTextWidth=function(texts, graphics) {
- var max = graphics.getTextW(texts[0]);
+var getMaxTextWidth=function(texts, k) {
+ var max = k.getTextW(texts[0]);
  for(var i = 1; texts[i] != null; i++) {
-   max = Math.max(max, graphics.getTextW(texts[i]));
+   max = Math.max(max, k.getTextW(texts[i]));
  }
  return max;
 }
@@ -18179,8 +18788,21 @@ var _extendPaths=function(allPaths, nodeDestiny, maxLength) {
   allPaths = newPaths;
   return _extendPaths(allPaths, nodeDestiny, maxLength);
 }
-var loops=function(network, minSize) {
- if(network == null) return null;
+var loops=function(network, minSize=3) {
+ if(network == null) return null
+
+ let _sameLoop = function(loop0, loop1) {
+      if(loop0.length != loop1.length) return false;
+      if(loop1.get(loop0[0].id) == null) return false;
+
+      var i1 = loop1.indexOf(loop0[0]);
+      var l = loop0.length;
+      for(var i = 1; loop0[i] != null; i++) {
+        if(loop0[i] != loop1[(i + i1) % l]) return false;
+      }
+      return true;
+  }
+
   var i, j, k, loops;
   var allLoops = new T();
   for(i = 0; network.nodes[i] != null; i++) {
@@ -18201,6 +18823,7 @@ var loops=function(network, minSize) {
  })
   return allLoops;
 }
+
 var _getLoopsOnNode=function(central) {
  if(central.to.length === 0 || central.from.length === 0) return [];
   var columns = new T();
@@ -18435,7 +19058,7 @@ var influenceLevels = function(network, node_or_nodes, direction_to=true){
 
       list.forEach(n=>{
         n.__level = level
-        nextRelations = to?n.toRelationList:n.fromRelationList
+        nextRelations = to?n.toRelations:n.fromRelations
         nextRelations?.forEach(r=>{
           otherNode = to?r.node1:r.node0
           r._onImpactTo = true
@@ -18759,6 +19382,81 @@ var getNodesPageRanks=function(network, mode, useRelationsWeight){
  return addPageRankToNodes(network, mode, useRelationsWeight);
 }
 
+var addPageRankToNodes = function(network, from=2, useRelationsWeight){
+      //TODO:deploy useRelationsWeight
+      //from = from == null ? true : from;
+
+      var n;
+      var i;
+      var j;
+      var d =0.85; //dumping factor;
+      var N = network.nodes.length;
+      var base = (1 - d) / N;
+      from = from==false?0:(from==true?1:from);
+      var propName =  ["toPageRank", "fromPageRank","allPageRank"][from];
+      var node;
+      var otherNode;
+      var nodes;
+      var weights, w=1;
+
+      network.minFromPageRank = network.minToPageRank = 99999999;
+      network.maxFromPageRank = network.maxToPageRank = -99999999;
+
+
+      for(i = 0; network.nodes[i] != null; i++) {
+        node = network.nodes[i];
+        node[propName] = 1 / N;
+      }
+
+      let max
+      for(n = 0; n < 300; n++) {
+        for(i = 0; network.nodes[i] != null; i++) {
+          node = network.nodes[i];
+
+          switch(from){
+            case 0:
+              nodes = node.to;
+              break;
+            case 1:
+              nodes = node.from;
+              break;
+            case 2:
+              nodes = node.nodes;
+              break;
+          }
+
+          //nodes = from ? node.from : node.to;
+          node[propName] = base;
+
+          if(useRelationsWeight) weights = from ? node.fromRelations : node.toRelations;
+
+          for(j = 0; nodes[j] != null; j++) {
+            otherNode = nodes[j];
+            if(useRelationsWeight) w = weights[j].weight;
+            node[propName] += w * d * otherNode[propName] / (from ? otherNode.to.length : otherNode.from.length);
+          }
+
+          if(n == 299) {
+
+            if(useRelationsWeight) node[propName] = Math.pow(node[propName], 4);
+
+            if(from) {
+              network.minFromPageRank = Math.min(network.minFromPageRank, node[propName]);
+              max = network.maxFromPageRank = Math.max(network.maxFromPageRank, node[propName]);
+            } else {
+              network.minToPageRank = Math.min(network.minToPageRank, node[propName]);
+              max = network.maxToPageRank = Math.max(network.maxToPageRank, node[propName]);
+            }
+
+          }
+        }
+      }
+
+      network.nodes.forEach(node=>{node[propName]/=max; console.log(node[propName])})
+
+      return network.nodes.getPropertyValues(propName);
+    }
+
 var fusionNetworks=function(networks, hubsDistanceFactor, hubsForceWeight, nodesProperties) {
  hubsDistanceFactor = hubsDistanceFactor == null ? 1 : hubsDistanceFactor;
  hubsForceWeight = hubsForceWeight == null ? 1 : hubsForceWeight;
@@ -18931,8 +19629,8 @@ var _jLvn=function() {
      graph.nodes.forEach(function(node,i){
        status.nodes_to_com[node] = i;
        var deg = get_degree_for_node(graph, node);
-       if (deg < 0)
-         throw 'Bad graph type, use positive weights!';
+       if (deg < 0) return
+         //throw 'Bad graph type, use positive weights!';
        status.degrees[i] = deg;
        status.gdegrees[node] = deg;
        status.loops[node] = get_edge_weight(graph, node, node) || 0;
@@ -19156,10 +19854,44 @@ var getNodesCentralities=function(network, mode, bNormalized, bReversed) {
 var addCentralitiesToNodes=function(network, mode, bNormalized, bReversed) {
  if(network==null) return;
  mode = mode==null?0:mode;
- if(mode===0 || mode==10) addEigenvectorCentralityToNodes(network, bNormalized, bReversed);
- if(mode===1 || mode==10) addBetweennessCentralityToNodes(network, bNormalized, bReversed);
+ if(mode===0) addEigenvectorCentralityToNodes(network, bNormalized, bReversed);
+ if(mode===1) addBetweennessCentralityToNodes(network, bNormalized, bReversed);
+ if(mode===2) addReachToNodes(network, false);
+ if(mode===3) addReachToNodes(network, true);
  return network;
 }
+
+var _getAdjacencyMap = function(network,bDirected,bReversed,bStochastic){
+// derived from Graph.js inside http://www.clips.ua.ac.be/pages/pattern
+  if(network==null) return null;
+  bDirected = bDirected == null ? false : bDirected;
+  bReversed = bReversed == null ? false : bReversed;
+  bStochastic = bStochastic == null ? false : bStochastic;
+  var map = {};
+  for(var i=0; i < network.nodes.length; i++) {
+      map[network.nodes[i].id] = {};
+  }
+  for(i=0; i < network.relations.length; i++) {
+      var e = network.relations[i];
+      var id1 = e[(bReversed)?"node1":"node0"].id;
+      var id2 = e[(bReversed)?"node0":"node1"].id;
+      map[id1][id2] = 1.0 - e.weight*0.5;
+      if (!bDirected) { 
+          map[id2][id1] = map[id1][id2];
+      }
+  }
+  if(bStochastic) {
+    for (var id1 in map) {
+      var v = []; for(var k in map[id1]) v.push(map[id1][k]);
+      var n = 0; for(var i=0; i < v.length; i++) n += v[i];
+      for(var id2 in map[id1]) {
+        map[id1][id2] /= n;
+      }
+    }
+  }
+  return map;
+}
+
 var addEigenvectorCentralityToNodes=function(network, bNormalized, bReversed) {
  // derived from Graph.js inside http://www.clips.ua.ac.be/pages/pattern
  /* Eigenvector centrality for nodes in the graph (cfr. Google's PageRank).
@@ -19237,6 +19969,7 @@ var addBetweennessCentralityToNodes=function(network, bNormalized, bDirected) {
  if(network == null) return network;
  if(bNormalized === undefined) bNormalized = true;
  if(bDirected === undefined) bDirected = false;
+
   var Heap = function(){
      this.init = function() {
        /* Items in the heap are ordered by weight (i.e. priority).
@@ -19319,6 +20052,27 @@ var addBetweennessCentralityToNodes=function(network, bNormalized, bDirected) {
  }
  return network;
 }
+
+var addReachToNodes=function(network, countDifferentPaths=false){
+    let _addReachNodesToNode = function(node){
+        if(node.reach) return node.reach
+        node.reach=new L()
+        node.to.forEach(son=>{
+            node.reach = node.reach.concat(_addReachNodesToNode(son, countDifferentPaths))
+            node.reach.push(son)
+            if(!countDifferentPaths){
+                node.reach = node.reach.getWithoutRepetitions()
+            }
+        })
+        return node.reach
+    }
+    network.nodes.forEach(n=>n.reach=null)
+    network.nodes.forEach(n=>{if(!n.reach) _addReachNodesToNode(n)})
+    network.nodes.forEach(n=>{console.log(n.name, n.reach.getPropertyValues("name").join(", ")); n.reach=n.reach.length})
+}
+
+
+
 var getLeaves=function(object){//@todo: move to TreeOperators
  if(object==null) return;
  if(object.getLeaves!=null) return object.getLeaves();
@@ -19437,6 +20191,188 @@ var createRandomNetwork=function(nNodes, pRelationOrNumberOfRelations, mode, ran
  }
 }
 
+var textsToNet = function(texts, names, colorsList, threshold = 0.8, stopWords=1){
+    //getWordsInTextsOccurrencesTable(texts, weightsMode, stopWords=1, includeLinks, wordsLimitPerString=500, totalWordsLimit=1000, sortByTotalWeight, minSizeWords=3, addTotalList, minSupportFraction=0, wordDelimiter)
+    let wordsTable = transpose(getWordsInTextsOccurrencesTable(texts, 0, stopWords), true)
+    let net = buildCorrelationsNetwork(wordsTable, true, names||texts, colorsList, threshold)
+    return net
+}
+
+var textToNet = function(text, separator="\n\n", nNodes, thresholdCorrelation, groupsSeparator, stopWords, includeBiGrams, addContextToRelations=false){
+    if(text==null) return
+
+    let groupBlocks
+
+    if(Array.isArray(text)){
+        groupBlocks = text
+        text = text.join(/\n\n/)
+    } else if(groupsSeparator!=null){// && text.includes(groupsSeparator)){
+        groupBlocks = text.split(groupsSeparator)
+    } else {
+        groupBlocks = [text]
+    }
+
+    groupBlocks = groupBlocks.filter(g=>g!="")
+
+
+    let wordsOb = {}
+    let nLocation = 0
+    let parts
+    groupBlocks.forEach((block,i)=>{
+        parts = block.split(separator)
+        parts.forEach((part,j)=>{
+            let words = getWords(part)
+            if(includeBiGrams) words = words.concat(getBigrams(part))
+            words.forEach(word=>{
+                let wOb = wordsOb[word]
+                if(wOb==null){
+                    wOb={
+                        word,
+                        count:0,
+                        contexts:[],
+                        groups:[],
+                        locations:[]
+                    }
+                    wordsOb[word] = wOb
+                }
+                wOb.count++
+                //wOb.contexts.push(part)
+                wOb.groups.push(i)
+                wOb.locations.push(nLocation)
+            })
+            nLocation++
+        })
+
+    })
+
+    let listWordObjects = new L()
+    let maxCount = 0
+
+    for(let word in wordsOb){
+        let ob = wordsOb[word]
+        listWordObjects.push(ob)
+    }
+
+    listWordObjects = listWordObjects.getSortedByProperty("count", false).slice(0, nNodes).filter(w=>w.count>1)
+
+    listWordObjects.forEach(wO=>{
+        maxCount = Math.max(maxCount, wO.count)
+        wO.vector = createListWithSameElement(nLocation,0)
+        wO.locations.forEach(n=>wO.vector[n]++)
+        wO.vector.mean = wO.vector.getMean()
+        wO.vector.standardDeviation = wO.vector.getStandardDeviation()
+    })
+
+    let listConnections = new L()
+
+    let usesThreshold = thresholdCorrelation<=1
+
+    for(let i=0; i<listWordObjects.length; i++){
+        for(let j=i+1; j<listWordObjects.length; j++){
+            let wordObject0 = listWordObjects[i]
+            let wordObject1 = listWordObjects[j]
+            let pair_id = wordObject0.word+"_"+wordObject1.word
+            let connection = {
+                pair_id,
+                wordObject0,
+                wordObject1,
+                //weight:(numericCorrelation(wordObject0.vector, wordObject1.vector)**2)*Math.log(wordObject0.count)*Math.log(wordObject1.count)
+                weight:numericCorrelation(wordObject0.vector, wordObject1.vector)
+            }
+            if(!usesThreshold || connection.weight>=thresholdCorrelation) listConnections.push(connection)
+            //connections[pair_id] = connection
+            //if(listWordObjects)
+        }
+    }
+
+    if(!usesThreshold) listConnections = listConnections.getSortedByProperty("weight", false).slice(0, thresholdCorrelation)
+
+    let net = new Net()
+    listConnections.forEach(connection=>{
+        let rel = net.createRelation(connection.wordObject0.word, connection.wordObject1.word)
+        if(rel.node0.count==null){
+            rel.node0.count = connection.wordObject0.count
+            rel.node0.weight = Math.log(connection.wordObject0.count)
+            rel.node0.groups = connection.wordObject0.groups
+        }
+        if(rel.node1.count==null){
+            rel.node1.count = connection.wordObject1.count
+            rel.node1.weight = Math.log(connection.wordObject1.count)
+            rel.node1.groups = connection.wordObject1.groups
+        }
+        rel.content = rel.node0.name+"|"+rel.node1.name+" "+connection.weight
+        rel.weight = connection.weight
+    })
+
+    let nGroups = groupBlocks.length
+    let colors = createDefaultCategoricalColorList(nGroups, "0.9").getInterpolated("white", 0.6)
+    net.colorsTable = new T()
+    net.colorsTable[0]=new sL()
+    net.colorsTable[1]=new cL()
+    for(let i=0; i<nGroups; i++){
+        net.colorsTable[0][i]=i
+        net.colorsTable[1][i]=colors[i]
+    }
+
+    net.nodes.forEach(n=>{
+        n.colorsTable = toL(n.groups).getFrequenciesTable(true, true).getColumns([0,2])
+        if(nGroups==2) n.groupsProportion = (n.groups.filter(g=>g==0).length-n.groups.filter(g=>g==1).length)/n.groups.length//could be done more efficiently
+        n.colorsTable[0] = n.colorsTable[0].map(group=>colors[group])
+    })
+
+    if(addContextToRelations){
+        parts = text.toLowerCase().split(separator)
+        net.relations.forEach(r=>{
+            r.content = ""
+            parts.forEach(part=>{
+                if(part.includes(r.node0.name) && part.includes(r.node1.name)){
+                    if(r.content!="") r.content+=separator+" /// "
+                    r.content+=part
+                }
+            })
+        })
+    }
+
+    return net
+}
+
+var textToTree = function(text, divisors, parentName="text"){
+    let tree = new _.Tr()
+    let parent = new _.Nd(parentName, parentName)
+    parent.text = text
+    parent.level = 0
+
+    let getSubTexts = function(txt, level, parent){
+        if(!txt || txt.trim()=="") return
+        let name = parent==null?"text":(txt.includes("\n")?txt.split("\n")[0]
+                                :(txt.includes(".")?txt.split(".")[0]
+                                    :(txt.includes(" ")?txt.split(" ")[0]:txt.substr(0,100))))
+        
+        let node = new _.Nd(name, name)
+        node.text = txt
+        node.level = level
+        tree.addNodeToTree(node, parent)
+        node.weight = txt.length
+        let blocks = txt.split(divisors[level])
+        //console.log(level, name, blocks.length)
+        // if(level==2){
+        //     console.log("txt:", txt)
+        //     console.log("div:", divisors[level])
+        //     console.log("blocks:", blocks)
+        //     console.log("match:", txt.match(divisors[level]))
+        // }
+        if(blocks.length<2) return
+        blocks.forEach(block=>{
+            if(!block) return
+                block = block.trim()
+            if(level<divisors.length) getSubTexts(block, level+1, node)
+        })
+    }
+
+    getSubTexts(text, 0)
+
+    return tree
+}
 
 
 var imageToTableOfRGBA=function(img, brgbaStringsInCells) {
@@ -20016,7 +20952,7 @@ L.prototype.concatNew = function(array){
   Net.prototype.createNode = function(id, name){
 		var nd = this.nodes.get(id);
 		if(nd) return nd;
-		nd = new Nd(id, name);
+		nd = new Nd(id, name||id);
 		this.addNode(nd);
 		return nd;
 	}
@@ -20430,9 +21366,9 @@ exports.subCategoricalAnalysis=subCategoricalAnalysis
 exports.getListEntropy=getListEntropy
 exports.getListDiversity=getListDiversity
 exports.getInformationGain=getInformationGain
-exports.groupElements=groupElements
+//exports.groupElements=groupElements
 exports.groupElementsByPropertyValue=groupElementsByPropertyValue
-exports._groupElements_Base=_groupElements_Base
+//exports._groupElements_Base=_groupElements_Base
 exports.repeatElements=repeatElements
 exports._isCategorical=_isCategorical
 exports.buildInformationObjectForList=buildInformationObjectForList
@@ -20562,6 +21498,7 @@ exports.replaceStringInText=replaceStringInText
 exports.replaceStringsInText=replaceStringsInText
 exports.removeTextsBetweenStrings=removeTextsBetweenStrings
 exports.getWords=getWords
+exports.getBigrams=getBigrams
 exports.substr=substr
 exports.splitString=splitString
 exports.getFirstTextBetweenStrings=getFirstTextBetweenStrings
@@ -20594,6 +21531,7 @@ exports.countStringsOccurrences=countStringsOccurrences
 exports.validateEmail=validateEmail
 exports.validateUrl=validateUrl
 exports.getLevenshteinDistance=getLevenshteinDistance
+exports.getClosestLevenshtein = getClosestLevenshtein
 exports.getNgrams=getNgrams
 exports.stringToFunction=stringToFunction
 exports.stringFormat=stringFormat
@@ -20602,6 +21540,14 @@ exports.createIterationSequence=createIterationSequence
 exports.createListWithUniqueElements=createListWithUniqueElements
 exports.replaceChomasInTextLine=replaceChomasInTextLine
 exports._replaceSpacesInLine=_replaceSpacesInLine
+
+exports.decodeTextNet=decodeTextNet
+exports._simplifyForTextNet=_simplifyForTextNet
+exports._regexWordForTextNet=_regexWordForTextNet
+exports.encodeTextNet=encodeTextNet
+
+exports.modelInfluence=modelInfluence
+
 exports.NetworkToTable=NetworkToTable
 exports.TableToNetwork=TableToNetwork
 exports.TableToNetworkPairs=TableToNetworkPairs
@@ -20644,6 +21590,7 @@ exports.getLength=getLength
 exports.includes=includes
 exports.getPropertyValue=getPropertyValue
 exports.getPropertyValues=getPropertyValues
+exports.getPropertyValuesInterval=getPropertyValuesInterval
 exports.getMultiplePropertyValues=getMultiplePropertyValues
 exports.getName=getName
 exports.isPropertyValue=isPropertyValue
@@ -20700,6 +21647,7 @@ exports.lineFromTwoPoints=lineFromTwoPoints
 exports.distancePointToLine=distancePointToLine
 exports.distancePointToSegment=distancePointToSegment
 exports.intersectionLines=intersectionLines
+exports.intersectionLineRectangle=intersectionLineRectangle
 exports.numberTableToPolygon=numberTableToPolygon
 exports.numberTableToColorList=numberTableToColorList
 exports.numberTableToNetwork=numberTableToNetwork
@@ -20717,6 +21665,7 @@ exports.polygonLength=polygonLength
 exports.minRect=minRect
 exports.packingCircles=packingCircles
 exports.packingRectangles=packingRectangles
+exports.fillWithRectangles=fillWithRectangles
 exports.squarify=squarify
 exports.partitionRectangle=partitionRectangle
 exports._getHighestRatio=_getHighestRatio
@@ -20773,15 +21722,20 @@ exports.buildNetworkClusters=buildNetworkClusters
 exports._iterativeBuildClusters=_iterativeBuildClusters
 exports._buildNetworkClustersLvn=_buildNetworkClustersLvn
 exports.getNodesPageRanks=getNodesPageRanks
+exports.addPageRankToNodes=addPageRankToNodes
 exports.fusionNetworks=fusionNetworks
 exports._jLvn=_jLvn
 exports.getNodesCentralities=getNodesCentralities
 exports.addCentralitiesToNodes=addCentralitiesToNodes
 exports.addEigenvectorCentralityToNodes=addEigenvectorCentralityToNodes
 exports.addBetweennessCentralityToNodes=addBetweennessCentralityToNodes
+exports.addReachToNodes=addReachToNodes
 exports.getLeaves=getLeaves
 exports.createNetworkFromListAndFunction=createNetworkFromListAndFunction
 exports.createRandomNetwork=createRandomNetwork
+exports.textToNet=textToNet
+exports.textToTree=textToTree
+exports.textsToNet=textsToNet
 exports.imageToTableOfRGBA=imageToTableOfRGBA
 exports.invertImageColors=invertImageColors
 exports.grayscaleImage=grayscaleImage
@@ -20795,4 +21749,5 @@ exports.clickLink=clickLink
 exports.downloadData=downloadData
 exports.downloadTable=downloadTable
 
+exports.StringOperators_STOP_WORDS = StringOperators_STOP_WORDS
 }));

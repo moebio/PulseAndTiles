@@ -26,21 +26,11 @@ export default class NetView{
 		this.OVER_CLOSEST = false
 		this._FORCES_ACTIVE = true
 		this.ZOOM_TO_CURSOR = true
-  		
-		////
-		//this.recMap = new _.Rec(0,0,k.W,k.H)
-		//k.mapCanvas(this.recMap)
-		//this.zoom = 1;
-		//this.nodes_zoom = 1;
   
 		this.zoomPoint = new _.P(k.cX, k.cY)
-  
-		// this.overNode
-		// this.pressedNode
-		// this.selectedNode
-		// this.superPressedNode0
-		// this.superPressedNode1
+
 		this.pairSelected
+		this.layout_value
   
 		this.N_LEVELS_TREE
   
@@ -54,8 +44,9 @@ export default class NetView{
 			text_border_color:'white',
 			box_color:'black',
 			box_border_color:'black',
-			box_padding:3,
-			color_mode:'box',//text, box
+			box_padding:2,
+			fixed_width:100,
+			color_mode:'image',//'box',//text, box, categories
 			font:"Arial",
 			size_property:"weight",
 			draggable:true,
@@ -88,15 +79,20 @@ export default class NetView{
 			zoom_max:15,
 		},
 		interaction:{
-			nodes_zoom:'dynamic',//static,close
+			nodes_zoom:'close',//static,close
 			shift_nodes_zoom:true,
-			node_unselection:"anywhere"//"over_selected"
+			node_unselection:"anywhere",//"over_selected"
+			milliseconds_for_superpressing:300
 		},
 		layout:{
 			selection_mode:'spanning_tree',//impact_from,impact_to,spanning_tree, (center)
 			r_spanning_circles:120,
 			margin_for_visibility:170,
-			savesNodesPositionsOnBrowser:false
+			savesNodesPositionsOnBrowser:false,
+			draw_loops:0,
+			draw_grid:true,
+			simulation:false,
+			clusters_circles_margin:4
 		}
 	}
 
@@ -115,6 +111,7 @@ export default class NetView{
 				this.setConfiguration(dataObj.value)
 				break
 			case "select":
+				this.layoutClusters = false
 				this.nodeSelected(dataObj.value)
 				break
 			case "over":
@@ -122,10 +119,7 @@ export default class NetView{
 				To Be Done
 				these are just tests
 				**/
-
 				let node = typeof(dataObj.value)=="string"?this.net.get(dataObj.value):dataObj.value
-
-				//this.overNode = dataObj.value
 				this.k.mX = node._px+2
 				this.k.mY = node._py+2
 				this.drawMethods.draw(true)
@@ -138,10 +132,43 @@ export default class NetView{
 				this.setNewDrawNodeFunction(dataObj.value)
 				break
 			case "layout":
+				if(!dataObj.value.includes("free")) this.layout_value = dataObj.value
 				switch(dataObj.value){
 					case "clusters":
-						console.log("++++ clusters")
 						this.layouts.placeNodesInClusters()
+						break
+					case "clusters category"://should be done for any property
+						this.layouts.placeNodesInClusters("category")
+						break
+					case "cloud"://should be done for any property
+						this.layouts.placeNodesInCloud()
+						break
+					case "xy":
+						this.layouts.placeNodesInXY()
+						break
+					case "xy fixed":
+						this.layouts.placeNodesInXY(true)
+						break
+					case "x":
+						this.layouts.placeNodesInX()
+						break
+					case "x fixed":
+						this.layouts.placeNodesInX(true)
+						break
+					case "y":
+						this.layouts.placeNodesInY()
+						break
+					case "y fixed":
+						this.layouts.placeNodesInY(true)
+						break
+					case "free":
+						this.layouts.freeNodesInXY()
+						break
+					case "free x":
+						this.layouts.freeNodesInX()
+						break
+					case "free y":
+						this.layouts.freeNodesInY()
 						break
 				}
 		}
@@ -151,6 +178,9 @@ export default class NetView{
 		if(this.net != net && net){
 			var previous = this.net;
 			var previousSelected = this.selectedNode
+
+			var previousLayoutValue = this.layout_value
+			this.layoutClusters = false
 
 			this.net = net
 			this.nodeUnSelected()
@@ -164,8 +194,7 @@ export default class NetView{
 				}
 				if(nd.x==null || nd.y==null) nodesHaveCoordinates = false
 				if(nd.x || nd.y) allCoordinatesZero = false
-
-				nd._size = this.config.nodes.maxSize*(nd[this.config.nodes.size_property]||1)
+				this.assignSizeToNode(nd)
 			})
 
 			net.relations.forEach(r=>r._size = r[this.config.relations.size_property]||1)
@@ -173,18 +202,38 @@ export default class NetView{
 			if(allCoordinatesZero) nodesHaveCoordinates=false
 
 			this.forces.forcesForNetwork(net, nodesHaveCoordinates?0:200, new _.P(500,400))
-			//console.log("this.forces", this.forces)
-			//this.k.setText('', 12)//this.config.nodes.text_size)
 			this.k.context.font = "12px "+this.config.nodes.font
-			this.net.nodes.forEach(nd=>nd._w_base = this.k.getTextW(nd.name)+this.config.nodes.box_padding*2)
+			this.net.nodes.forEach(nd=>{
+				if(this.config.nodes.fixed_width>0){
+					this.k.setText(this.config.nodes.box_color, 12, null, "center", "middle")
+					let textInfo = this.k._textWidthSectionsInfo(nd.name, this.config.nodes.fixed_width)
+					let nLines = textInfo.nLines// this.k.nLines(nd.name, this.config.nodes.fixed_width)
+					//nd._w_base = this.config.nodes.fixed_width+this.config.nodes.box_padding*2
+					nd._w_base = textInfo.maxWidth+this.config.nodes.box_padding*2
+					nd._h_base = 12*nLines+this.config.nodes.box_padding*2
+					nd._dyText = -0.5*(nLines-1)
+				} else {
+					nd._w_base = this.k.getTextW(nd.name)+this.config.nodes.box_padding*2
+					nd._h_base = 12+this.config.nodes.box_padding*2
+				}
+
+				//images
+				if(nd.urlImage && !nd._loadingImage){
+					nd._loadingImage=true
+					_.loadImage(nd.urlImage, o=>{
+						nd.image=o.result
+						nd._w_base = 0.8*this.config.nodes.fixed_width
+						nd._h_base = (nd.image.height/nd.image.width)*nd._w_base
+					})
+				}
+			})
+
+			if(this.config.layout.draw_loops) this.calculateLoops()
 
 			if(!previous && !nodesHaveCoordinates){
 
 				if(this.config.savesNodesPositionsOnBrowser && localStorage.NetViewNodesPositions){
-					console.log(">+ RETRIEVE positions")//, localStorage.NetViewNodesPositions)
-
 					let array = localStorage.NetViewNodesPositions.split("|")
-
 					array.forEach(ndpos=>{
 						if(ndpos.length==0) return
 						let parts = ndpos.split("#")
@@ -197,10 +246,8 @@ export default class NetView{
 					})
 
 				} else {
-					//console.log("this.forces.iterate", this.forces.iterate)
 					this.forces.iterate(200)
 					if(this.config.savesNodesPositionsOnBrowser){
-						console.log(">+ SAVE positions")
 						localStorage.NetViewNodesPositions = ''
 						this.net.nodes.forEach(n=>{
 							localStorage.NetViewNodesPositions += "|"+n.id+"#"+n.x.toFixed(2)+"#"+n.y.toFixed(2)
@@ -211,21 +258,25 @@ export default class NetView{
 			}
 
 			if(!previous){
-				//sets view center in the center of the net
 				let bar_x = 0
 				let bar_y = 0
 				net.nodes.forEach(nd=>{
 					bar_x+=nd.x/net.nodes.length
 					bar_y+=nd.y/net.nodes.length
 				})
-				// this.recMap.x+=bar_x-this.k.W*0.5
-				// this.recMap.y+=bar_y-this.k.H*0.5
 			}
 
 
 			if(previousSelected){
 				let selectedInNewNet = net.get(previousSelected.id)
 				if(selectedInNewNet) this.nodeSelected(selectedInNewNet)
+			}
+
+			if(previousLayoutValue){
+				//this should be different,
+				//Layout should manage all this
+				//this.layout.setLayout(previousLayoutValue)
+				this.receiveData({type:"layout", value:previousLayoutValue})
 			}
 		}
 	}
@@ -234,6 +285,32 @@ export default class NetView{
 		//console.log("this.net", this.net)
 		//_thickFactor is used to draw thicker relations in special cases
 		this.net.relations.forEach(r=>{r._thickFactor=thickness*this.config.relations.max_thick})
+	}
+
+	assignSizeToNode = function(node){
+		let sizeByProperty
+
+		switch(this.config.nodes.size_property){
+			case null:
+				sizeByProperty = 1
+				break
+			case "degree":
+				sizeByProperty = node.relations.length/5
+				break
+			case "to degree":
+				sizeByProperty = node.to.length/5
+				break
+			case "from degree":
+				sizeByProperty = node.from.length/5
+				break
+			default:
+				sizeByProperty = node[this.config.nodes.size_property]
+				if(sizeByProperty==null) sizeByProperty=1
+				break
+
+		}
+
+		node._size = this.config.nodes.maxSize*sizeByProperty
 	}
 
 
@@ -246,9 +323,11 @@ export default class NetView{
 		this.config = Object.assign(NetView.defaultConfig)//config?Object.assign(NetView.defaultConfig, config):NetView.defaultConfig
 		_.deepAssign(this.config, config)
 
-		if(change_in_nodes_size_property && this.net) this.net.nodes.forEach(n=>n._size = this.config.nodes.maxSize*(n[this.config.nodes.size_property]||1) )
+		if(change_in_nodes_size_property && this.net) this.net.nodes.forEach(n=>this.assignSizeToNode(n))
 		if(change_in_relations_size_property && this.net) this.net.relations.forEach(r=>r._size = r[this.config.relations.size_property])
-		
+		if(this.config.layout.draw_loops) this.calculateLoops()
+
+
 		this.ZOOM_MIN = this.config.view.zoom_min
 		this.ZOOM_MAX = this.config.view.zoom_max
 
@@ -256,7 +335,6 @@ export default class NetView{
 		this.forces.friction = this.config.physics.friction
 		this.forces.dEqSprings = this.config.physics.dEqSprings
 		this.forces.dEqRepulsors = this.config.physics.dEqRepulsors
-		//NetView._deepAssign(this.config, config)
 		
 		this.NODES_DYNAMIC_ZOOM = this.config.interaction.nodes_zoom=='dynamic' || this.config.interaction.nodes_zoom=='close'
 		this.NODES_CLOSE_ZOOM = this.config.interaction.nodes_zoom=='close'
@@ -288,8 +366,7 @@ export default class NetView{
 	//actions that send data
 
 	nodeSelected(selectedNode){
-		
-
+		console.log(selectedNode)
 		if(typeof(selectedNode)=="string" ){
 			selectedNode=this.net.get(selectedNode)
 		}
@@ -315,7 +392,7 @@ export default class NetView{
 	}
 	nodeUnSelected(){
 		this._FORCES_ACTIVE = true
-		this.forces.friction = 0.9
+		this.forces.friction = this.config.physics.friction
 
 		this.selectedNode = null
 		this.callBackSendData({type:'unselected', value:""})
@@ -323,6 +400,10 @@ export default class NetView{
 	}
 	nodeOver(overNode){
 		this.callBackSendData({type:'over', value:overNode})
+	}
+
+	nodeOut(){
+		this.callBackSendData({type:'out', value:""})
 	}
 
 	relationOver(overRelation){
@@ -334,8 +415,6 @@ export default class NetView{
 	}
 
 	selectPair(node0, node1, sendData=true){
-		
-
 		let path = _.shortestPath(this.net, node0, node1, true)
 		this.selectedNode = null
 
@@ -368,41 +447,25 @@ export default class NetView{
 	pairUnSelected(){
 		this.pairSelected = null
 		this._FORCES_ACTIVE = true
-		this.forces.friction = 0.9
+		this.forces.friction = this.config.physics.friction
 		this._resetThickFactor()
 	}
 
+	calculateLoops = function(){
+		console.log("this.config.layout.draw_loops", this.config.layout.draw_loops)
+		if(this.net.loops?.[this.config.layout.draw_loops]) return
+		if(!this.net.loops) this.net.loops=[]
+		let loops = _.loops(this.net, this.config.layout.draw_loops)
+		
+		let loop_colors = _.createCategoricalColors(0, loops.length+2, null, 0.1).slice(1)
+		loops.forEach((loop,i)=>loop.color = loop_colors[i])
 
-
-	//verifiers
-
-	// nodeIsVisible(nd){
-	// 	nd._visible = nd._py>=-170 && nd._py<=this.k.H+170 && nd._px>=-170 && nd._px<=this.k.W+170
-	// }
-
-
-	//nodes placement
-
-	
+		this.net.loops[this.config.layout.draw_loops] = loops
+	}
 
 
 	///////
 
 	resize(k){
-	}
-
-
-	static description = function(){
-	}
-
-	static instructions = function(){
-	}
-
-	static condition = function(data){
-		//data is:
-		//Nt
-		//T with two L
-		//T with L and nLs
-		//T with L and tags
 	}
 }
