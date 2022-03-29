@@ -454,7 +454,19 @@ export default class Draw{
 				this.k.line(rel.node0._px, rel.node0._py, rel.node1._px, rel.node1._py)
 			}
 			if(view.config.relations.arrow_size>0){
-				//TBD: straight lines with arrows
+				//repeated code!!
+				let pMx = (rel.node0._px+rel.node1._px)*0.5
+				let pMy = (rel.node0._py+rel.node1._py)*0.5
+				let a = Math.atan2(rel.node1._py-rel.node0._py, rel.node1._px - rel.node0._px);
+				this.k.fill(color)
+				this._drawTriangleOnArc(
+						rel.node0._px, rel.node0._py,
+						pMx, pMy,
+						pMx, pMy,
+						rel.node1._px, rel.node1._py,
+						a,
+						(view.config.relations.arrow_size*this.zoom*rel._thickFactor*0.8+1)*rel._size
+				)
 			}
 		}
 

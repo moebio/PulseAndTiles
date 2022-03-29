@@ -296,7 +296,7 @@ function T() {
       var nArgs = arguments.length;
 
       for(i = 0; i < nArgs; i++) {
-        args[i] = new L(arguments[i]);
+        args[i] = arguments[i]["isList"]?arguments[i]:new L(arguments[i]);
       }
 
       var array = L.apply(this, args);
@@ -2185,7 +2185,7 @@ L.prototype.removeElementsAtIndexes=function(indexes) {
    this.splice(indexes[i] - i, 1);
  }
 }
-L.prototype.setNames=function(names, transformative, indexesOrNames) {
+L.prototype.setNames=function(names, transformative=true, indexesOrNames) {
  if(names == null) return this;
  if(typeof names === 'string' && names.search(/\n|\r|\,/)!=-1) names = names.split(/\n|\r|\,/g);
  if(typeof names === 'string') names = [names];
@@ -5811,6 +5811,10 @@ MetaCanvas.prototype.clipCircle=function (x, y, r) {
  this.context.clip();
 }
 
+/**
+ * performs a mask
+ * requires calling to k.restore() at the end of drawing what is being masked
+ **/
 MetaCanvas.prototype.clipRect=function (x, y, w, h) {
  this.context.save();
  this.context.beginPath();
@@ -6707,11 +6711,13 @@ Forces.prototype._resetAccelerations=function() {
    node.ay = 0;
  }
 }
-Engine3D.prototype.setBasis=function(point3D) {
- this._basis = point3D.clone();
- this._basisBase = point3D.clone();
- this._provisionalBase = point3D.clone();
+
+Engine3D.prototype.setBasis=function(polygon3D) {
+ this._basis = polygon3D.clone();
+ this._basisBase = polygon3D.clone();
+ this._provisionalBase = polygon3D.clone();
 }
+
 Engine3D.prototype.setAngles=function(point3D) {
  this._angles = point3D.clone();
  this._freeRotation = false;
@@ -6732,14 +6738,35 @@ Engine3D.prototype.applyRotation=function(planeVector){
  this._provisionalBase[1] = this._basis[1].clone();
  this._provisionalBase[2] = this._basis[2].clone();
 }
+
+/**useful only for calculating inverse rotation (for analgyphs)**/
+Engine3D.prototype.projectPoint3D_complete=function(point3D) {
+ var prescale = 1// this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
+    return new P3D(
+        (this._basis[0].x * point3D.x + this._basis[1].x * point3D.y + this._basis[2].x * point3D.z) * prescale,
+        (this._basis[0].y * point3D.x + this._basis[1].y * point3D.y + this._basis[2].y * point3D.z) * prescale, 
+        (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z) * prescale
+    );
+}
+
 Engine3D.prototype.projectPoint3D=function(point3D) {
- var prescale = this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
- return new P3D((this._basis[0].x * point3D.x + this._basis[1].x * point3D.y + this._basis[2].x * point3D.z) * prescale, (this._basis[0].y * point3D.x + this._basis[1].y * point3D.y + this._basis[2].y * point3D.z) * prescale, prescale);
+    var prescale = this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
+    return new P3D(
+        (this._basis[0].x * point3D.x + this._basis[1].x * point3D.y + this._basis[2].x * point3D.z) * prescale,
+        (this._basis[0].y * point3D.x + this._basis[1].y * point3D.y + this._basis[2].y * point3D.z) * prescale, 
+        prescale
+    );
 }
+
 Engine3D.prototype.projectCoordinates=function(x, y, z) {
- var prescale = this.lens / (this.lens + (this._basis[0].z * x + this._basis[1].z * y + this._basis[2].z * z));
- return new P3D((this._basis[0].x * x + this._basis[1].x * y + this._basis[2].x * z) * prescale, (this._basis[0].y * x + this._basis[1].y * y + this._basis[2].y * z) * prescale, prescale);
+    var prescale = this.lens / (this.lens + (this._basis[0].z * x + this._basis[1].z * y + this._basis[2].z * z));
+    return new P3D(
+        (this._basis[0].x * x + this._basis[1].x * y + this._basis[2].x * z) * prescale, 
+        (this._basis[0].y * x + this._basis[1].y * y + this._basis[2].y * z) * prescale, 
+        prescale
+    );
 }
+
 Engine3D.prototype.scale=function(point3D) {
  return this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
 }
@@ -7448,6 +7475,7 @@ var normalizeToMax=function(numberlist, factor) {
 }
 var normalizeToInterval=function(numberlist, interval) {
  if(numberlist==null || interval==null || numberlist.length === 0) return;
+ interval = interval==null?numberlist.getInterval():interval
   var i;
  var nlInterval = numberlist.getInterval();
  var nLAmplitude = nlInterval.getAmplitude();
@@ -15439,14 +15467,13 @@ var _removeQuotes=function(string) {
  return string;
 }
 
-var TableToCSV=function(table, separator, namesAsHeaders,replaceCommasBy,addTypesAsFirstLine) {
+var TableToCSV=function(table, separator=",", namesAsHeaders=true, replaceCommasBy,addTypesAsFirstLine) {
  if(table==null) return;
-  separator = separator || ",";
+
  var i;
  var j;
  var list;
  var type;
- if(table == null) return null;
  var lines = createListWithSameElement(table[0].length, "");
  var addSeparator;
  for(i = 0; table[i] != null; i++) {
@@ -15831,23 +15858,41 @@ var normalizeTableToMax=function(numbertable, factor) {
  newTable.name = numbertable.name;
  return newTable;
 }
+
+/**
+ * modes: max, min-max, sum, z-score
+ **/
 var normalizeLists=function(numbertable, factor, mode) {
  if(numbertable==null || !numbertable.length || !numbertable[0].length) return;
  
  mode = mode == null ? 'min-max' : mode;
   var newTable = instanceSameType(numbertable);
+  newTable.name = numbertable.name;
  var i;
  for(i = 0; numbertable[i] != null; i++) {
    if(numbertable[i].type != 'nL'){
      newTable[i] = numbertable[i].clone();
      continue;
    }
-   if(mode == 'min-max')
-     newTable[i] = normalizeToMax(numbertable[i], factor);
-   else if(mode == 'z-score')
-     newTable[i] = normalizeByZScore(numbertable[i]);
+
+   switch(mode){
+    case "max":
+        newTable[i] = normalizeToMax(numbertable[i], factor);
+        break
+    case "sum":
+        newTable[i] = normalizeToSum(numbertable[i], factor);
+        break
+    case "z-score":
+        newTable[i] = normalizeByZScore(numbertable[i], factor);
+        break
+    case "min-max":
+    default:
+        newTable[i] = numbertable[i].getNormalized()
+        break
+
+   }
  }
- newTable.name = numbertable.name;
+ 
  return newTable;
 }
 var normalizeListsToMax=function(numbertable, factorValue) {
@@ -15876,6 +15921,21 @@ var normalizeListsToSum=function(numbertable, factorValue) {
  newTable.name = numbertable.name;
  return newTable;
 }
+var normalizeListsToInterval=function(numbertable, interval, factorValue) {
+ if(numbertable==null || !numbertable[0].length) return;
+  var newTable = new nT();
+ var numberlist;
+ var l = numbertable.length;
+ var i;
+ for(i = 0; i<l; i++) {
+   numberlist = numbertable[i];
+   newTable[i] = normalizeToInterval(numberlist, interval, factorValue);
+ }
+ newTable.name = numbertable.name;
+ return newTable;
+}
+
+
 var averageSmootherOnLists=function(numberTable, intensity, nIterations) {
  if(numberTable == null || !numberTable[0].length) return;
   intensity = intensity || 0.5;
@@ -20198,6 +20258,76 @@ var textsToNet = function(texts, names, colorsList, threshold = 0.8, stopWords=1
     return net
 }
 
+/**
+ * universal parser, identifies format and builds net
+ **/
+var parseNet = function(netData, threshold=0.2){
+    let net = new _.Net()
+
+    if(Array.isArray(netData) && netData.length==2){
+        //nodes and relations
+        let nodesObjectsArray = netData[0]
+        let relationsObjectsArray = netData[1]
+
+
+        //nodes
+
+        try{
+            nodesObjectsArray = JSON.parse(nodesObjectsArray)
+        }catch(e){
+
+        }
+        if(!Array.isArray(nodesObjectsArray==null)){
+            nodesObjectsArray=[]
+            let nodesLines = netData[0].split("\n")
+            nodesLines.forEach(line=>{
+                nodesObjectsArray.push(JSON.parse(line))
+            })
+        }
+
+        nodesObjectsArray.forEach(nodeObject=>{
+            let category = nodeObject.node.labels[0]
+            let node = new _.Nd(String(nodeObject.node?.id), nodeObject.node?.properties?.fullName||nodeObject.node?.properties?.title)
+            node.category = category
+            node.color = interpolateColors(stringToColor(category), "white", 0.7)
+            node.urlImage = nodeObject.node?.properties?.savedImg
+
+            node.properties = nodeObject.node?.properties
+
+            net.addNode(node)
+        })
+
+
+        //relations
+
+        try{
+            relationsObjectsArray = JSON.parse(relationsObjectsArray)
+        }catch(e){
+            
+        }
+        if(!Array.isArray(relationsObjectsArray)){
+            relationsObjectsArray=[]
+            let relationsLines = netData[1].split("\n")
+            relationsLines.forEach(line=>{
+                relationsObjectsArray.push(JSON.parse(line))
+            })
+        }
+
+        relationsObjectsArray.forEach(relationObject=>{
+            let weight = relationObject.rel?.properties?.weight
+            if(weight<threshold) return
+            if(net.get(String(relationObject.rel.start.id))==null || net.get(String(relationObject.rel.end.id))==null) return
+            let relation = net.createRelation(relationObject.rel.start.id, relationObject.rel.end.id)
+            relation.weight = weight
+        })
+
+    }
+    
+
+    return net
+}
+
+
 var textToNet = function(text, separator="\n\n", nNodes, thresholdCorrelation, groupsSeparator, stopWords, includeBiGrams, addContextToRelations=false){
     if(text==null) return
 
@@ -20338,9 +20468,9 @@ var textToNet = function(text, separator="\n\n", nNodes, thresholdCorrelation, g
 
 var textToTree = function(text, divisors, parentName="text"){
     let tree = new _.Tr()
-    let parent = new _.Nd(parentName, parentName)
-    parent.text = text
-    parent.level = 0
+    // let parent = new _.Nd(parentName, parentName)
+    // parent.text = text
+    // parent.level = 0
 
     let getSubTexts = function(txt, level, parent){
         if(!txt || txt.trim()=="") return
@@ -20354,22 +20484,55 @@ var textToTree = function(text, divisors, parentName="text"){
         tree.addNodeToTree(node, parent)
         node.weight = txt.length
         let blocks = txt.split(divisors[level])
-        //console.log(level, name, blocks.length)
-        // if(level==2){
-        //     console.log("txt:", txt)
-        //     console.log("div:", divisors[level])
-        //     console.log("blocks:", blocks)
-        //     console.log("match:", txt.match(divisors[level]))
-        // }
+        console.log(level, name, blocks.length)
         if(blocks.length<2) return
-        blocks.forEach(block=>{
-            if(!block) return
+
+        let captureDivisor = divisors[level].toString().includes("(")
+
+        if(level<3){
+            //console.log("txt:", txt)
+            console.log("level:", level)
+            console.log("div:", divisors[level])
+            console.log("blocks:", blocks)
+            //console.log("match:", txt.match(divisors[level]))
+            console.log("divisors[level]:", divisors[level])
+            console.log("captureDivisor:", captureDivisor)
+        }
+
+        //if(blocks[0].trim()=="") blocks.shift()
+        
+        if(captureDivisor){
+            let block, content, detectedDivisor = ""
+            for(var i=0; i<blocks.length; i+=2){
+                console.log("+++", i)
+                block = blocks[i]
+                if(!block || block.trim()==""){
+                    i++
+                    continue
+                }
+                //if(block.match(divisors[level])){
+                
+                detectedDivisor = i>0?block[i-1]:""
+                content = block[i]
+
+                console.log("   ++++++++ level, detectedDivisor:", level, detectedDivisor)
+                if(level<divisors.length){
+                    getSubTexts(i>0?(detectedDivisor+content).trim():block.trim(), level+1, node)
+                }
+            }
+        } else {
+            blocks.forEach(block=>{
+                if(!block || block.trim()=="") return
                 block = block.trim()
-            if(level<divisors.length) getSubTexts(block, level+1, node)
-        })
+                if(level<divisors.length) getSubTexts(block, level+1, node)
+            })
+        }
+        
     }
 
     getSubTexts(text, 0)
+
+    tree.nodes[0].name = parentName
 
     return tree
 }
@@ -20988,6 +21151,7 @@ L.prototype.concatNew = function(array){
      this.applyTransformationFunctions(fX, fY)
  }
  MetaCanvas.prototype.setDRAGGABLE = function(value){
+    if(this.DRAGGABLE == value) return
    this.DRAGGABLE = value
        if(value){
          this.x0 = this.x0??0
@@ -21003,6 +21167,7 @@ L.prototype.concatNew = function(array){
        }
  }
  MetaCanvas.prototype.setZOOMABLE = function(value, maxZoom = 50, minZoom = 0.1){
+    if(this.ZOOMABLE == value) return
    this.ZOOMABLE = value
    this.MAX_ZOOM = maxZoom
    this.MIN_ZOOM = minZoom
@@ -21011,13 +21176,13 @@ L.prototype.concatNew = function(array){
          this.y0 = this.y0??0
          this.ZOOM = this.ZOOM??1
          this._setDragZoomTransformation()
-       } else {
-         if(!this.DRAGGABLE){
-           this.resetTransformation()
-         } else {
-           this.ZOOM = 1
-         }
-       }
+   } else {
+     if(!this.DRAGGABLE){
+       this.resetTransformation()
+     } else {
+       this.ZOOM = 1
+     }
+   }
  }
 
 
@@ -21572,6 +21737,7 @@ exports.normalizeTableToMax=normalizeTableToMax
 exports.normalizeLists=normalizeLists
 exports.normalizeListsToMax=normalizeListsToMax
 exports.normalizeListsToSum=normalizeListsToSum
+exports.normalizeListsToInterval=normalizeListsToInterval
 exports.averageSmootherOnLists=averageSmootherOnLists
 exports.kMeans=kMeans
 exports.product=product
@@ -21736,6 +21902,7 @@ exports.createRandomNetwork=createRandomNetwork
 exports.textToNet=textToNet
 exports.textToTree=textToTree
 exports.textsToNet=textsToNet
+exports.parseNet=parseNet
 exports.imageToTableOfRGBA=imageToTableOfRGBA
 exports.invertImageColors=invertImageColors
 exports.grayscaleImage=grayscaleImage

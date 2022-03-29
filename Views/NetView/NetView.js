@@ -1,4 +1,3 @@
-//import * as _ from '../../assembled.js'
 import '../../pulse.js'
 import Draw from './Draw.js'
 import Layouts from './Layouts.js'
@@ -37,7 +36,7 @@ export default class NetView{
 		this.net
   }
 
-	static defaultConfig ={
+	static defaultConfig = {
 		nodes:{
 			text_size:14,
 			text_color:'white',
@@ -46,13 +45,13 @@ export default class NetView{
 			box_border_color:'black',
 			box_padding:2,
 			fixed_width:100,
-			color_mode:'image',//'box',//text, box, categories
+			color_mode:'image', //'box',//text, box, categories
 			font:"Arial",
 			size_property:"weight",
 			draggable:true,
 			tooltip:false,
 			tooltip_property:'description',
-			useColorsTable:false,
+			useColorsTable:false, //requires that node has property colorsTable
 			maxSize:1
 		},
 		relations:{
@@ -82,7 +81,7 @@ export default class NetView{
 			nodes_zoom:'close',//static,close
 			shift_nodes_zoom:true,
 			node_unselection:"anywhere",//"over_selected"
-			milliseconds_for_superpressing:300
+			milliseconds_for_superpressing:300 //time elapsed when pressing a node to start conencting to another node
 		},
 		layout:{
 			selection_mode:'spanning_tree',//impact_from,impact_to,spanning_tree, (center)
@@ -175,6 +174,8 @@ export default class NetView{
 	}
 
 	setNetwork(net){
+		if(net["type"]!="Net" && net["type"]!="Tr") net = _.parseNet(net)
+
 		if(this.net != net && net){
 			var previous = this.net;
 			var previousSelected = this.selectedNode
@@ -366,7 +367,6 @@ export default class NetView{
 	//actions that send data
 
 	nodeSelected(selectedNode){
-		console.log(selectedNode)
 		if(typeof(selectedNode)=="string" ){
 			selectedNode=this.net.get(selectedNode)
 		}
@@ -428,7 +428,6 @@ export default class NetView{
 		this.net.relations.forEach(r=>r._thickFactor=0.5)
 
 		let paths = _.shortestPaths(this.net, node0, node1)||[]
-		console.log("paths", paths)
 		let paths_combined = new _.ndL()
 		paths.forEach(nl=>paths_combined = paths_combined.concat(nl))
 		_.getRelationsBetweenNodeLists(this.net, paths_combined, paths_combined, false).forEach(r=>r._thickFactor=1.2)

@@ -1,0 +1,103 @@
+
+///////////////////
+
+The Tile Net receives either a Net instance (from pulse farmework), or a [nodes, relations] array.
+
+Some properties in the nodes could be used in the visualziation:
+
+name
+color
+urlImage
+weight
+colorsTable (column 0: colors, column 1: weights, normalized to sum = 1)
+
+
+Some properties in the relations could be used in the visualziation:
+
+color
+weight
+
+
+
+
+///////////////////configuration object
+
+nodes:
+	text_size:14
+	text_color:'white'
+	text_border_color:'white'
+	box_color:'black'
+	box_border_color:'black'
+	box_padding:2
+	fixed_width:100
+	color_mode:'image'						//other options: box
+	font:"Arial"
+	size_property:"weight"
+	draggable:true
+	tooltip:false
+	tooltip_property:'description'
+	useColorsTable:false					//requires that node has property colorsTable
+	maxSize:1
+
+relations:
+	show_mode:'over'						//other options: all, over, close_all, close_few
+	show_mode_on_layout:'context'			//other options: all
+	curvature:0 							//inactive if 0
+	arrow_size:0 							//inactive if 0
+	color:null
+	size_property:"weight"
+	tooltip:false
+	tooltip_property:'name'
+	max_thick:2
+
+physics:
+	friction:0.9
+	k:0.01
+	dEqSprings:130
+	dEqRepulsors:220
+
+view:
+	background:'white'
+	zoom_min:0.1
+	zoom_max:15
+	
+interaction:
+	nodes_zoom:'close'						//other options: static,close
+	shift_nodes_zoom:true
+	node_unselection:"anywhere"				//other options: over_selected
+	milliseconds_for_superpressing:300		//time elapsed when pressing a node to start conencting to another node
+
+layout:
+	selection_mode:'spanning_tree'			//other options: impact_from, impact_to, spanning_tree
+	r_spanning_circles:120
+	draw_loops:0 							//draw loops of size n, if n>0
+	draw_grid:true
+	simulation:false						//for fixed values of x or y
+	clusters_circles_margin:4
+
+
+
+
+
+
+///////////////////layouts
+
+
+clusters
+
+clusters category (uses category property of nodes)
+
+cloud
+
+xy (uses properties x and y of nodes)
+
+x (uses property x of nodes)
+
+y (uses property y of nodes)
+
+free (free nodes from fixed x and/or y positions)
+
+free x (frees nodes from x position)
+
+free y (frees nodes from y position)
+

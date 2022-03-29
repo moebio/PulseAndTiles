@@ -1,10 +1,11 @@
 {
-	"description":"Net visualizes a network, based on simulated forces. Allows for hovering and selecting nodes (with different associated behaviors).",
+	"description":"Net visualizes a network, based on simulated forces. It allows for multiple layout and visual configurations (see configuration documentation). Allows for hovering and selecting nodes (with different associated behaviors).",
 	"instructions_developer":"",
 	"instructions_user":"Hover and click on nodes for expanding information and selecting",
 	"authors":["Santiago Ortiz"],
-	"tags":["networks", "visualization"],
+	"tags":["networks", "", "visualization"],
 	"images":[],
+
 	"receives":[
 		{
 			"type":"network",
@@ -15,12 +16,35 @@
 		},
 		{
 			"type":"configuration",
-			"description":"tile configuration object, configures nodes and relations appearance, phyisics simulation parameters",
+			"description":"Configuration object, configures nodes and relations appearance, physics simulation parameters and layout. A sub-object (e.g. {physics:{friction:0.5}}) could be sent at any moment, it will only modified the specific parameters. See documentation.txt",
 			"value_type":"Object",
 			"kind":"configuration",
 			"optional":"true"
+		},
+		{
+			"type":"over",
+			"description":"node or id of node to be hovered (will behave as if the cursor hovers it)",
+			"value_type":"Object",
+			"kind":"command",
+			"optional":"true"
+		},
+		{
+			"type":"unselect",
+			"description":"forces the un-selection of a node (if any is selected, if not the command is unoquous), doesn´t require to send value.",
+			"value_type":"string",
+			"kind":"layout",
+			"optional":"true"
+		}
+		,
+		{
+			"type":"layout",
+			"description":"sets a layout, options are: clusters, clusters category (uses category property of nodes), cloud, xy (uses properties x and y of nodes), x (uses property x of nodes), y (uses property y of nodes), free (free nodes from fixed x and/or y positions), free x (frees nodes from x position), free y (frees nodes from y position). See documentation.txt",
+			"value_type":"",
+			"kind":"command",
+			"optional":"true"
 		}
 	],
+
 	"sends":[
 		{
 			"type":"over",
@@ -32,6 +56,36 @@
 			"type":"select",
 			"description":"selected node, sends every time a new node is selected",
 			"value_type":"Nd",
+			"kind":"command"
+		},
+		{
+			"type":"unselected",
+			"description":"sends every time a node is unselected",
+			"value_type":"",
+			"kind":"command"
+		},
+		{
+			"type":"out",
+			"description":"sends every time the cursor leaves a node",
+			"value_type":"",
+			"kind":"command"
+		},
+		{
+			"type":"over relation",
+			"description":"hovered relation, sends every time a new relation is hovered",
+			"value_type":"Relation",
+			"kind":"command"
+		},
+		{
+			"type":"selected relation",
+			"description":"selected relation, sends every time a new relation is selected",
+			"value_type":"Relation",
+			"kind":"command"
+		},
+		{
+			"type":"selected pair",
+			"description":"selected pair of node, sends every time a pair of nodes is selected, the value contains an Object with values node0 and node1",
+			"value_type":"Object",
 			"kind":"command"
 		}
 	]
