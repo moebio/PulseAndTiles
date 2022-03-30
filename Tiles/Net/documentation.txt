@@ -7,9 +7,11 @@ Some properties in the nodes could be used in the visualziation:
 
 name
 color
-urlImage
-weight
-colorsTable (column 0: colors, column 1: weights, normalized to sum = 1)
+urlImage			//if nodes have this property its image will be downloaded
+weight 				//used for sizing the nodes, but any other numeric property could be used
+description 		//used for tooltips (although any string property could be used)
+colorsTable 		//an array with two arrays, [ [colors], [weights, normalized to sum = 1] ]
+
 
 
 Some properties in the relations could be used in the visualziation:
