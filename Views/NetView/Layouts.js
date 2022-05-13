@@ -302,4 +302,29 @@ export default class Layouts{
 		this._FORCES_ACTIVE = true
 		this.view.forces.friction = this.view.config.physics.friction
 	}
+
+	fitInWindow = function(){
+		let x0 = 999999
+		let y0 = 999999
+		let x1 = -999999
+		let y1 = -999999
+
+		this.view.net.nodes.forEach(n=>{
+			x0 = Math.min(x0, n.x)
+			x1 = Math.max(x1, n.x)
+			y0 = Math.min(y0, n.y)
+			y1 = Math.max(y1, n.y)
+		})
+
+		let ampx = x1-x0
+		let ampy = y1-y0
+
+		this.view.net.nodes.forEach(n=>{
+			n.xF = this.k.W*(n.x-x0)/ampx
+			n.yF = this.k.H*(n.y-y0)/ampy
+			if(n.fixed_x) n.fixed_x = n.xF
+			if(n.fixed_y) n.fixed_y = n.yF
+		})
+
+	}
 }

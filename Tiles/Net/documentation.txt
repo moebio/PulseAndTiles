@@ -103,3 +103,5 @@ free x (frees nodes from x position)
 
 free y (frees nodes from y position)
 
+fit in window (keeps relative current positions and places all nodes within window boundaries)
+

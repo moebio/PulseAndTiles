@@ -5,6 +5,7 @@ import Layouts from './Layouts.js'
 export default class NetView{
 
 	constructor(k, callBackSendData, config) {//extends View
+		console.log("[·•] NV constructor")
 		//super(...args) //when extending View
 
 		this.k = k
@@ -100,7 +101,8 @@ export default class NetView{
 	}
 
 	receiveData(dataObj){
-		//console.log("Net | dataObj", dataObj)
+		console.log("[·] Net | dataObj", dataObj)
+
 		switch(dataObj.type){
 			case "network":
 			case "data":
@@ -169,11 +171,15 @@ export default class NetView{
 					case "free y":
 						this.layouts.freeNodesInY()
 						break
+					case "fit in window":
+						this.layouts.fitInWindow()
+						break
 				}
 		}
 	}
 
 	setNetwork(net){
+		console.log("[•] setNetwork")
 		if(net["type"]!="Net" && net["type"]!="Tr") net = _.parseNet(net)
 
 		if(this.net != net && net){
@@ -258,14 +264,21 @@ export default class NetView{
 				
 			}
 
-			if(!previous){
-				let bar_x = 0
-				let bar_y = 0
-				net.nodes.forEach(nd=>{
-					bar_x+=nd.x/net.nodes.length
-					bar_y+=nd.y/net.nodes.length
-				})
-			}
+			// if(!previous){
+			// 	let bar_x = 0
+			// 	let bar_y = 0
+			// 	net.nodes.forEach(nd=>{
+			// 		bar_x+=nd.x/net.nodes.length
+			// 		bar_y+=nd.y/net.nodes.length
+			// 	})
+			// 	net.nodes.forEach(nd=>{
+			// 		nd.x-=bar_x
+			// 		nd.y-=bar_y
+			// 		nd.xF = nd.x
+			// 		nd.yF = nd.y
+			// 	})
+			// 	console.log("[•] 1st network, bar_x, bar_y", bar_x, bar_y)
+			// }
 
 
 			if(previousSelected){

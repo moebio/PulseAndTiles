@@ -172,7 +172,7 @@ function iL() {
 
 
 iL.toL=function(array) {
- var result = L.toL(array)
+ let result = L.toL(array)
   result.type = "iL";
   result.getInterval = iL.prototype.getInterval;
  result.getAmplitudes = iL.prototype.getAmplitudes;
@@ -195,7 +195,7 @@ function cL() {
     }
 
 cL.toL=function(array) {
- var result = L.toL(array);
+ let result = L.toL(array);
  result.type = "cL";
  result.name = array.name || "";
  result.getRgbArrays = cL.prototype.getRgbArrays;
@@ -236,7 +236,7 @@ function Pol() {
     }
 
 Pol.toL=function(array) {
- var result = L.toL(array);
+ let result = L.toL(array);
  result.type = "Pol";
   result.getFrame = Pol.prototype.getFrame;
  result.getBarycenter = Pol.prototype.getBarycenter;
@@ -267,7 +267,7 @@ function Pol3D() {
     }
 
 Pol3D.toL=function(array) {
- var result = L.toL(array);
+ let result = L.toL(array);
  result.type = "Pol3D";
   //assign methods to array:
  result.getBarycenter = Pol3D.prototype.getBarycenter;
@@ -309,7 +309,7 @@ T.toL=function(array) {
  for ( var i=0; i< array.length; i++ ){
    if( Array.isArray(array[i])  && !array[i]["isList"] ) array[i] = L.toL(array[i]);
  }
- var result = L.toL(array);
+ let result = L.toL(array);
  result.type = "T";
  result.applyFunction = T.prototype.applyFunction;
  result.getListsDowncasted = T.prototype.getListsDowncasted;
@@ -426,7 +426,7 @@ function nT() {
 
 
 nT.toL=function(array) {
- var result = T.toL(array);
+ let result = T.toL(array);
  result.type = "nT";
  result.getSums = nT.prototype.getSums;
  result.getRowsSums = nT.prototype.getRowsSums;
@@ -458,7 +458,7 @@ function polL() {
     }
 
 polL.toL=function(array) {
- var result = T.toL(array);
+ let result = T.toL(array);
  result.type = "polL";
  result.getFrame = polL.prototype.getFrame;
  result.getBarycenter = polL.prototype.getBarycenter;
@@ -625,7 +625,7 @@ function relL() {
     }
 
 relL.toL=function(array) {
- var list = ndL.toL(array);
+ let list = ndL.toL(array);
  list.type = "relL";
  //assign methods to array:
  list.addRelation = relL.prototype.addRelation;
@@ -654,7 +654,7 @@ function recL() {
 
 
 recL.toL=function(array) {
- var list = L.toL(array);
+ let list = L.toL(array);
  list.type = "recL";
   list.getFrame = recL.prototype.getFrame;
  list.add = recL.prototype.add;
@@ -724,7 +724,7 @@ function dL() {
 
 dL.toL=function(array, forceToDate) {
  forceToDate = forceToDate == null ? true : forceToDate;
- var list = L.toL(array);
+ let list = L.toL(array);
   if(forceToDate) {
    for(var i = 0; i < list.length; i++) {
      list[i] = new Date(list[i]);
@@ -761,7 +761,7 @@ function nL() {
 nL.toL=function(array, forceToNumber) {
  forceToNumber = forceToNumber == null ? true : forceToNumber;
   var list = L.toL(array);
- var l = list.length;
+ let l = list.length;
   if(forceToNumber) {
    for(var i = 0; i < l; i++) {
      list[i] = Number(list[i]);
@@ -841,7 +841,7 @@ function pol3DL() {
     }
 
 pol3DL.toL=function(array) {
- var result = L.toL(array);
+ let result = L.toL(array);
  result.type = "pol3DL";
   result.getBarycenter = pol3DL.prototype.getBarycenter;
   return result;
@@ -940,11 +940,11 @@ P.prototype.factor=function(k) {
  if(k.type != null && k.type == 'P') return new P(this.x * k.x, this.y * k.y);
 }
 P.prototype.normalize=function() {
- var norm = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+ let norm = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
  return new P(this.x / norm, this.y / norm);
 }
 P.prototype.normalizeToValue=function(k) {
- var factor = k / Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+ let factor = k / Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
  return new P(this.x * factor, this.y * factor);
 }
 P.prototype.subtract=function(point) {
@@ -993,7 +993,7 @@ L.prototype.downcast=function() {
    return this;
  }
   var typeOfElements = this.getTypeOfElements();
- var newList;
+ let newList;
  switch(typeOfElements) {
    case "number":
      newList = nL.toL(this, false);
@@ -1037,9 +1037,9 @@ L.prototype.downcast=function() {
      break;
  }
   var l = this.length;
- var containsNulls = false;
- var allLists = true;
- var i;
+ let containsNulls = false;
+ let allLists = true;
+ let i;
   if(newList == null || (newList.type==null && newList == "") ) {//do not change newList == null
     for(i = 0; i<l; i++) {
      if(this[i]==null) containsNulls = true;
@@ -1101,10 +1101,10 @@ L.prototype.getElements=function(indexesOrNames, nullIfNotFound) {
  if(indexesOrNames==null) return;
   var newList = instanceSameType(this);
  newList.name = this.name;
- var l = indexesOrNames.length;
- var i;
- var list;//element?
- var type = _typeOf(newList);
+ let l = indexesOrNames.length;
+ let i;
+ let list;//element?
+ let type = _typeOf(newList);
   var name = _typeOf(indexesOrNames)=='sL';
   for(i=0; i<l; i++){
    list = name?this.getElementByName(indexesOrNames[i]):this[indexesOrNames[i] < 0 ? indexesOrNames[i]+this.length : indexesOrNames[i]];
@@ -1124,7 +1124,7 @@ L.prototype.getElements=function(indexesOrNames, nullIfNotFound) {
 }
 
 L.prototype.toArray=function() {//@todo: make this efficient
- var array = this.slice(0);
+ let array = this.slice(0);
  array.name = this.name;
  array.type = this.type;
  return array;
@@ -1133,7 +1133,7 @@ L.prototype.toArray=function() {//@todo: make this efficient
 L.prototype.isEqual=function(list) {
  if(list == null || this.length != list.length) return false;
   var i;
- var l = this.length;
+ let l = this.length;
  if(this.isTable){
    for(i = 0; i<l; i++) {
      if(!this[i].isEqual(list[i])) return false;
@@ -1151,26 +1151,26 @@ L.prototype.getLengths=function() {
 }
 
 L.prototype.getTypeOfElements=function() {
- var typeOfElements = _typeOf(this[0]);
- var l = this.length;
+ let typeOfElements = _typeOf(this[0]);
+ let l = this.length;
  for(var i = 1; i<l; i++) {
    if(_typeOf(this[i]) != typeOfElements) return "";
  }
  return typeOfElements;
 }
 L.prototype.getTypes=function() {
- var types = new sL();
- var l = this.length;
+ let types = new sL();
+ let l = this.length;
  for(var i = 0; i<l; i++) {
    types[i] = _typeOf(this[i]);
  }
  return types;
 }
 L.prototype.getNames=function(typePreffixForLists, countDifferentSufixForLists, read_label) {
- var sl = new sL();
+ let sl = new sL();
  sl.name = read_label?"labels":"names";
- var l = this.length;
- var name;
+ let l = this.length;
+ let name;
   if(typePreffixForLists && this["isTable"]) buildInformationObjectForTable(this);
   for(var i = 0; i<l; i++) {
    name = read_label && this[i].label!=null?this[i].label:this[i].name;
@@ -1195,30 +1195,30 @@ L.prototype.getLabels=function(typeSuffixForLists, countDifferentSufixForLists) 
  return this.getNames(typeSuffixForLists, countDifferentSufixForLists, true);
 }
 L.prototype.getDescriptions=function() {
- var sl = new sL();
- var l = this.length;
+ let sl = new sL();
+ let l = this.length;
  for(var i = 0; i<l; i++) {
    sl[i] = this[i].description;
  }
  return sl;
 }
 L.prototype.getCategories=function() {
- var sl = new sL();
- var l = this.length;
+ let sl = new sL();
+ let l = this.length;
  for(var i = 0; i<l; i++) {
    sl[i] = this[i].category;
  }
  return sl;
 }
 L.prototype.getReversed=function() {
- var newList = this.clone();
+ let newList = this.clone();
  newList.reverse(); // uses the built-in array function and changes in place
  return newList;
 }
 
 L.prototype.getSubList=function() {
   var interval;
- var i;
+ let i;
  if(arguments[0]==null) return;
   if(arguments[0]["isList"]) {
    return this.getElements(arguments[0]);
@@ -1236,7 +1236,7 @@ L.prototype.getSubList=function() {
   if(interval.x<0) interval.x = this.length+interval.x;
  if(interval.y<0) interval.y = this.length+interval.y;
   var newInterval = new I(Math.max(Math.min(Math.floor(interval.x), this.length), 0), Math.max(Math.min(Math.floor(interval.y), this.length - 1), 0));
- var newList;
+ let newList;
   if(arguments[2]) newInterval.y+=arguments[2];
   if(this.type == "nL") {
    newList = nL.toL(this.slice(newInterval.x, newInterval.y + 1), false);
@@ -1267,7 +1267,7 @@ L.prototype.getSubList=function() {
  return newList;
 }
 L.prototype.getSubListByType=function(type) {
- var newList = new L();
+ let newList = new L();
  newList.name = this.name;
  for(var i=0; i<this.length;  i++){
    if(_typeOf(this[i]) == type) newList.push(this[i]);
@@ -1275,9 +1275,9 @@ L.prototype.getSubListByType=function(type) {
  return newList.downcast();
 }
 L.prototype.getElementNumberOfOccurrences=function(element) {
- var nOccurrences = 0;
- var from = 0;
- var index = this.indexOf(element, from);
+ let nOccurrences = 0;
+ let from = 0;
+ let index = this.indexOf(element, from);
  while(index > -1) {
    nOccurrences++;
    from = index + 1;
@@ -1287,9 +1287,9 @@ L.prototype.getElementNumberOfOccurrences=function(element) {
 }
 L.prototype.clone=function() {
  //TODO:check this! fromArray should suffice
- var clonedList = instanceSameType(this);
- var i;
- var l = this.length;
+ let clonedList = instanceSameType(this);
+ let i;
+ let l = this.length;
   for(i = 0; i<l; i++) {
    clonedList.push(this[i]);
  }
@@ -1305,9 +1305,9 @@ L.prototype.getWithoutRepetitions=function(bReturnIndexes,bUseObjectEquivalence)
 L.prototype.getSimplified=function(nCategories, othersElement, nLWeights) {
  if(!nCategories) return;
   var freqTable = this.getFrequenciesTable(true,false,false,nLWeights);
- var frequencyIndexesDictionary = getFirstOccurrenceDictionaryForList(freqTable[0]);
- var i;
- var l = this.length;
+ let frequencyIndexesDictionary = getFirstOccurrenceDictionaryForList(freqTable[0]);
+ let i;
+ let l = this.length;
   if(othersElement==null) othersElement = "other";
   var newList = this.type=="sL"?new sL():new L();
  newList.name = this.name;
@@ -1318,9 +1318,9 @@ L.prototype.getSimplified=function(nCategories, othersElement, nLWeights) {
 }
 
 L.prototype.countElement=function(element) {
- var n = 0;
+ let n = 0;
  //this.forEach(function(elementInList) {
- var l = this.length;
+ let l = this.length;
   for(var i = 0; i<l; i++) {
    if(element == this[i]) n++;
  }
@@ -1328,9 +1328,9 @@ L.prototype.countElement=function(element) {
 }
 
 L.prototype.countOccurrences=function() { //TODO: more efficient // problem with sL that contain elements such as "toString" and other Object properties
- var occurrences = new nL();
- var dictionary = {};
- var l = this.length;
+ let occurrences = new nL();
+ let dictionary = {};
+ let l = this.length;
  
  for(var i = 0; i<l; i++) {
    if(dictionary[this[i]]==null) dictionary[this[i]] = 0;
@@ -1345,7 +1345,7 @@ L.prototype.countOccurrences=function() { //TODO: more efficient // problem with
 L.prototype.countDifferentElements=function() {
  if(this.infoObject) return this.infoObject.numberDifferentElements;
   var dictionary = {};
- var n=0;
+ let n=0;
  
  for(var i = 0; i<this.length; i++){
    if(dictionary[this[i]]==null){
@@ -1358,12 +1358,12 @@ L.prototype.countDifferentElements=function() {
 
 L.prototype.getFrequenciesTable=function(sortListsByOccurrences=true, addWeightsNormalizedToSum, addCategoricalColors, nLWeights) {
  //if(this.freqTable && this.freqTable.length==2 && (addWeightsNormalizedToSum || addCategoricalColors || nLWeights)) this.freqTable=null;
- var weightsNormalizedToSumName = "Occurrences normalized to sum";
- var categoricalColorsName = "Categorical colors";
+ let weightsNormalizedToSumName = "Occurrences normalized to sum";
+ let categoricalColorsName = "Categorical colors";
   var table;
  
- var i;
- var index;
+ let i;
+ let index;
   if(this.freqTable){
    table = this.freqTable.getColumns([0,1]);
    elementList = table[0];
@@ -1425,10 +1425,10 @@ L.prototype.getFrequenciesTable=function(sortListsByOccurrences=true, addWeights
 }
 
 L.prototype.allElementsAreEqual=function() {
- var i;
+ let i;
  if(this.length < 2) return true;
   var first = this[0];
- var l = this.length;
+ let l = this.length;
   for(i = 1; i<l; i++) {
    if(this[i] != first) return false;
  }
@@ -1436,9 +1436,9 @@ L.prototype.allElementsAreEqual=function() {
 }
 
 L.prototype.getMode=function() {
- var dictionary = {};
+ let dictionary = {};
   var nFirst = 0;
- var firstObject;
+ let firstObject;
   for(var i=0; i<this.length; i++){
    if(dictionary[this[i]]==null) dictionary[this[i]]=0;
    dictionary[this[i]]++;
@@ -1457,9 +1457,9 @@ L.prototype.getMode=function() {
 
 L.prototype.getMin=function() {
  if(this.length === 0) return null;
- var min = this[0];
- var i;
- var l = this.length;
+ let min = this[0];
+ let i;
+ let l = this.length;
  for(i = 1; i < l; i++) {
    min = Math.min(min, this[i]);
  }
@@ -1467,9 +1467,9 @@ L.prototype.getMin=function() {
 }
 L.prototype.getMax=function() {
  if(this.length === 0) return null;
- var max = this[0];
- var i;
- var l = this.length;
+ let max = this[0];
+ let i;
+ let l = this.length;
  for(i = 1; i < l; i++) {
    max = Math.max(max, this[i]);
  }
@@ -1494,8 +1494,8 @@ L.prototype.getRandomElements=function(n, withoutRepetitions, randomSeed, keepOr
   var random = randomSeed!=null ? new _Alea("my", randomSeed, "seeds") : NumberOperators_random;
  withoutRepetitions = withoutRepetitions == null ? true : withoutRepetitions;
  n = Math.min(n, this.length);
- var newList = instanceSameType(this);
- var element;
+ let newList = instanceSameType(this);
+ let element;
   if(keepOrder){
    var list = this;
    if(withoutRepetitions){
@@ -1531,10 +1531,10 @@ L.prototype.getRandomElements=function(n, withoutRepetitions, randomSeed, keepOr
 }
 
 L.prototype.getPropertyValues=function(propertyName, valueIfNull) {
- var newList = new L();
+ let newList = new L();
  newList.name = propertyName;
- var val;
- var l = this.length;
+ let val;
+ let l = this.length;
  for(var i = 0; i<l; i++) {
    val = getPropertyValue(this[i],propertyName);
    newList[i] = (val == null ? valueIfNull : val);
@@ -1544,7 +1544,7 @@ L.prototype.getPropertyValues=function(propertyName, valueIfNull) {
 L.prototype.isSorted=function(ascending){
  ascending = ascending==null?true:Boolean(ascending);
   var l = this.length;
- var i;
+ let i;
  if(ascending){
    for(i=1;i<l;i++){
      if(this[i]<this[i-1]) return false;
@@ -1561,8 +1561,8 @@ L.prototype.getSortedByIndexes=function(indexes) {
  if(indexes==null) return;
   var result = instanceSameType(this);
  result.name = this.name;
- var i;
- var l = this.length;
+ let i;
+ let l = this.length;
  for(i = 0; i<l; i++) {
    if(indexes[i] != -1) result.push(this[indexes[i]]);
  }
@@ -1576,7 +1576,7 @@ L.prototype.getSortedByProperty=function(propertyName, ascending, secondProperty
   ascending = ascending == null ? true : ascending;
  if(this.length==0) return this.clone();
   var type = _typeOf(this[0][propertyName]);
- var notNumbersOrDates = type!='number' && type!='date';
+ let notNumbersOrDates = type!='number' && type!='date';
   var comparator;
  if(secondPropertyName){
    if(ascending) {
@@ -1637,8 +1637,8 @@ L.prototype.getSortedByList=function(list, ascending, smallPerturbation, stable)
   ascending = ascending == null ? true : ascending;
  stable = stable == null ? false : stable;
   var pairsArray = [];
- var i;
- var l = this.length;
+ let i;
+ let l = this.length;
   if(smallPerturbation && list.type=="nL"){
    for(i = 0; i<l; i++) {
      pairsArray[i] = [this[i], list[i]+Math.random()*10000*Number.MIN_VALUE, i];
@@ -1654,7 +1654,7 @@ L.prototype.getSortedByList=function(list, ascending, smallPerturbation, stable)
      pairsArray[i] = [this[i], list[i],i];
    }
  }
- var bSimpleComparator = (list.type=="nL" || list.type=="dL") && !stable;
+ let bSimpleComparator = (list.type=="nL" || list.type=="dL") && !stable;
   var comparator;
  if(ascending) {
    if(bSimpleComparator){
@@ -1699,7 +1699,7 @@ L.prototype.getSortedByList=function(list, ascending, smallPerturbation, stable)
 }
 L.prototype.getSortedRandom=function() {
  //complexity can be improved to O(n), by swaping values in order
- var newList = this.clone();
+ let newList = this.clone();
  newList.name = this.name;
  newList.sort(function() {
    return random() - 0.5;
@@ -1707,8 +1707,8 @@ L.prototype.getSortedRandom=function() {
  return newList;
 }
 L.prototype.indexOfElement=function(element) { //TODO: test if this is faster than indexOf
- var i;
- var l = this.length;
+ let i;
+ let l = this.length;
  for(i = 0; i<l; i++) {
    if(this[i] == element) return i;
  }
@@ -1717,7 +1717,7 @@ L.prototype.indexOfElement=function(element) { //TODO: test if this is faster th
 L.prototype.indexesOf=function(element) {//@todo: probably better to just traverse de list
  //if(element==null) return;
   var index = this.indexOf(element);
- var nl = new nL();
+ let nl = new nL();
   while(index != -1) {
    nl.push(index);
    index = this.indexOf(element, index + 1);
@@ -1727,7 +1727,7 @@ L.prototype.indexesOf=function(element) {//@todo: probably better to just traver
 L.prototype.indexOfElements=function(elements) {//@todo: probably better to just traverse de list
  if(elements==null) return;
   var nl = new nL();
- var l = elements.length;
+ let l = elements.length;
  for(var i = 0; i<l; i++) {
    nl[i] = this.indexOf(elements[i]);
  }
@@ -1737,9 +1737,9 @@ L.prototype.indexesOfElements=function(elements, includeMinusOneWhenNotIncluded)
  if(elements==null) return;
   var dictionary;
   var nl = new nL();
- var i;
- var l = this.length;
- var index;
+ let i;
+ let l = this.length;
+ let index;
   dictionary = getFirstOccurrenceDictionaryForList(this);
   if(includeMinusOneWhenNotIncluded){
    for(i = 0; i<elements.length; i++) {
@@ -1771,10 +1771,10 @@ L.prototype.getElementByName=function(name, returnIndex) {
 L.prototype.getElementsByNames=function(names, returnIndex, includeElementIfNameNotFound, elementToIncludeIfNameNotFound) {
  if(names==null) return;
   var list = returnIndex ? new nL() : new L();
- var j, i;
- var name;
- var l = this.length;
- var found;
+ let j, i;
+ let name;
+ let l = this.length;
+ let found;
   //names.forEach(function(name) {
  for(j=0; j<names.length; j++){
    name = names[j];
@@ -1793,17 +1793,17 @@ L.prototype.getElementsByNames=function(names, returnIndex, includeElementIfName
   return returnIndex ? list : list.downcast();
 }
 L.prototype.getFirstElementByPropertyValue=function(propertyName, value) {
- var l = this.length;
+ let l = this.length;
  for(var i = 0; i<l; i++) {
    if(this[i][propertyName] == value) return this[i];
  }
  return null;
 }
 L.prototype.getFilteredByBooleanList=function(booleanList) {
- var newList = new L();
+ let newList = new L();
  newList.name = this.name;
- var i;
- var l = this.length;
+ let i;
+ let l = this.length;
  for(i = 0; i<l; i++) {
    if(booleanList[i]) newList.push(this[i]);
  }
@@ -1813,8 +1813,8 @@ L.prototype.getFilteredByPropertyValue=function(propertyName, propertyValue, com
  comparison = comparison == null ? "equal" : comparison;
   var newList = new L();
  newList.name = "filtered_" + this.name;
- var i;
- var l = this.length;
+ let i;
+ let l = this.length;
  switch(comparison) {
    case "equal":
      for(i = 0; i<l; i++) {
@@ -1841,9 +1841,9 @@ L.prototype.getFilteredByPropertyValue=function(propertyName, propertyValue, com
 }
 
 L.prototype.getWithoutElementsAtIndexes=function(indexes) {
- var i;
- var newList;
- var l = this.length;
+ let i;
+ let newList;
+ let l = this.length;
  if(this.type == 'L') {
    newList = new L();
  } else {
@@ -1867,8 +1867,8 @@ L.prototype.getWithoutElementsAtIndexes=function(indexes) {
 }
 
 L.prototype.getWithoutElementAtIndex=function(index) {
- var newList;
- var l = this.length;
+ let newList;
+ let l = this.length;
   if(index<0) index+=l;
   if(this.type == 'L') {
    newList = new L();
@@ -1891,8 +1891,8 @@ L.prototype.getWithoutElement=function(element) {
   var newList = new L();
  newList.name = this.name;
  
- var i;
- var l = this.length;
+ let i;
+ let l = this.length;
  for(i = 0; i<l; i++) {
    if(this[i]!=element) newList.push(this[i]);
  }
@@ -1900,9 +1900,9 @@ L.prototype.getWithoutElement=function(element) {
 }
 
 L.prototype.getWithoutElements=function(list) {//TODO: more efficiency with dictionary
- var newList;
- var i;
- var l = this.length;
+ let newList;
+ let i;
+ let l = this.length;
  if(this.type == 'L') {
    newList = new L();
  } else {
@@ -1928,8 +1928,8 @@ L.prototype.getWithoutElements=function(list) {//TODO: more efficiency with dict
 }
 
 L.prototype.getFilteredByFunction=function(func,name) {
- var newList = instanceSameType(this);
- var l = this.length;
+ let newList = instanceSameType(this);
+ let l = this.length;
  for(var i = 0; i<l; i++) {
    if(func(this[i],i,this)) {
      if(newList.type == 'ndL')
@@ -1986,7 +1986,7 @@ L.prototype.insertMany=function(elements, indexes, replace){
    throw new Error("some elements with given names not found");
  }
  
- var list;
+ let list;
  if(replace){
    var l = Math.min(elements.length, indexes.length);
    list = this.clone();
@@ -2014,8 +2014,8 @@ L.prototype.insertMany=function(elements, indexes, replace){
    next++;
  };
   /*
- var indexElement = 0;
- var element;
+ let indexElement = 0;
+ let element;
   for(var i=0; i<this.length+l; i++){
    var indexPosition = indexes.indexOf(i);
    if(indexPosition>=0){
@@ -2062,9 +2062,9 @@ L.prototype.toNumberList=function(valueForNaN, mode) {
  if(this.type=="nL") return this;
  mode = mode==null?0:mode;
   var nl = new nL();
- var l = this.length;
- var i;
- var containsNulls = false;
+ let l = this.length;
+ let i;
+ let containsNulls = false;
   if(this.type=="dL"){
    if(nl.name == '')
      nl.name = 'decimal date';
@@ -2090,8 +2090,8 @@ L.prototype.toNumberList=function(valueForNaN, mode) {
 L.prototype.toStringList=function() {
  if(this.type=="sL") return this;
   var l = this.length;
- var i;
- var sl = new sL();
+ let i;
+ let sl = new sL();
   sl.name = this.name;
  for(i = 0; i<l; i++) {
    sl[i] = String(this[i]);
@@ -2104,7 +2104,7 @@ L.prototype.toStringList=function() {
  return sl;
 }
 L.prototype.toColorList=function(stableColors, colorScaleForNumbers) {
- var colors;
+ let colors;
   if(this.type=="cL") return this;
   if(this.type=="nL"){
 
@@ -2147,10 +2147,10 @@ L.prototype.toColorList=function(stableColors, colorScaleForNumbers) {
   return colors;
 }
 L.prototype.removeElements=function(elements) { //TODO: make it more efficient (avoiding the splice method)
- var i;
- var dictionary = {};
- var l = this.length;
- var nElements = elements.length;
+ let i;
+ let dictionary = {};
+ let l = this.length;
+ let nElements = elements.length;
   for(i=0; i<nElements; i++){
    dictionary[elements[i]] = true;
  }
@@ -2162,7 +2162,7 @@ L.prototype.removeElements=function(elements) { //TODO: make it more efficient (
  }
 }
 L.prototype.removeElement=function(element) {
- var index = this.indexOf(element);
+ let index = this.indexOf(element);
  if(index != -1) this.splice(index, 1);
 }
 
@@ -2193,7 +2193,7 @@ L.prototype.setNames=function(names, transformative=true, indexesOrNames) {
   var nLElementsToChange = indexesOrNames==null ? createSortedNumberList(names.length) : indexesOrNames;
  if(nLElementsToChange.type == 'sL')
    nLElementsToChange = this.getElementsByNames(nLElementsToChange,true,true);
- var l = Math.min(nLElementsToChange.length, names.length);
+ let l = Math.min(nLElementsToChange.length, names.length);
   var newList = transformative?this:this.clone();
   for(i=0; i<l; i++){
    j = nLElementsToChange[i];
@@ -2210,7 +2210,7 @@ L.prototype.setPropertyValues=function(propertyName, values, transformative) {
  if(propertyName == null || values==null) return null;
  if(!Array.isArray(values)) values = [values];
   var n = values.length;
- var l = this.length;
+ let l = this.length;
   var newList = transformative?this:this.clone();
   for(var i=0; i<l; i++){
    //this[i][propertyName] = values[i % n];
@@ -2234,36 +2234,36 @@ L.prototype.splice=function() { //TODO: replace
 iL.prototype.getInterval=function() {
  if(this.length === 0) return null;
   var max = Math.max(this[0].x, this[0].y);
- var min = Math.min(this[0].x, this[0].y);
- var l = this.length;
- var i;
+ let min = Math.min(this[0].x, this[0].y);
+ let l = this.length;
+ let i;
  for(i = 1; i<l; i++) {
    max = Math.max(max, this[i].x, this[i].y);
    min = Math.min(min, this[i].x, this[i].y);
  }
- var interval = new I(min, max);
+ let interval = new I(min, max);
  return interval;
 }
 iL.prototype.getAmplitudes=function() {
  if(this.length === 0) return null;
   var i;
- var nl = new nL();
+ let nl = new nL();
   for(i=0; i<this.length; i++){
    nl[i] = this[i].getAmplitude();
  }
   return nl;
 }
 cL.prototype.getRgbArrays=function() {
- var rgbArrays = new L();
- var l = this.length;
+ let rgbArrays = new L();
+ let l = this.length;
   for(var i = 0; i<l; i++) {
    rgbArrays[i] = colorStringToRGB(this[i]);
  }
   return rgbArrays;
 }
 cL.prototype.getInterpolated=function(color, value) {
- var newColorList = new cL();
- var l = this.length;
+ let newColorList = new cL();
+ let l = this.length;
   for(var i = 0; i<l; i++) {
    newColorList[i] = interpolateColors(this[i], color, value);
  }
@@ -2271,8 +2271,8 @@ cL.prototype.getInterpolated=function(color, value) {
  return newColorList;
 }
 cL.prototype.getInverted=function() {
- var newColorList = new cL();
- var l = this.length;
+ let newColorList = new cL();
+ let l = this.length;
   for(var i = 0; i<l; i++) {
    newColorList[i] = invertColor(this[i]);
  }
@@ -2280,8 +2280,8 @@ cL.prototype.getInverted=function() {
  return newColorList;
 }
 cL.prototype.addAlpha=function(alpha) {
- var newColorList = new cL();
- var l = this.length;
+ let newColorList = new cL();
+ let l = this.length;
   for(var i = 0; i<l; i++) {
    newColorList[i] = addAlpha(this[i], alpha);
  }
@@ -2301,21 +2301,21 @@ P3D.prototype.getNorm=function() {
  return Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
 }
 P3D.prototype.normalizeToValue=function(k) {
- var factor = k / Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2) + Math.pow(this.z, 2));
+ let factor = k / Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2) + Math.pow(this.z, 2));
  return new P3D(this.x * factor, this.y * factor, this.z * factor);
 }
 P3D.prototype.cross=function(point3D) {
- var _x = this.y * point3D.z - this.z * point3D.y;
- var _y = this.z * point3D.x - this.x * point3D.z;
- var _z = this.x * point3D.y - this.y * point3D.x;
+ let _x = this.y * point3D.z - this.z * point3D.y;
+ let _y = this.z * point3D.x - this.x * point3D.z;
+ let _z = this.x * point3D.y - this.y * point3D.x;
  return new P3D(_x, _y, _z);
 }
 P3D.prototype.dot=function(point3D) {
  return this.x * point3D.x + this.y * point3D.y + this.z * point3D.z;
 }
 P3D.prototype.angleToPoint=function(point3D) {
- var n0 = this.getNorm();
- var n1 = point3D.getNorm();
+ let n0 = this.getNorm();
+ let n1 = point3D.getNorm();
  return Math.acos(this.dot(point3D)/(n0*n1));
 }
 P3D.prototype.add=function(point) {
@@ -2331,9 +2331,9 @@ P3D.prototype.interpolate=function(point3D, t) {
  return new P3D((1 - t) * this.x + t * point3D.x, (1 - t) * this.y + t * point3D.y, (1 - t) * this.z + t * point3D.z);
 }
 P3D.prototype.getAngles=function() {
- var radius = Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
- var alfa = 0.5 * Math.PI - Math.atan2(this.z / radius, this.y / radius);
- var beta = -Math.asin(this.x / radius);
+ let radius = Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
+ let alfa = 0.5 * Math.PI - Math.atan2(this.z / radius, this.y / radius);
+ let beta = -Math.asin(this.x / radius);
  if(alfa < -Math.PI) alfa += 2 * Math.PI;
  if(alfa > Math.PI) alfa -= 2 * Math.PI;
  if(beta < -Math.PI) beta += 2 * Math.PI;
@@ -2341,9 +2341,9 @@ P3D.prototype.getAngles=function() {
  return new P3D(alfa, beta, 0);
 }
 P3D.prototype.getInverseAngles=function() {
- var radius = Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
- var alfa = -0.5 * Math.PI + Math.atan2(-this.z / radius, -this.y / radius);
- var beta = Math.asin(-this.x / radius);
+ let radius = Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
+ let alfa = -0.5 * Math.PI + Math.atan2(-this.z / radius, -this.y / radius);
+ let beta = Math.asin(-this.x / radius);
  if(alfa < -Math.PI) alfa += 2 * Math.PI;
  if(alfa > Math.PI) alfa -= 2 * Math.PI;
  if(beta < -Math.PI) beta += 2 * Math.PI;
@@ -2358,9 +2358,9 @@ P3D.prototype.toString=function() {
 }
 
 Pol3D.prototype.getBarycenter=function() {
-var x=0;
-var y=0;
-var z=0;
+let x=0;
+let y=0;
+let z=0;
 for(var i=0; i<this.length; i++){
   x+=this[i].x;
   y+=this[i].y;
@@ -2400,12 +2400,12 @@ Rec.prototype.getRandomPoint=function() {
 }
 Rec.prototype.getIntersection=function(rectangle) {
  if(rectangle.x + rectangle.width < this.x || rectangle.x > this.x + this.width || rectangle.y + rectangle.height < this.y || rectangle.y > this.y + this.height) return null;
- var xR = Math.max(rectangle.x, this.x);
- var yR = Math.max(rectangle.y, this.y);
+ let xR = Math.max(rectangle.x, this.x);
+ let yR = Math.max(rectangle.y, this.y);
  return new Rec(xR, yR, Math.min(rectangle.x + rectangle.width, this.x + this.width) - xR, Math.min(rectangle.y + rectangle.height, this.y + this.height) - yR);
 }
 Rec.prototype.interpolate=function(rectangle, t) {
- var mint = 1 - t;
+ let mint = 1 - t;
  return new Rec(mint * this.x + t * rectangle.x, mint * this.y + t * rectangle.y, mint * this.width + t * rectangle.width, mint * this.height + t * rectangle.height);
 }
 Rec.prototype.getRatio=function() {
@@ -2466,8 +2466,8 @@ Rec.prototype.toString=function() {
 
 T.prototype.applyFunction=function(func) {
  //TODO: to be tested!
- var i;
- var newTable = new T();
+ let i;
+ let newTable = new T();
   newTable.name = this.name;
   for(i = 0; this[i] != null; i++) {
    newTable[i] = this[i].applyFunction(func);
@@ -2479,7 +2479,7 @@ T.prototype.getListsDowncasted=function() {
 }
 T.prototype.get=function(indexOrNameOfColumn, row0, row1, without_repetitions) {
   var i;
- var found;
+ let found;
   if(indexOrNameOfColumn && Array.isArray(indexOrNameOfColumn)){
    return this.getColumns(indexOrNameOfColumn)
  } else if(typeof indexOrNameOfColumn =='string'){
@@ -2545,9 +2545,9 @@ T.prototype.getColumns=function(indexesOrNames, row0, row1, emptyListIfNotFound,
    return newTable.downcast();
  }
   newTable = new T();
- var l = indexesOrNames.length;
- var i;
- var list;
+ let l = indexesOrNames.length;
+ let i;
+ let list;
   for(i=0; i<l; i++){
    list = this.get(indexesOrNames[i], row0, row1);
     if(list==null){
@@ -2562,14 +2562,14 @@ T.prototype.getColumns=function(indexesOrNames, row0, row1, emptyListIfNotFound,
 
 T.prototype.getWithoutColumn=function(indexListOrName){
  if(indexListOrName == null) return;
- var list = this.get(indexListOrName);
+ let list = this.get(indexListOrName);
  if(list==null) return this
  return this.getWithoutElement(list)
 }
 
 T.prototype.getWithoutColumns=function(indexesOrNames){
  if(indexesOrNames == null) return;
- var lists = this.getColumns(indexesOrNames);
+ let lists = this.getColumns(indexesOrNames);
  if(lists==null || lists.length==0) return this;
  return this.getWithoutElements(lists);
 }
@@ -2582,8 +2582,8 @@ T.prototype.getRow=function(index) {
  if(!Number.isInteger(Number(index)))
    return null;
   var list = new L();
- var i;
- var l = this.length;
+ let i;
+ let l = this.length;
   for(i = 0; i < l; i++) {
    list[i] = this[i][index];
  }
@@ -2602,13 +2602,13 @@ T.prototype.getRows=function(indexes,bReturnAllOnNull) {
    if(indexes.y<0 && this.length>0) indexes.y += this[0].length;
    indexes = createSortedNumberList(Math.floor(indexes.y-indexes.x+1),indexes.x);
  }
- var newTable = new T();
- var list;
- var i,j;
- var l = this.length;
- var il = indexes.length;
- var index;
- var bNegIndexMsg = false;
+ let newTable = new T();
+ let list;
+ let i,j;
+ let l = this.length;
+ let il = indexes.length;
+ let index;
+ let bNegIndexMsg = false;
   for(i=0; i<l; i++){
    list = instanceSameType(this[i]);
    for(j=0;j<il;j++){
@@ -2631,7 +2631,7 @@ T.prototype.getRows=function(indexes,bReturnAllOnNull) {
  return newTable.downcast();
 }
 T.prototype.getCell=function(indexOrNameOfColumn, indexElementInColumn) {
- var list = this.get(indexOrNameOfColumn);
+ let list = this.get(indexOrNameOfColumn);
   return list.get(indexElementInColumn);
 }
 T.prototype.getListLength=function(indexOrNameOfColumn) {
@@ -2640,8 +2640,8 @@ T.prototype.getListLength=function(indexOrNameOfColumn) {
  return this[indexOrNameOfColumn].length;
 }
 T.prototype.getLengths=function() {
- var lengths = new nL();
- var l = this.length;
+ let lengths = new nL();
+ let l = this.length;
   for(var i = 0; i<l; i++) {
    lengths[i] = this[i]==null?0:this[i].length;
  }
@@ -2658,9 +2658,9 @@ T.prototype.sliceRows=function(startIndex, endIndex) {
  startIndex = startIndex==null?0:startIndex;
  endIndex = endIndex == null ? (this[0].length - 1) : endIndex;
   var i;
- var newTable = new T();
- var newList;
- var l = this.length;
+ let newTable = new T();
+ let newList;
+ let l = this.length;
   newTable.name = this.name;
  for(i = 0; i<l; i++) {
    newList = this[i].getSubList(startIndex, endIndex);
@@ -2672,8 +2672,8 @@ T.prototype.sliceRows=function(startIndex, endIndex) {
 }
 
 T.prototype.getWithoutRow=function(rowIndex) {
- var newTable = new T();
- var l = this.length;
+ let newTable = new T();
+ let l = this.length;
  newTable.name = this.name;
  if(rowIndex<0){
    rowIndex += (this.length > 0) ? this[0].length : 0
@@ -2688,9 +2688,9 @@ T.prototype.getWithoutRow=function(rowIndex) {
 }
 
 T.prototype.getWithoutRows=function(rowsIndexes) {
- var newTable = new T();
- var l = this.length;
- var nElements;
+ let newTable = new T();
+ let l = this.length;
+ let nElements;
  newTable.name = this.name;
  // need to clone input since we can't modify it. It may be an array so we can't just use .clone
  rowsIndexes = nL.toL(rowsIndexes.slice(), false);
@@ -2699,7 +2699,7 @@ T.prototype.getWithoutRows=function(rowsIndexes) {
    if(rowsIndexes[i] < 0)
      rowsIndexes[i] += (this.length > 0) ? this[0].length : 0;
  }
- var dictionary = getBooleanDictionaryForList(rowsIndexes);
+ let dictionary = getBooleanDictionaryForList(rowsIndexes);
  for(i = 0; i<l; i++) {
    newTable[i] = instanceSameType(this[i]);
    nElements = this[i].length;
@@ -2718,13 +2718,13 @@ T.prototype.sortRowsByList=function(listOrIndex, ascending, stable) { //depracat
   ascending = ascending == null ? true : ascending;
  stable = stable == null ? false : stable;
   var newTable = instanceSameType(this);
- var l = this.length;
+ let l = this.length;
   var pairsArray = [];
   for(var i = 0; i<sortinglist.length; i++) {
    pairsArray[i] = [i, sortinglist[i]];
  }
   var bSimpleComparator = (sortinglist.type=="nL" || sortinglist.type=="dL") && !stable;
- var comparator;
+ let comparator;
   if(ascending) {
    if(bSimpleComparator){
      comparator = function(a, b) {
@@ -2805,8 +2805,7 @@ T.prototype.sortRowsByLists=function(lists, ascending) {
    // if not a list then convert into one of same length as lists
    ascending = createListWithSameElement(lists.length,ascending);
  }
- var nLPolarity = new nL();
- var i;
+ let nLPolarity = new nL();
  for(i = 0; i < ascending.length; i++){
    if(ascending[i] == true || ascending[i] == 'true' || ascending[i] == 1)
      nLPolarity.push(1);
@@ -2814,7 +2813,7 @@ T.prototype.sortRowsByLists=function(lists, ascending) {
      nLPolarity.push(-1);
  }
   var newTable = instanceSameType(this);
- var l = this.length;
+ let l = this.length;
   var rowArray = [];
   for(i = 0; i<this[0].length; i++) {
    rowArray[i] = {i:i, t:this, lists:lists, polarity:nLPolarity};
@@ -2850,13 +2849,13 @@ T.prototype.sortRowsByLists=function(lists, ascending) {
 
 T.prototype.transpose=function(firstListAsHeaders, headersAsFirstList) {
   var tableToTranspose = firstListAsHeaders ? this.getSubList(1) : this;
- var l = tableToTranspose.length;
- var nElements;
+ let l = tableToTranspose.length;
+ let nElements;
   var table = instantiate(_typeOf(tableToTranspose));
  if(tableToTranspose.length === 0) return table;
- var i;
- var j;
- var list;
+ let i;
+ let j;
+ let list;
   for(i = 0; i<l; i++) {
    list = tableToTranspose[i];
    nElements = list.length;
@@ -2898,7 +2897,7 @@ T.prototype.removeRow=function(index) {
 }
 T.prototype.pushRow=function() {
  if(arguments == null || arguments.length === 0 ||  arguments[0] == null) return null;
- var v = arguments
+ let v = arguments
  if(v.length == 1 && v[0].length == this.length)
    v = v[0];
  for(var i=0; i < v.length && i < this.length; i++)
@@ -2906,9 +2905,9 @@ T.prototype.pushRow=function() {
 }
 
 T.prototype.clone=function() {
- var l = this.length;
- var clonedTable = instanceSameType(this);
- var i;
+ let l = this.length;
+ let clonedTable = instanceSameType(this);
+ let i;
   clonedTable.name = this.name;
   for(i = 0; i<l; i++) {
    clonedTable.push(this[i].clone());
@@ -2919,10 +2918,10 @@ T.prototype.clone=function() {
 }
 
 T.prototype.cloneWithEmptyLists=function() {
- var l = this.length;
- var i;
- var newTable = instanceSameType(this);
- var newList;
+ let l = this.length;
+ let i;
+ let newTable = instanceSameType(this);
+ let newList;
   newTable.name = this.name;
   for(i = 0; i<l; i++) {
    newList = instanceSameType(this[i]);
@@ -2939,7 +2938,7 @@ T.prototype.appendRows=function(tab2) {
    // special case, clone or we end up in infinite loop below
    tab2 = tab2.clone();
  }
- var i,j;
+ let i,j;
  for(i=0; i < tab2.length; i++){
    if(i >= this.length){
      this[i] = instanceSameType(tab2[i]);
@@ -2971,8 +2970,8 @@ T.prototype.trim=function(){
 
 polL.prototype.getFrame=function() {
  if(this.length === 0) return null;
- var frameP = this[0].getFrame();
- var rect = new Rec(frameP.x, frameP.y, frameP.getRight(), frameP.getBottom());
+ let frameP = this[0].getFrame();
+ let rect = new Rec(frameP.x, frameP.y, frameP.getRight(), frameP.getBottom());
  for(var i = 1; this[i] != null; i++) {
    frameP = this[i].getFrame();
    rect.x = Math.min(rect.x, frameP.x);
@@ -2986,13 +2985,13 @@ polL.prototype.getFrame=function() {
 }
 
 polL.prototype.getCenter=function() {
- var fr = this.getFrame();
+ let fr = this.getFrame();
  return new P(fr.x+fr.width*0.5,fr.y+fr.height*0.5);
 }
 polL.prototype.getBarycenter=function() {
- var i;
+ let i;
  if(this.length === 0) return null;
- var barycenter = new P(this[0].x, this[0].y);
+ let barycenter = new P(this[0].x, this[0].y);
  for(i = 1; this[i] != null; i++) {
    barycenter.x += this[i].getBarycenter().x;
    barycenter.y += this[i].getBarycenter().y;
@@ -3002,8 +3001,8 @@ polL.prototype.getBarycenter=function() {
  return barycenter;
 }
 polL.prototype.add=function(object) {
- var type = _typeOf(object);
- var i;
+ let type = _typeOf(object);
+ let i;
  switch(type) {
    case 'P':
      var newPolygonList = new polL();
@@ -3015,7 +3014,7 @@ polL.prototype.add=function(object) {
  }
 }
 polL.prototype.factor=function(value) {
- var newPolygonList = new polL();
+ let newPolygonList = new polL();
  for(var i = 0; this[i] != null; i++) {
    newPolygonList[i] = this[i].factor(value);
  }
@@ -3023,7 +3022,7 @@ polL.prototype.factor=function(value) {
  return newPolygonList;
 }
 polL.prototype.getRotated=function(angle, center) {
- var newPolygonList = new polL();
+ let newPolygonList = new polL();
  for(var i = 0; this[i] != null; i++) {
    newPolygonList[i] = this[i].getRotated(angle,center);
  }
@@ -3031,7 +3030,7 @@ polL.prototype.getRotated=function(angle, center) {
  return newPolygonList;
 }
 polL.prototype.clone=function() {
- var newPolygonList = new polL();
+ let newPolygonList = new polL();
  for(var i = 0; this[i] != null; i++) {
    newPolygonList[i] = this[i].clone();
  }
@@ -3040,8 +3039,8 @@ polL.prototype.clone=function() {
 }
 Pol.prototype.getFrame=function() {
  if(this.length === 0) return null;
- var rectangle = new Rec(this[0].x, this[0].y, this[0].x, this[0].y);
- var p;
+ let rectangle = new Rec(this[0].x, this[0].y, this[0].x, this[0].y);
+ let p;
  for(var i = 1; this[i] != null; i++) {
    p = this[i];
    rectangle.x = Math.min(rectangle.x, p.x);
@@ -3054,15 +3053,15 @@ Pol.prototype.getFrame=function() {
   return rectangle;
 }
 Pol.prototype.getCenter=function() {
- var fr = this.getFrame();
+ let fr = this.getFrame();
  return new P(fr.x+fr.width*0.5,fr.y+fr.height*0.5);
 }
 Pol.prototype.getBarycenter=function(countLastPoint) {
- var i;
+ let i;
  countLastPoint = countLastPoint == null ? true : countLastPoint;
- var cLPN = 1 - Number(countLastPoint);
+ let cLPN = 1 - Number(countLastPoint);
  if(this.length === 0) return null;
- var barycenter = new P(this[0].x, this[0].y);
+ let barycenter = new P(this[0].x, this[0].y);
  for(i = 1; this[i + cLPN] != null; i++) {
    barycenter.x += this[i].x;
    barycenter.y += this[i].y;
@@ -3072,8 +3071,8 @@ Pol.prototype.getBarycenter=function(countLastPoint) {
  return barycenter;
 }
 Pol.prototype.add=function(object) {
- var type = _typeOf(object);
- var i;
+ let type = _typeOf(object);
+ let i;
  switch(type) {
    case 'P':
      var newPolygon = new Pol();
@@ -3085,8 +3084,8 @@ Pol.prototype.add=function(object) {
  }
 }
 Pol.prototype.factor=function(value) {
- var i;
- var newPolygon = new Pol();
+ let i;
+ let newPolygon = new Pol();
  newPolygon.name = this.name;
   if(value >= 0 || value < 0) {
    for(i = 0; this[i] != null; i++) {
@@ -3111,9 +3110,9 @@ Pol.prototype.getRotated=function(angle, center) {
  return newPolygon;
 }
 Pol.prototype.getClosestPoint=function(point) {
- var closest = this[0];
- var d2Min = Math.pow(point.x - closest.x, 2) + Math.pow(point.y - closest.y, 2);
- var d2;
+ let closest = this[0];
+ let d2Min = Math.pow(point.x - closest.x, 2) + Math.pow(point.y - closest.y, 2);
+ let d2;
   for(var i = 1; this[i] != null; i++) {
    d2 = Math.pow(point.x - this[i].x, 2) + Math.pow(point.y - this[i].y, 2);
    if(d2 < d2Min) {
@@ -3124,8 +3123,8 @@ Pol.prototype.getClosestPoint=function(point) {
  return closest;
 }
 Pol.prototype.toNumberList=function() {
- var nl = new nL();
- var i;
+ let nl = new nL();
+ let i;
  for(i = 0; this[i] != null; i++) {
    nl[i * 2] = this[i].x;
    nl[i * 2 + 1] = this[i].y;
@@ -3133,10 +3132,10 @@ Pol.prototype.toNumberList=function() {
  return nl;
 }
 Pol.prototype.containsPoint=function(point) {
- var i;
- var j;
- var l;
- var c;
+ let i;
+ let j;
+ let l;
+ let c;
  for(c = false, i = -1, l = this.length, j = l - 1; ++i < l; j = i)
        ((this[i].y <= point.y && point.y < this[j].y) || (this[j].y <= point.y && point.y < this[i].y)) &&
        (point.x < (this[j].x - this[i].x) * (point.y - this[i].y) / (this[j].y - this[i].y) + this[i].x) &&
@@ -3144,8 +3143,8 @@ Pol.prototype.containsPoint=function(point) {
  return c;
 }
 Pol.prototype.touchesPolygon=function(polygon) {
- var f0 = this.getFrame();
- var f1 = polygon.getFrame();
+ let f0 = this.getFrame();
+ let f1 = polygon.getFrame();
  if(f0.x>f1.x+f1.width || f0.x+f0.width<f1.x || f0.y>f1.y+f1.height || f0.y+f0.height<f1.y) return false;
   for(var i=0;i<this.length;i++){
    if(polygon.containsPoint(this[i])) return true;
@@ -3154,14 +3153,14 @@ Pol.prototype.touchesPolygon=function(polygon) {
 }
 Pol.prototype.approach=function(destiny, speed) {
  speed = speed || 0.5;
- var antispeed = 1 - speed;
+ let antispeed = 1 - speed;
   this.forEach(function(point, i) {
    point.x = antispeed * point.x + speed * destiny[i].x;
    point.y = antispeed * point.y + speed * destiny[i].y;
  });
 }
 Pol.prototype.clone=function() {
- var newPolygon = new Pol();
+ let newPolygon = new Pol();
  for(var i = 0; this[i] != null; i++) {
    newPolygon[i] = this[i].clone();
  }
@@ -3200,7 +3199,7 @@ Nd.prototype.loadImage=function(urlImage) {
  }, this);
 }
 Nd.prototype.clone=function(extraPropertyNames) {
- var newNode = new Nd(this.id, this.name);
+ let newNode = new Nd(this.id, this.name);
   newNode.x = this.x;
  newNode.y = this.y;
  newNode.z = this.z;
@@ -3215,7 +3214,7 @@ Nd.prototype.clone=function(extraPropertyNames) {
   return newNode;
 }
 sL.prototype.getLengths=function() {
- var lengths = new nL();
+ let lengths = new nL();
   this.forEach(function(string) {
    lengths.push(string == null ? 0 : string.length);
  });
@@ -3223,7 +3222,7 @@ sL.prototype.getLengths=function() {
 }
 
 sL.prototype.countTags=function(splitCharacter=",") {
- var nTags = new nL()
+ let nTags = new nL()
   this.forEach(function(string) {
     if(string.includes(splitCharacter)){
         nTags.push(string.split(splitCharacter).length)
@@ -3250,10 +3249,10 @@ sL.prototype.indexesOfSubString=function(substring){
 }
 sL.prototype.append=function(sufix, after) {
  after = after == null ? true : after;
- var newStringList = new sL();
+ let newStringList = new sL();
  newStringList.name = this.name;
- var sufixIsStringList = _typeOf(sufix) == "sL";
- var i;
+ let sufixIsStringList = _typeOf(sufix) == "sL";
+ let i;
  if(after) {
    for(i = 0; this[i] != null; i++) {
      newStringList[i] = this[i] + (sufixIsStringList ? sufix[i] : sufix);
@@ -3268,11 +3267,11 @@ sL.prototype.append=function(sufix, after) {
 sL.prototype.getSurrounded=function(prefix, sufix) {//to be deprecated
  sufix = sufix==null?"":sufix;
  
- var newStringList = new sL();
+ let newStringList = new sL();
  newStringList.name = this.name;
- var i;
+ let i;
   var prefixIsStringList = Array.isArray(prefix);
- var sufixIsStringList = Array.isArray(sufix);
+ let sufixIsStringList = Array.isArray(sufix);
   for(i = 0; this[i] != null; i++) {
    newStringList[i] = (prefixIsStringList ? prefix[i] : prefix) + this[i] + (sufixIsStringList ? sufix[i] : sufix);
  }
@@ -3281,8 +3280,8 @@ sL.prototype.getSurrounded=function(prefix, sufix) {//to be deprecated
 sL.prototype.replace=function(regExp, string) {
  if(regExp==null) return this;
   var newStringList = new sL();
- var i;
- var l = this.length;
+ let i;
+ let l = this.length;
   newStringList.name = this.name;
   for(i = 0; i<l; i++){
    newStringList[i] = this[i].replace(regExp, string);
@@ -3291,9 +3290,9 @@ sL.prototype.replace=function(regExp, string) {
 }
 sL.prototype.getConcatenated=function(separator) {
  separator = separator == null ? ' ' : separator;
- var i;
- var string = "";
- var l = this.length;
+ let i;
+ let string = "";
+ let l = this.length;
  for(i = 0; i<l; i++) {
    string += this[i];
    if(i < this.length - 1) string += separator;
@@ -3301,20 +3300,20 @@ sL.prototype.getConcatenated=function(separator) {
  return string;
 }
 sL.prototype.toLowerCase=function() {
- var newStringList = new sL();
+ let newStringList = new sL();
  newStringList.name = this.name;
- var i;
- var l = this.length;
+ let i;
+ let l = this.length;
  for(i = 0; i<l; i++) {
    newStringList[i] = this[i].toLowerCase();
  }
  return newStringList;
 }
 sL.prototype.toUpperCase=function() {
- var newStringList = new sL();
+ let newStringList = new sL();
  newStringList.name = this.name;
- var i;
- var l = this.length;
+ let i;
+ let l = this.length;
  for(i = 0; i<l; i++) {
    newStringList[i] = this[i].toUpperCase();
  }
@@ -3323,9 +3322,9 @@ sL.prototype.toUpperCase=function() {
 sL.prototype.trim=function(maxLength) {
  if(this.isTable) return this.trim();
  if(this.type != 'sL') return null;
- var i;
- var l = this.length;
- var newStringList = new sL();
+ let i;
+ let l = this.length;
+ let newStringList = new sL();
  for(i = 0; i<l; i++) {
    newStringList[i] = maxLength ? this[i].substring(0,maxLength).trim() : this[i].trim();
  }
@@ -3333,14 +3332,14 @@ sL.prototype.trim=function(maxLength) {
  return newStringList;
 }
 sL.prototype.clone=function() {
- var newList = sL.toL(this.slice(), false);
+ let newList = sL.toL(this.slice(), false);
  newList.name = this.name;
  newList.fnDerived = this.fnDerived;
  return newList;
 }
 ndL.prototype.removeNodes=function() {
- var l = this.length;
- var i;
+ let l = this.length;
+ let i;
  for(i = 0; i < l; i++) {
    this.ids[this[i].id] = null;
    this.removeElement(this[i]);
@@ -3351,7 +3350,7 @@ ndL.prototype.addNode=function(node) {
  this._push(node);
 }
 ndL.prototype.addNodes=function(nodes) {
- var i;
+ let i;
  for(i = 0; nodes[i] != null; i++) {
    this.addNode(nodes[i]);
  }
@@ -3365,9 +3364,9 @@ ndL.prototype.removeNodeAtIndex=function(index) {
  this.splice(index, 1);
 }
 ndL.prototype.normalizeWeights=function() {
- var i;
- var max = -9999999;
- var l = this.length;
+ let i;
+ let max = -9999999;
+ let l = this.length;
  for(i = 0; i<l; i++) {
    max = Math.max(this[i].weight, max);
  }
@@ -3376,8 +3375,8 @@ ndL.prototype.normalizeWeights=function() {
  }
 }
 ndL.prototype.getNodeByName=function(name) {
- var i;
- var l = this.length;
+ let i;
+ let l = this.length;
  for(i = 0; i < l; i++) {
    if(this[i].name == name) {
      return this[i];
@@ -3389,9 +3388,9 @@ ndL.prototype.get=function(id) {
  return this.ids[id];
 }
 ndL.prototype.getNodesByIds=function(ids) {
- var newNodelist = new ndL();
- var node;
- var nIds = ids.length;
+ let newNodelist = new ndL();
+ let node;
+ let nIds = ids.length;
  for(var i = 0; i<nIds; i++) {
    node = this.ids[ids[i]];
    if(node != null) newNodelist.addNode(node);
@@ -3399,39 +3398,39 @@ ndL.prototype.getNodesByIds=function(ids) {
  return newNodelist;
 }
 ndL.prototype.getWeights=function() {
- var nl = new nL();
- var i;
+ let nl = new nL();
+ let i;
  for(i = 0; this[i] != null; i++) {
    nl[i] = this[i].weight;
  }
  return nl;
 }
 ndL.prototype.getIds=function() {
- var list = new sL();
- var l = this.length;
+ let list = new sL();
+ let l = this.length;
  for(var i = 0; i<l; i++) {
    list[i] = this[i].id;
  }
  return list;
 }
 ndL.prototype.getDegrees=function() {
- var nl = new nL();
+ let nl = new nL();
  for(var i = 0; this[i] != null; i++) {
    nl[i] = this[i].nodes.length;
  }
  return nl;
 }
 ndL.prototype.getPolygon=function(graphics) {
- var polygon = new Pol();
+ let polygon = new Pol();
  for(var i = 0; this[i] != null; i++) {
    polygon[i] = new P(this[i].x + graphics.cX, this[i].y + graphics.cY);
  }
  return polygon;
 }
 ndL.prototype.clone=function() {
- var newNodeList = new ndL();
- var l = this.length;
- var i;
+ let newNodeList = new ndL();
+ let l = this.length;
+ let i;
  //this.forEach(function(node) {
  for(i=0; i<l; i++){
    newNodeList.addNode(this[i]);
@@ -3440,8 +3439,8 @@ ndL.prototype.clone=function() {
  return newNodeList;
 }
 ndL.prototype.getWithoutRepetitions=function() {
- var newList = new ndL();
- var i;
+ let newList = new ndL();
+ let i;
  newList.name = this.name;
  for(i = 0; this[i]!=null; i++) {
    if(newList.get(this[i].id) == null) newList.addNode(this[i]);
@@ -3449,7 +3448,7 @@ ndL.prototype.getWithoutRepetitions=function() {
  return newList;
 }
 ndL.prototype.removeElements=function(nodes) {
- var i;
+ let i;
  for(i = 0; this[i]!=null; i++) {
    //if(elements.indexOf(this[i]) > -1) {
    // c.l('                          this[i].id:', this[i].id);
@@ -3470,8 +3469,8 @@ relL.prototype.removeRelation=function(relation) {
    this.removeNode(relation);
 }
 relL.prototype.getRelationsWithNode=function(node) {
- var i;
- var filteredRelations = [];
+ let i;
+ let filteredRelations = [];
  for(i = 0; this[i] != null; i++) {
    var relation = this[i];
    if(relation.node0 == node || relation.node1 == node) {
@@ -3482,8 +3481,8 @@ relL.prototype.getRelationsWithNode=function(node) {
  return filteredRelations;
 }
 relL.prototype.getRelatedNodesToNode=function(node) {
- var i;
- var relatedNodes = new ndL();
+ let i;
+ let relatedNodes = new ndL();
  for(i = 0; i < this.length; i++) {
    var relation = this[i];
    if(relation.node0.id == node.id) {
@@ -3496,8 +3495,8 @@ relL.prototype.getRelatedNodesToNode=function(node) {
  return relatedNodes;
 }
 relL.prototype.getChildrenOfNode=function(node) {
- var i;
- var childNodes = new ndL();
+ let i;
+ let childNodes = new ndL();
  for(i = 0; i < this.length; i++) {
    var relation = this[i];
    if(relation.node0.id == node.id) {
@@ -3508,9 +3507,9 @@ relL.prototype.getChildrenOfNode=function(node) {
 }
 relL.prototype.getAllRelationsBetweenNodes=function(node0, node1, directed) {
  //TODO: to be improved (check node1 on node0.relations) (see: nodesAreConnected)
- var i;
+ let i;
  directed = directed == null ? false : directed;
- var filteredRelations = [];
+ let filteredRelations = [];
  for(i = 0; this[i] != null; i++) {
    var relation = this[i];
    if((relation.node0 == node0 && relation.node1 == node1) || (!directed && relation.node0 == node1 && relation.node1 == node0)) {
@@ -3534,9 +3533,9 @@ relL.prototype.getFirstRelationBetweenNodes=function(node0, node1, directed) { /
 relL.prototype.getFirstRelationByIds=function(id0, id1, directed) {
  //TODO: to be improved (check node1 on node0.relations) (see: nodesAreConnected)
  //TODO: make it work with ids
- var i;
- var _directed = directed || false;
- var relation;
+ let i;
+ let _directed = directed || false;
+ let relation;
  for(i = 0; this[i] != null; i++) {
    relation = this[i];
    if(relation.node0.id == id0 && relation.node1.id == id1) {
@@ -3571,7 +3570,7 @@ recL.prototype.getFrame=function() {//TODO: use RectangleOperators.minRect
   return frame;
 }
 recL.prototype.clone=function() {
- var newRectangleList = new recL();
+ let newRectangleList = new recL();
  for(var i = 0; this[i] != null; i++) {
    newRectangleList[i] = this[i].clone();
  }
@@ -3584,10 +3583,10 @@ recL.prototype.factor=function() {
 }
 
 recL.prototype.getIntersectionArea=function() {
- var rect0;
- var rect1;
- var intersectionArea = 0;
- var intersection;
+ let rect0;
+ let rect1;
+ let intersectionArea = 0;
+ let intersection;
  for(var i = 0; this[i + 1] != null; i++) {
    rect0 = this[i];
    for(var j = i + 1; this[j] != null; j++) {
@@ -3672,7 +3671,7 @@ Net.prototype.addRelation=function(relation) {
 Net.prototype.connect=function(node0, node1, id, weight, content) {
  id = id || (node0.id + "_" + node1.id);
  weight = weight || 1;
- var relation = new Rel(id, id, node0, node1, weight);
+ let relation = new Rel(id, id, node0, node1, weight);
  this.addRelation(relation);
  relation.content = content;
  return relation;
@@ -3703,8 +3702,8 @@ Net.prototype.removeRelation=function(relation) {
  relation.node1.fromRelations.removeRelation(relation);
 }
 Net.prototype.removeIsolatedNodes=function(minDegree=1) {
- var i;
- var nRemoved = 0;
+ let i;
+ let nRemoved = 0;
   for(i = 0; this.nodes[i] != null; i++) {
    if(this.nodes[i].getDegree() < minDegree) {
      this.nodes[i]._toRemove = true;
@@ -3720,14 +3719,14 @@ Net.prototype.removeIsolatedNodes=function(minDegree=1) {
   return nRemoved;
 }
 Net.prototype.lightClone=function(){
- var newNetwork = new Net();
+ let newNetwork = new Net();
  newNetwork.nodes = this.nodes;
  newNetwork.relations = this.relations;
  return newNetwork;
 }
 Net.prototype.clone=function(nodePropertiesNames, relationPropertiesNames, idsSubfix, namesSubfix) {
- var newNetwork = new Net();
- var newNode, newRelation;
+ let newNetwork = new Net();
+ let newNode, newRelation;
   if(nodePropertiesNames==null) nodePropertiesNames=[];
  if(relationPropertiesNames==null) relationPropertiesNames=[];
   idsSubfix = idsSubfix == null ? '' : String(idsSubfix);
@@ -3795,16 +3794,16 @@ Tr.prototype.getLevel=function(level) {
  level = level===0?0:level;
   var newNodeList = new ndL();
  newNodeList.name = "level_"+level;
- var l = this.nodes.length;
- var i;
+ let l = this.nodes.length;
+ let i;
  for(i = 0; i<l; i++) {
    if(this.nodes[i].level == level) newNodeList.addNode(this.nodes[i]);
  }
  return newNodeList;
 }
 Tr.prototype.getLeaves=function(node) {
- var leaves = new ndL();
- var i, l;
+ let leaves = new ndL();
+ let i, l;
  leaves.name = "leaves";
  if(node) {
    if(node.to.length === 0) {
@@ -3842,7 +3841,7 @@ Tr.prototype.assignDescentWeightsToNodes=function() {
  this._assignDescentWeightsToNode(this.nodes[0]);
 }
 Tr.prototype._assignDescentWeightsToNode=function(node) {
- var i;
+ let i;
  if(node.to.length === 0) {
    node.descentWeight = node.weight;
    return node.descentWeight;
@@ -3867,8 +3866,8 @@ Tr.prototype.traverse=function(nodeStart,mode,fnCallback) {
  }
  mode = mode == null ? 0 : mode;
   var aKeep=[nodeStart];
- var i,n,nodesChildren,iCount=0,bProcessChildren;
- var retNodeList = new ndL();
+ let i,n,nodesChildren,iCount=0,bProcessChildren;
+ let retNodeList = new ndL();
   while(aKeep.length>0){
    n = mode == 0 ? aKeep.pop() : aKeep.shift();
    bProcessChildren = true;
@@ -3921,9 +3920,9 @@ Tr.prototype.buildFilteredTree=function(nodesStart) {
  if(nodesStart.type != 'ndL')
    throw new Error('Invalid input type for buildFilteredTree');
   var treeRet = this.clone();
- var nodesAncestors = this.getAncestorsOf(nodesStart);
- var nodesRemove = new ndL();
- var nodeTest, i;
+ let nodesAncestors = this.getAncestorsOf(nodesStart);
+ let nodesRemove = new ndL();
+ let nodeTest, i;
  for(i=0; i < treeRet.nodes.length; i++){
    nodeTest = treeRet.nodes[i];
    if(nodesAncestors.get(nodeTest.id) == null &&
@@ -3943,8 +3942,8 @@ Tr.prototype.clone=function(nodePropertiesNames, relationPropertiesNames, idsSub
  // We should have a better way of keeping it in one location.
  // Also, the cloning of Nodes with all their extra custom properties is problematic.
  // Ideally, we use a solution that handles this automatically, perhaps using getOwnPropertyNames
- var newTree = new Tr();
- var newNode, newRelation;
+ let newTree = new Tr();
+ let newNode, newRelation;
  newTree.nLevels = this.nLevels;
   if(nodePropertiesNames==null) nodePropertiesNames=[];
  if(relationPropertiesNames==null) relationPropertiesNames=[];
@@ -4005,7 +4004,7 @@ dI.prototype.getProduct=function(object) { //TODO: complete with more object typ
 nT.prototype.getMax=function() {
  if(this.length === 0) return null;
   var max = this[0].getMax();
- var i;
+ let i;
   for(i = 1; this[i] != null; i++) {
    max = Math.max(this[i].getMax(), max);
  }
@@ -4014,7 +4013,7 @@ nT.prototype.getMax=function() {
 nT.prototype.getMaxValues=function() {
  if(this.length === 0) return null;
   var maxs = new nL();
- var i;
+ let i;
   for(i = 0; this[i] != null; i++) {
    maxs[i] = this[i].getMax();
  }
@@ -4023,7 +4022,7 @@ nT.prototype.getMaxValues=function() {
 nT.prototype.getMaxCell=function() {
  if(this.length === 0) return null;
   var location = createListWithSameElement(2,0);
- var i,j,m;
+ let i,j,m;
  m = this[0][0];
  for(i = 0;i < this.length;i++){
    for(j = 0;j < this[i].length;j++){
@@ -4039,7 +4038,7 @@ nT.prototype.getMaxCell=function() {
 nT.prototype.getMin=function() {
  if(this.length === 0) return null;
   var min = this[0].getMin();
- var i;
+ let i;
   for(i = 1; this[i] != null; i++) {
    min = Math.min(this[i].getMin(), min);
  }
@@ -4048,7 +4047,7 @@ nT.prototype.getMin=function() {
 nT.prototype.getMinValues=function() {
  if(this.length === 0) return null;
   var mins = new nL();
- var i;
+ let i;
  
  for(i = 0; this[i] != null; i++) {
    mins[i] = this[i].getMin();
@@ -4058,7 +4057,7 @@ nT.prototype.getMinValues=function() {
 nT.prototype.getMinCell=function() {
  if(this.length === 0) return null;
   var location = createListWithSameElement(2,0);
- var i,j,m;
+ let i,j,m;
  m = this[0][0];
  for(i = 0;i < this.length;i++){
    for(j = 0;j < this[i].length;j++){
@@ -4073,8 +4072,8 @@ nT.prototype.getMinCell=function() {
 }
 nT.prototype.getInterval=function(bIgnoreNaN) {
  if(this.length === 0) return null;
- var rangeInterval = (this[0]).getInterval(bIgnoreNaN);
- var n = this.length;
+ let rangeInterval = (this[0]).getInterval(bIgnoreNaN);
+ let n = this.length;
  for(var i = 1; i<n; i++) {
    var newRange = (this[i]).getInterval(bIgnoreNaN);
    rangeInterval.x = Math.min(rangeInterval.x, newRange.x);
@@ -4084,21 +4083,21 @@ nT.prototype.getInterval=function(bIgnoreNaN) {
 }
 nT.prototype.getFrame=function() {
  if(this.length<2) return;
- var i0 = this[0].getInterval();
- var i1 = this[1].getInterval();
+ let i0 = this[0].getInterval();
+ let i1 = this[1].getInterval();
  return new Rec(i0.x, i1.x, i0.getAmplitude(), i1.getAmplitude());
 }
-nT.prototype.getSums=function() {
- var nl = new nL();
- var l = this.length;
+nT.prototype.getSums=function(factor=1) {
+ let nl = new nL();
+ let l = this.length;
  for(var i = 0; i<l; i++) {
-   nl[i] = this[i].getSum();
+   nl[i] = this[i].getSum()*factor;
  }
  return nl;
 }
 nT.prototype.getRowsSums=function() {
- var sums = this[0].clone();
- var nl;
+ let sums = this[0].clone();
+ let nl;
  for(var i = 1; this[i] != null; i++) {
    nl = this[i];
    for(var j = 0; nl[j] != null; j++) {
@@ -4108,18 +4107,18 @@ nT.prototype.getRowsSums=function() {
  return sums;
 }
 nT.prototype.getAverages=function() {
- var nl = new nL();
+ let nl = new nL();
  for(var i = 0; this[i] != null; i++) {
    nl[i] = this[i].getMean();
  }
  return nl;
 }
 nT.prototype.getRowsAverages=function() {
- var l = this.length;
- var averages = this[0].clone().factor(1 / l);
- var nl;
- var i, j;
- var length;
+ let l = this.length;
+ let averages = this[0].clone().factor(1 / l);
+ let nl;
+ let i, j;
+ let length;
  for(i = 1; i<l; i++) {
    nl = this[i];
    length = nl.length;
@@ -4130,10 +4129,10 @@ nT.prototype.getRowsAverages=function() {
  return averages;
 }
 nT.prototype.getIntervals=function() {
- var l = this.length;
- var nl;
- var i;
- var intervalList = new L();//TODO: convert into iL once available
+ let l = this.length;
+ let nl;
+ let i;
+ let intervalList = new L();//TODO: convert into iL once available
  for(i = 0; i<l; i++) {
    nl = this[i];
    intervalList.push(nl.getInterval());
@@ -4141,10 +4140,10 @@ nT.prototype.getIntervals=function() {
  return intervalList;
 }
 nT.prototype.factor=function(value) {
- var newTable = new nT();
- var i;
- var nl;
- var l = this.length;
+ let newTable = new nT();
+ let i;
+ let nl;
+ let l = this.length;
   switch(_typeOf(value)) {
    case 'number':
      for(i = 0; i<l; i++) {
@@ -4163,10 +4162,10 @@ nT.prototype.factor=function(value) {
  return newTable;
 }
 nT.prototype.add=function(value) {
- var newTable = new nT();
- var nl;
- var i;
- var l = this.length;
+ let newTable = new nT();
+ let nl;
+ let i;
+ let l = this.length;
   for(i = 0; i<l; i++) {
    nl = this[i];
    newTable[i] = nl.add(value);
@@ -4175,24 +4174,24 @@ nT.prototype.add=function(value) {
  return newTable;
 }
 dL.prototype.getTimes=function() {
- var i;
- var nl = new nL();
+ let i;
+ let nl = new nL();
  for(i = 0; this[i] != null; i++) {
    nl.push(this[i].getTime());
  }
  return nl;
 }
 dL.prototype.getYears=function() {
- var i;
- var nl = new nL();
+ let i;
+ let nl = new nL();
  for(i = 0; this[i] != null; i++) {
    nl.push(this[i].getYear());
  }
  return nl;
 }
 dL.prototype.getFullYears=function() {
- var i;
- var nl = new nL();
+ let i;
+ let nl = new nL();
  for(i = 0; this[i] != null; i++) {
    nl.push(this[i].getFullYear());
  }
@@ -4200,8 +4199,8 @@ dL.prototype.getFullYears=function() {
 }
 dL.prototype.getMin=function() {
  if(this.length === 0) return null;
- var min = this[0];
- var i;
+ let min = this[0];
+ let i;
  for(i = 1; this[i] != null; i++) {
    min = min < this[i] ? min : this[i];
  }
@@ -4209,8 +4208,8 @@ dL.prototype.getMin=function() {
 }
 dL.prototype.getMax=function() {
  if(this.length === 0) return null;
- var max = this[0];
- var i;
+ let max = this[0];
+ let i;
  for(i = 1; this[i] != null; i++) {
    max = max > this[i] ? max : this[i];
  }
@@ -4231,8 +4230,8 @@ dL.prototype.getInterval=function() {
 nL.prototype.getMin=function() {
  //TODO:store result and retrieve while the nL doesn't change;
  if(this.length === 0) return null;
- var i;
- var min = this[0];
+ let i;
+ let min = this[0];
  for(i = 1; i < this.length; i++) {
    min = Math.min(min, this[i]);
  }
@@ -4241,9 +4240,9 @@ nL.prototype.getMin=function() {
 nL.prototype.getMax=function() {
  //TODO:store result and retrieve while the nL doesn't change;
  if(this.length === 0) return null;
- var i;
- var max = this[0];
- var l = this.length;
+ let i;
+ let max = this[0];
+ let l = this.length;
  for(i = 1; i < l; i++) {
    max = Math.max(max, this[i]);
  }
@@ -4251,9 +4250,9 @@ nL.prototype.getMax=function() {
 }
 nL.prototype.getIndexOfMin=function() {
  if(this.length === 0) return null;
- var i;
- var min = this[0];
- var imin = 0;
+ let i;
+ let min = this[0];
+ let imin = 0;
  for(i = 1; i < this.length; i++) {
    if(this[i] < min){
      min = this[i];
@@ -4264,9 +4263,9 @@ nL.prototype.getIndexOfMin=function() {
 }
 nL.prototype.getIndexOfMax=function() {
  if(this.length === 0) return null;
- var i;
- var max = this[0];
- var imax = 0;
+ let i;
+ let max = this[0];
+ let imax = 0;
  for(i = 1; i < this.length; i++) {
    if(this[i] > max){
      max = this[i];
@@ -4277,9 +4276,9 @@ nL.prototype.getIndexOfMax=function() {
 }
 nL.prototype.getAmplitude=function() {
  if(this.length === 0) return 0;
- var min = this[0];
- var max = this[0];
- var l = this.length;
+ let min = this[0];
+ let max = this[0];
+ let l = this.length;
  for(var i = 1; i<l; i++) {
    min = Math.min(min, this[i]);
    max = Math.max(max, this[i]);
@@ -4288,9 +4287,9 @@ nL.prototype.getAmplitude=function() {
 }
 nL.prototype.getSum=function() {
  if(this.length === 0) return 0;
- var i;
- var sum = this[0];
- var l = this.length;
+ let i;
+ let sum = this[0];
+ let l = this.length;
  for(i = 1; i < l; i++) {
    sum += this[i];
  }
@@ -4298,9 +4297,9 @@ nL.prototype.getSum=function() {
 }
 nL.prototype.getProduct=function() {
  if(this.length === 0) return null;
- var i;
- var product = this[0];
- var l = this.length;
+ let i;
+ let product = this[0];
+ let l = this.length;
  for(i = 1; i < l; i++) {
    product *= this[i];
  }
@@ -4309,10 +4308,10 @@ nL.prototype.getProduct=function() {
 nL.prototype.getInterval=function(bIgnoreNaN) {
  if(this.length === 0) return null;
  bIgnoreNaN = bIgnoreNaN == null ? false : bIgnoreNaN;
- var max = -Infinity;
- var min = Infinity;
- var l = this.length;
- var i;
+ let max = -Infinity;
+ let min = Infinity;
+ let l = this.length;
+ let i;
  for(i = 0; i<l; i++) {
    if(bIgnoreNaN && isNaN(this[i])) continue;
    max = Math.max(max, this[i]);
@@ -4323,29 +4322,29 @@ nL.prototype.getInterval=function(bIgnoreNaN) {
    min = -Infinity;
    max =  Infinity;
  }
- var interval = new I(min, max);
+ let interval = new I(min, max);
  return interval;
 }
 nL.prototype.getIntervalWithAverage=function() {
  if(this.length === 0) return null;
- var max = this[0];
- var min = this[0];
- var average = this[0];
- var l = this.length;
- var i;
+ let max = this[0];
+ let min = this[0];
+ let average = this[0];
+ let l = this.length;
+ let i;
  for(i = 1; i<l; i++) {
    max = Math.max(max, this[i]);
    min = Math.min(min, this[i]);
    average+=this[i];
  }
- var interval = new I(min, max);
+ let interval = new I(min, max);
  interval.average = average/l;
  return interval;
 }
 nL.prototype.getNumbersSimplified=function(method, param) {
- var newList;
- var i, j;
- var l = this.length;
+ let newList;
+ let i, j;
+ let l = this.length;
   method = method||0;
  param = param||0;
   newList = new nL();
@@ -4416,59 +4415,59 @@ nL.prototype.getMean=function() {//@todo: change name to getMean
 }
 nL.prototype.getGeometricMean=function() {
  /*
- var s = 0;
+ let s = 0;
  //this.forEach(function(val) {
- var l = this.length;
+ let l = this.length;
  for(var i = 0; i<l; i++) {
    s += Math.log(this[i]);
  }
  return Math.pow(Math.E, s / this.length);
  */
 if(this.length==0) return 0;
-var s = this[0];
+let s = this[0];
  for(var i = 1; i<this.length; i++) {
    s *= this[i];
  }
  return Math.pow(s, 1 / this.length);
 }
 nL.prototype.getNorm=function() {
- var sq = 0;
- var l = this.length;
+ let sq = 0;
+ let l = this.length;
  for(var i = 0; i<l; i++) {
    sq += Math.pow(this[i], 2);
  }
  return Math.sqrt(sq);
 }
-nL.prototype.getVariance=function() {
- var sd = 0;
- var average = this.getMean();
- var l = this.length;
+nL.prototype.getVariance=function(mean) {
+ let sd = 0;
+ let average = mean||this.getMean();
+ let l = this.length;
  for(var i = 0; i<l; i++) {
    sd += Math.pow(this[i] - average, 2);
  }
  return sd / this.length;
 }
-nL.prototype.getStandardDeviation=function() {
- return Math.sqrt(this.getVariance());
+nL.prototype.getStandardDeviation=function(mean) {
+ return Math.sqrt(this.getVariance(mean));
 }
 nL.prototype.getMedian=function() {
- var sorted = this.getSorted(true);
- var prop = (this.length - 1) / 2;
- var entProp = Math.floor(prop);
- var onIndex = prop == entProp;
+ let sorted = this.getSorted(true);
+ let prop = (this.length - 1) / 2;
+ let entProp = Math.floor(prop);
+ let onIndex = prop == entProp;
  return onIndex ? sorted[prop] : (0.5 * sorted[entProp] + 0.5 * sorted[entProp + 1]);
 }
 nL.prototype.getQuantiles=function(nQuantiles, mode) {//TODO: defines different options for return
  nQuantiles = nQuantiles==null?4:nQuantiles;
  mode = mode || 0;
   var l = this.length;
- var sorted = this.getSorted(true);
- var prop = l/nQuantiles;
- var entProp = Math.floor(prop);
- var onIndex = prop == entProp;
- var quantiles = new nL();
+ let sorted = this.getSorted(true);
+ let prop = l/nQuantiles;
+ let entProp = Math.floor(prop);
+ let onIndex = prop == entProp;
+ let quantiles = new nL();
  quantiles.name = this.name;
- var i;
+ let i;
   for(i = 0; i < nQuantiles - 1; i++) {
    quantiles[i] = onIndex ? sorted[(i + 1) * prop] : (0.5 * sorted[(i + 1) * entProp] + 0.5 * sorted[(i + 1) * entProp + 1]);
  }
@@ -4484,8 +4483,8 @@ nL.prototype.getQuantiles=function(nQuantiles, mode) {//TODO: defines different 
  }
  
  numberQuantil.name = this.name;
- var j;
- var words;
+ let j;
+ let words;
  if(mode==3) words = nQuantiles==2?['low', 'high']:['low', 'medium', 'high'];
   for(i=0; i<l; i++){
    for(j=0; j<quantiles.length; j++){
@@ -4518,8 +4517,8 @@ nL.prototype.getSorted=function(ascending) {
 nL.prototype.getSortIndexes=function(descending) {
  if(descending == null) descending = true;
   var pairs = [];
- var newList = new nL();
- var l = this.length;
+ let newList = new nL();
+ let l = this.length;
   if(this.length === 0) return newList;
   for(var i = 0; i<l; i++) {
    pairs.push([i, this[i]]);
@@ -4590,12 +4589,12 @@ nL.prototype.getNormalized=function(factor) {
   factor = factor == null ? 1 : factor;
   if(this.length === 0) return null;
  
- var i;
- var interval = this.getInterval();
+ let i;
+ let interval = this.getInterval();
   var newList = this.cleanNonFinites(interval);
  if(this!=newList) return newList.getNormalized(factor);
   var a = interval.getAmplitude();
- var newNumberList;
+ let newNumberList;
  if(a===0) {
    newNumberList = createListWithSameElement(this.length, 1);
    newNumberList.name = this.name;
@@ -4622,8 +4621,8 @@ nL.prototype.getNormalizedToMax=function(factor) {
   factor = factor == null ? 1 : factor;
   if(this.length === 0) return null;
  
- var i;
- var max = this.getMax();
+ let i;
+ let max = this.getMax();
   var newList = this.cleanNonFinites();
  if(this!=newList) return newList.getNormalizedToMax(factor);
    var newNumberList = new nL();
@@ -4634,9 +4633,9 @@ nL.prototype.getNormalizedToMax=function(factor) {
  return newNumberList;
 }
 nL.prototype.factor=function(value) {
- var i;
- var newNumberList = new nL();
- var l = this.length;
+ let i;
+ let newNumberList = new nL();
+ let l = this.length;
   if(Array.isArray(value)){
    for(i = 0; i < l; i++) {
      newNumberList.push(this[i] * value[i%this.length]);
@@ -4650,10 +4649,10 @@ nL.prototype.factor=function(value) {
  return newNumberList;
 }
 nL.prototype.add=function(object) {
- var i;
- var newNumberList = new nL();
- var type = _typeOf(object);
- var l = this.length;
+ let i;
+ let newNumberList = new nL();
+ let type = _typeOf(object);
+ let l = this.length;
   switch(type) {
    case 'number':
      for(i = 0; i<l; i++) {
@@ -4670,10 +4669,10 @@ nL.prototype.add=function(object) {
  return newNumberList;
 }
 nL.prototype.subtract=function(object) {
- var i;
- var newNumberList = new nL();
- var type = _typeOf(object);
- var l = this.length;
+ let i;
+ let newNumberList = new nL();
+ let type = _typeOf(object);
+ let l = this.length;
   switch(type) {
    case 'number':
      for(i = 0; i<l; i++) {
@@ -4690,10 +4689,10 @@ nL.prototype.subtract=function(object) {
  return newNumberList;
 }
 nL.prototype.divide=function(object) {
- var i;
- var newNumberList = new nL();
- var type = _typeOf(object);
- var l = this.length;
+ let i;
+ let newNumberList = new nL();
+ let type = _typeOf(object);
+ let l = this.length;
   switch(type) {
    case 'number':
      for(i = 0; i<l; i++) {
@@ -4710,9 +4709,9 @@ nL.prototype.divide=function(object) {
  return newNumberList;
 }
 nL.prototype.sqrt=function() {
- var i;
- var newNumberList = new nL();
- var l = this.length;
+ let i;
+ let newNumberList = new nL();
+ let l = this.length;
   for(i = 0; i < l; i++) {
    newNumberList.push(Math.sqrt(this[i]));
  }
@@ -4720,9 +4719,9 @@ nL.prototype.sqrt=function() {
  return newNumberList;
 }
 nL.prototype.pow=function(power) {
- var i;
- var newNumberList = new nL();
- var l = this.length;
+ let i;
+ let newNumberList = new nL();
+ let l = this.length;
  for(i = 0; i < l; i++) {
    newNumberList.push(Math.pow(this[i], power));
  }
@@ -4732,8 +4731,8 @@ nL.prototype.pow=function(power) {
 nL.prototype.log=function(add) {
  add = add || 0;
   var i;
- var newNumberList = new nL();
- var l = this.length;
+ let newNumberList = new nL();
+ let l = this.length;
  for(i = 0; i<l; i++) {
    newNumberList[i] = Math.log(this[i] + add);
  }
@@ -4741,9 +4740,9 @@ nL.prototype.log=function(add) {
   return newNumberList;
 }
 nL.prototype.floor=function() {
- var i;
- var newNumberList = new nL();
- var l = this.length;
+ let i;
+ let newNumberList = new nL();
+ let l = this.length;
  for(i = 0; i < l; i++) {
    newNumberList.push(Math.floor(this[i]));
  }
@@ -4753,15 +4752,15 @@ nL.prototype.floor=function() {
 nL.prototype.approach=function(destinty, speed) {
  speed = speed || 0.5;
   var i;
- var antispeed = 1 - speed;
- var l = this.length;
+ let antispeed = 1 - speed;
+ let l = this.length;
   for(i = 0; i<l; i++) {
    this[i] = antispeed * this[i] + speed * destinty[i];
  }
  return true;
 }
 nL.prototype.isEqual=function(nl) {
- var l = this.length;
+ let l = this.length;
  if(nl == null || nl.length != l) {
    return false;
  }
@@ -4772,10 +4771,10 @@ nL.prototype.isEqual=function(nl) {
 }
 nL.prototype.addRandom=function(interval){
  if(interval == null) interval = new I(0,1);
- var i;
- var newNumberList = new nL();
- var l = this.length;
- var a = interval.getAmplitude();
+ let i;
+ let newNumberList = new nL();
+ let l = this.length;
+ let a = interval.getAmplitude();
   for(i = 0; i < l; i++) {
    newNumberList[i] =  this[i] + Math.random()*a + interval.x;
  }
@@ -4785,7 +4784,7 @@ nL.prototype.addRandom=function(interval){
 }
 nL.prototype.trim=function(min, max){
  if(min==null && max==null) return this;
- var newNumberList = new nL();
+ let newNumberList = new nL();
   for(var i = 0; i < this.length; i++) {
    if(min!=null) newNumberList[i] =  Math.max(this[i], min);
    if(max!=null) newNumberList[i] =  Math.min(this[i], max);
@@ -4795,7 +4794,7 @@ nL.prototype.trim=function(min, max){
  return newNumberList;
 }
 nL.prototype.clone=function() {
- var newList = nL.toL(this.slice(), false);
+ let newList = nL.toL(this.slice(), false);
  newList.name = this.name;
  newList.fnDerived = this.fnDerived;
  return newList;
@@ -4823,22 +4822,22 @@ I.prototype.getSign=function() {
  return Math.abs(this.y - this.x)/(this.y - this.x);
 }
 I.prototype.getScaled=function(value) {
- var midAmp = 0.5 * (this.y - this.x);
- var middle = (this.x + this.y) * 0.5;
+ let midAmp = 0.5 * (this.y - this.x);
+ let middle = (this.x + this.y) * 0.5;
  return new I(middle - midAmp * value, middle + midAmp * value);
 }
 I.prototype.getScaledFromProportion=function(value, proportion) {
- var antiP = 1 - proportion;
- var amp0 = proportion * (this.y - this.x);
- var amp1 = antiP * (this.y - this.x);
- var middle = antiP * this.x + proportion * this.y;
+ let antiP = 1 - proportion;
+ let amp0 = proportion * (this.y - this.x);
+ let amp1 = antiP * (this.y - this.x);
+ let middle = antiP * this.x + proportion * this.y;
  return new I(middle - amp0 * value, middle + amp1 * value);
 }
 I.prototype.add=function(value) {
  return new I(this.x + value, this.y + value);
 }
 I.prototype.invert=function() {
- var swap = this.x;
+ let swap = this.x;
  this.x = this.y;
  this.y = swap;
 }
@@ -4856,16 +4855,16 @@ I.prototype.getInverseInterpolatedValue=function(value) {
  return (value - this.x) / (this.y - this.x);
 }
 I.prototype.getInterpolatedValues=function(nl) {
- var newNumberList = new nL();
- var nElements = nl.length;
+ let newNumberList = new nL();
+ let nElements = nl.length;
  for(var i = 0; i < nElements; i++) {
    newNumberList[i] = this.getInterpolatedValue(nl[i]);
  }
  return newNumberList;
 }
 I.prototype.getInverseInterpolatedValues=function(nl) {
- var newNumberList = new nL();
- var nElements = nl.length;
+ let newNumberList = new nL();
+ let nElements = nl.length;
  for(var i = 0; i < nElements; i++) {
    newNumberList.push(this.getInverseInterpolatedValue(nl[i]));
  }
@@ -4878,7 +4877,7 @@ I.prototype.unite=function(interval) {
  return new I(Math.min(this.x, interval.x), Math.max(this.y, interval.y));
 }
 I.prototype.clone=function() {
- var newInterval = new I(this.x, this.y);
+ let newInterval = new I(this.x, this.y);
  newInterval.name = name;
  return newInterval;
 }
@@ -4890,7 +4889,7 @@ I.prototype.isEqual=function(interval) {
  return this.x == interval.x && this.y == interval.y;
 }
 I.prototype.remap=function(val,intTarget) {
- var f = this.getInverseInterpolatedValue(val);
+ let f = this.getInverseInterpolatedValue(val);
  return intTarget.getInterpolatedValue(f);
 }
 
@@ -4916,8 +4915,8 @@ cScale.prototype.getColor=function(value) {
 }
 
 cScale.prototype.getColorList=function(nColors) {
- var colorList = new cL();
- var i;
+ let colorList = new cL();
+ let i;
  for(i = 0; i < nColors; i++) {
    colorList.push(this.getColor(i / (nColors - 1)));
  }
@@ -5005,7 +5004,7 @@ MetaCanvas.prototype._init=function (autoStart) {
   this._adjustCanvas(this.dimensions);
   // YY TODO allow user to bind to these events as well. Probably
  // through a generic event mechanism. c.f. global addInteractionEventListener
- var boundMouseOrKeyboard = this._onMouseOrKeyBoard.bind(this);
+ let boundMouseOrKeyboard = this._onMouseOrKeyBoard.bind(this);
    if (this.IS_TOUCH) {
    this.canvas.addEventListener("touchstart", boundMouseOrKeyboard, false);
    this.canvas.addEventListener("touchend", boundMouseOrKeyboard, false);
@@ -5030,8 +5029,8 @@ MetaCanvas.prototype._init=function (autoStart) {
  this.canvas.addEventListener("keyup", boundMouseOrKeyboard, false);
  document.addEventListener("keyup", boundMouseOrKeyboard, false);
   // Setup resize listeners
- var boundResize = this._onResize.bind(this);
- var elementDoc, elementWindow;
+ let boundResize = this._onResize.bind(this);
+ let elementDoc, elementWindow;
  // "this.container" is usually expectd to be properly set....
  if( this.container != null ){
    elementDoc = this.container.ownerDocument;
@@ -5076,14 +5075,14 @@ MetaCanvas.prototype._init=function (autoStart) {
  this.memory = {};
 }
 MetaCanvas.prototype._getRelativeMousePos=function (evt) {
- var rect = this.canvas.getBoundingClientRect();
+ let rect = this.canvas.getBoundingClientRect();
  return {
    x: evt.clientX - rect.left,
    y: evt.clientY - rect.top
  };
 }
 MetaCanvas.prototype._onMouseOrKeyBoard=function (e) {
- var pos;
+ let pos;
   if (this.IS_TOUCH) {
    var touches = e.touches != null && e.touches[0] != null ? e.touches[0] : e.targetTouches[0]
  }
@@ -5163,8 +5162,8 @@ MetaCanvas.prototype._onMouseOrKeyBoard=function (e) {
 }
 MetaCanvas.prototype._onResize=function (e) {
 
- var currentW = this.W;
- var currentH = this.H;
+ let currentW = this.W;
+ let currentH = this.H;
  // If the user has set the dimensions explicitly
  // we do not auto adjust the canvas.
  if (this.dimensions === undefined) {
@@ -5228,7 +5227,7 @@ MetaCanvas.prototype._stopCycle=function (callback) {
  }
 }
 MetaCanvas.prototype.setDimensions=function (width, height, width2, height2) {
- var x,y,w,h
+ let x,y,w,h
  if(width2!=null && height2!=null) {
    x = width
    y = height
@@ -5275,7 +5274,7 @@ MetaCanvas.prototype.cycleFor=function (time) {
  }
 }
 MetaCanvas.prototype._stopAfter=function (time, callback) {
- var self = this;
+ let self = this;
  this._setTimeOutId = setTimeout(function () {
    self._stopCycle();
    if (callback) {
@@ -5365,7 +5364,7 @@ MetaCanvas.prototype._emit=function (eventName, e) {
      break;
  }
   // Actually dispatch the event after any special handling
- var listenersLength = this._listeners[eventName].length;
+ let listenersLength = this._listeners[eventName].length;
  for (var i = 0; i < listenersLength; i++) {
    var callback = this._listeners[eventName][i];
    callback.call(callback.__context, e);
@@ -5387,7 +5386,7 @@ MetaCanvas.prototype.stop=function () {
  return this._stopCycle();
 }
 MetaCanvas.prototype.cycleOnMouseMovement=function (time) {
- var self = this;
+ let self = this;
  if (this.cycleOnMouseMovementListener) {
    if (this._LISTENERS_ADDED && time <= 1) {
       this.canvas.removeEventListener('mousemove', this.cycleOnMouseMovementListener, false);
@@ -5433,7 +5432,7 @@ MetaCanvas.prototype.on=function (eventName, callback, context) {
  this._listeners[eventName].push(callback);
 }
 MetaCanvas.prototype.off=function (eventName, callback) {
- var index = this._listeners[eventName].indexOf(callback);
+ let index = this._listeners[eventName].indexOf(callback);
  if (index > -1) {
    this._listeners[eventName].splice(index, 1);
  }
@@ -5510,7 +5509,7 @@ MetaCanvas.prototype.fsCircle=function (x, y, r) {
  this.context.stroke();
 }
 MetaCanvas.prototype.fEllipse=function (x, y, rW, rH) {
- var k = 0.5522848, // 4 * ((√(2) - 1) / 3)
+ let k = 0.5522848, // 4 * ((√(2) - 1) / 3)
    ox = rW * k, // control point offset horizontal
    oy = rH * k, // control point offset vertical
    xe = x + rW, // x-end
@@ -5526,7 +5525,7 @@ MetaCanvas.prototype.fEllipse=function (x, y, rW, rH) {
  this.context.fill();
 }
 MetaCanvas.prototype.sEllipse=function (x, y, rW, rH) {
- var k = 0.5522848,
+ let k = 0.5522848,
    ox = rW * k,
    oy = rH * k,
    xe = x + rW,
@@ -5590,7 +5589,7 @@ MetaCanvas.prototype._linesM=function () {
    return;
  }
   var args = arguments[0];
- var p = new Pol();
+ let p = new Pol();
  this.context.beginPath();
  this.context.moveTo(args[0], args[1]);
  p[0] = new P(args[0], args[1]);
@@ -5614,7 +5613,7 @@ MetaCanvas.prototype.fsLines=function () {
  this.context.stroke();
 }
 MetaCanvas.prototype.fsLinesM=function () {
- var mouseOn = this._linesM(arguments);
+ let mouseOn = this._linesM(arguments);
  this.context.fill();
  this.context.stroke();
  return mouseOn;
@@ -5712,13 +5711,13 @@ MetaCanvas.prototype.lineM=function (x0, y0, x1, y1, d = 4) {
  return this._distToSegmentSquared(x0, y0, x1, y1) < d * d;
 }
 MetaCanvas.prototype._distToSegmentSquared=function (x0, y0, x1, y1) {
- var l2 = Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2);
+ let l2 = Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2);
  if (l2 === 0) return Math.pow(x0 - this.mX, 2) + Math.pow(y0 - this.mY, 2);
- var t = ((this.mX - x0) * (x1 - x0) + (this.mY - y0) * (y1 - y0)) / l2;
+ let t = ((this.mX - x0) * (x1 - x0) + (this.mY - y0) * (y1 - y0)) / l2;
  if (t <= 0) return Math.pow(x0 - this.mX, 2) + Math.pow(y0 - this.mY, 2);
  if (t >= 1) return Math.pow(x1 - this.mX, 2) + Math.pow(y1 - this.mY, 2);
- var px = x0 + t * (x1 - x0);
- var py = y0 + t * (y1 - y0);
+ let px = x0 + t * (x1 - x0);
+ let py = y0 + t * (y1 - y0);
  return Math.pow(px - this.mX, 2) + Math.pow(py - this.mY, 2);
 }
 MetaCanvas.prototype.bezierM=function (x0, y0, cx0, cy0, cx1, cy1, x1, y1, d) { //TODO: fix this mess!
@@ -5753,9 +5752,9 @@ MetaCanvas.prototype.fitImage=function (image, rectangle, mode) {
  if (image == null || rectangle == null) return;
  if(mode==null) mode = 0;
   var propIm = image.width / image.height;
- var propRc = rectangle.width / rectangle.height;
- var compProp = propIm / propRc;
- var condition;
+ let propRc = rectangle.width / rectangle.height;
+ let compProp = propIm / propRc;
+ let condition;
   switch(mode){
    case 0:
      condition = propIm >= propRc;
@@ -5883,13 +5882,13 @@ MetaCanvas.prototype.fTextArc=function (text, x, y, xCenter, yCenter, centered) 
    return;
  }
   var i;
- var r = Math.sqrt(Math.pow(x - xCenter, 2) + Math.pow(y - yCenter, 2));
- var a = Math.atan2(y - yCenter, x - xCenter);
+ let r = Math.sqrt(Math.pow(x - xCenter, 2) + Math.pow(y - yCenter, 2));
+ let a = Math.atan2(y - yCenter, x - xCenter);
  if (centered) {
    a -= this.getTextW(text) * 0.5 / r;
  }
- var xl, yl;
- var letters = text.split('');
+ let xl, yl;
+ let letters = text.split('');
  for (i = 0; letters[i] != null; i++) {
    xl = xCenter + r * Math.cos(a);
    yl = yCenter + r * Math.sin(a);
@@ -5918,11 +5917,11 @@ MetaCanvas.prototype.fTextRotatedM=function (text, x, y, angle, size) {
  this.context.fillText(text, 0, 0);
  this.context.restore();
   var dX = this.mX - x;
- var dY = this.mY - y;
- var d = Math.sqrt(dX * dX + dY * dY);
- var a = Math.atan2(dY, dX) - angle;
- var mXT = x + d * Math.cos(a);
- var mYT = y + d * Math.sin(a);
+ let dY = this.mY - y;
+ let d = Math.sqrt(dX * dX + dY * dY);
+ let a = Math.atan2(dY, dX) - angle;
+ let mXT = x + d * Math.cos(a);
+ let mYT = y + d * Math.sin(a);
   return mYT > y && mYT < y + size && mXT > x && mXT < x + this.context.measureText(text).width;
 }
 MetaCanvas.prototype.setTextDefaults=function (color, fontSize, fontName, align, baseline, style) {
@@ -5935,12 +5934,12 @@ MetaCanvas.prototype.setTextDefaults=function (color, fontSize, fontName, align,
   this.setText();
 }
 MetaCanvas.prototype.setText=function (color, fSize, fName, align, baseline, style) {
- var fontColor = ifDef(color, this.fontColor);
- var fontSize = ifDef(String(fSize), this.fontSize);
- var fontName = ifDef(fName, this.fontName);
- var fontAlign = ifDef(align, this.fontAlign);
- var fontBaseline = ifDef(baseline, this.fontBaseline);
- var fontStyle = ifDef(style, this.fontStyle);
+ let fontColor = ifDef(color, this.fontColor);
+ let fontSize = ifDef(String(fSize), this.fontSize);
+ let fontName = ifDef(fName, this.fontName);
+ let fontAlign = ifDef(align, this.fontAlign);
+ let fontBaseline = ifDef(baseline, this.fontBaseline);
+ let fontStyle = ifDef(style, this.fontStyle);
   if (fontStyle !== '') {
    fontStyle += ' ';
  }
@@ -5981,47 +5980,47 @@ MetaCanvas.prototype.nLines=function (text, width) {
 }
 
 MetaCanvas.prototype._textWidthSectionsInfo=function (text, width) {
-  if(this["sections_"+width+"_"+text]) return this["sections_"+width+"_"+text]
+    if(this["sections_"+width+"_"+text]) return this["sections_"+width+"_"+text]
 
     let newText = text.replace(/[\s\n]+/g, " ").trim()
-  let words = newText.split(" ").filter(w=>w!="")
-  let accumulatedSection = 0
-  let sections = []
-  let nLines = 1
-  let line = ""
-  let maxWidth = 0
-  words.forEach(w=>{
-    if(this.context.measureText(line+w).width>width){
-      nLines++
-      accumulatedSection+=line.length+1
-      sections.push(accumulatedSection)
-      maxWidth = Math.max(this.context.measureText(line).width, maxWidth)
-      line=""
-    }
-    line+=(line==""?"":" ")+w
-  })
-  maxWidth = Math.max(this.context.measureText(line).width, maxWidth)
+    let words = newText.split(" ").filter(w=>w!="")
+    let accumulatedSection = 0
+    let sections = []
+    let nLines = 1
+    let line = ""
+    let maxWidth = 0
+    words.forEach(w=>{
+        if(this.context.measureText(line+w).width>width && line!=""){
+            nLines++
+            accumulatedSection+=line.length+1
+            sections.push(accumulatedSection)
+            maxWidth = Math.max(this.context.measureText(line).width, maxWidth)
+            line=""
+        }
+        line+=(line==""?"":" ")+w
+    })
+    maxWidth = Math.max(this.context.measureText(line).width, maxWidth)
 
-  this["sections_"+width+"_"+text]={
-    sections,
-    nLines,
-    maxWidth,
-    newText
-  }
-  
-  return this["sections_"+width+"_"+text];
+    this["sections_"+width+"_"+text]={
+        sections,
+        nLines,
+        maxWidth,
+        newText
+    }
+
+    return this["sections_"+width+"_"+text];
 }
 
 
 MetaCanvas.prototype.getPixelColor=function (x, y) {
- var rgba = this.context.getImageData(x, y, 1, 1).data;
+ let rgba = this.context.getImageData(x, y, 1, 1).data;
  return 'rgba(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ',' + rgba[3] + ')';
 }
 MetaCanvas.prototype.getPixelColorRGBA=function (x, y) {
  return Array.prototype.slice.call(this.context.getImageData(x, y, 1, 1).data);
 }
 MetaCanvas.prototype.captureCanvas=function (x0, y0, w, h) {
- var im = new Image();
+ let im = new Image();
   if (x0 == null) {
    im.src = this.canvas.toDataURL();
    return im;
@@ -6044,8 +6043,8 @@ MetaCanvas.prototype.getFrame=function () {
  return new Rec(0, 0, this.W, this.H);
 }
 MetaCanvas.prototype._linesInFrame=function (axis2D, nlX, nlY) {
- var l = Math.min(nlX.length, nlY.length);
- var i;
+ let l = Math.min(nlX.length, nlY.length);
+ let i;
   this.context.beginPath();
  this.context.moveTo(axis2D.projectX(nlX[0]), axis2D.projectY(nlY[0]));
   for (i = 1; i < l; i++) {
@@ -6067,7 +6066,7 @@ MetaCanvas.prototype.fsLinesInFrame=function (axis2D, nlX, nlY) {
 }
 
 MetaCanvas.prototype.drawSmoothPolygon=function (polygon, closed, amount=30) { //TODO: add tx, ty
- var controlPoints;
+ let controlPoints;
   if (polygon.length < 2) return null;
  this.context.beginPath();
  if (polygon.length == 2) {
@@ -6088,17 +6087,17 @@ MetaCanvas.prototype.drawSmoothPolygon=function (polygon, closed, amount=30) { /
    this.context.stroke();
    return;
  }
- var i;
- var nPoints = polygon.length;
- var prevPoint = polygon[nPoints - 1];
- var point = polygon[0];
- var nextPoint = polygon[1];
+ let i;
+ let nPoints = polygon.length;
+ let prevPoint = polygon[nPoints - 1];
+ let point = polygon[0];
+ let nextPoint = polygon[1];
  controlPoints = getSoftenControlPoints(prevPoint, point, nextPoint, amount);
- var prevCP = controlPoints[1];
- var cP;
+ let prevCP = controlPoints[1];
+ let cP;
  this.context.moveTo(point.x, point.y);
  prevPoint = point;
- var nSteps = nPoints + Number(closed);
+ let nSteps = nPoints + Number(closed);
  for (i = 1; i < nSteps; i++) {
    point = polygon[i % nPoints];
    nextPoint = polygon[(i + 1) % nPoints];
@@ -6112,7 +6111,7 @@ MetaCanvas.prototype.drawSmoothPolygon=function (polygon, closed, amount=30) { /
 }
 
 MetaCanvas.prototype.drawEllipse=function (x, y, rW, rH) {
- var k = 0.5522848, // 4 * ((√(2) - 1) / 3)
+ let k = 0.5522848, // 4 * ((√(2) - 1) / 3)
    ox = rW * k, // control point offset horizontal
    oy = rH * k, // control point offset vertical
    xe = x + rW, // x-end
@@ -6128,7 +6127,7 @@ MetaCanvas.prototype.drawEllipse=function (x, y, rW, rH) {
 MetaCanvas.prototype.drawPolygon=function (polygon, close, tx, ty) {
  tx = tx || 0;
  ty = ty || 0;
- var i;
+ let i;
  this.context.beginPath();
  this.context.moveTo(tx + polygon[0].x, ty + polygon[0].y);
  for (i = 1; polygon[i] != null; i++) {
@@ -6143,7 +6142,7 @@ MetaCanvas.prototype.drawPolygon=function (polygon, close, tx, ty) {
 MetaCanvas.prototype.drawPolygonWithControlPoints=function (polygon, controlPoints, tx, ty) {
  tx = tx || 0;
  ty = ty || 0;
- var i;
+ let i;
  this.context.beginPath();
  this.context.moveTo(tx + polygon[0].x, ty + polygon[0].y);
  for (i = 1; polygon[i] != null; i++) {
@@ -6157,9 +6156,9 @@ MetaCanvas.prototype.drawPolygonWithControlPoints=function (polygon, controlPoin
 MetaCanvas.prototype.drawBezierPolygon=function (bezierPolygon, tx, ty) {
  tx = tx || 0;
  ty = ty || 0;
- var bI;
- var N = Math.floor((bezierPolygon.length - 1) / 3);
- var i;
+ let bI;
+ let N = Math.floor((bezierPolygon.length - 1) / 3);
+ let i;
  this.context.moveTo(tx + bezierPolygon[0].x, ty + bezierPolygon[0].y);
  for (i = 0; i < N; i++) {
    bI = i * 3 + 1;
@@ -6171,11 +6170,11 @@ MetaCanvas.prototype.drawBezierPolygon=function (bezierPolygon, tx, ty) {
  }
 }
 MetaCanvas.prototype.drawMultiStyleCurve=function (poly, clr0, a0, lw0, clr1, a1, lw1) {
- var i, f, clr, lw, a;
+ let i, f, clr, lw, a;
  this.context.save();
  this.context.lineJoin = this.context.lineCap = "round";
- var intLw = new I(lw0, lw1);
- var intA = new I(a0, a1);
+ let intLw = new I(lw0, lw1);
+ let intA = new I(a0, a1);
  for (i = 0; i < poly.length - 1; i++) {
    f = i / (poly.length - 2);
    lw = intLw.getInterpolatedValue(f);
@@ -6192,7 +6191,7 @@ MetaCanvas.prototype.drawMultiStyleCurve=function (poly, clr0, a0, lw0, clr1, a1
 }
 MetaCanvas.prototype.drawRoundRect=function (x, y, width, height, radius) {
  radius = radius || 0;
- var bottom = y + height;
+ let bottom = y + height;
  this.context.moveTo(x + radius, y);
  this.context.lineTo(x + width - radius, y);
  this.context.quadraticCurveTo(x + width, y, x + width, y + radius);
@@ -6363,10 +6362,10 @@ MetaCanvas.prototype.mapRegion=function(recOnCurrentCanvas, recCoordinates){
 }
 
 MetaCanvas.prototype.mapCanvas=function(recCoordinates){
- var fX = function(x){
+ let fX = function(x){
        return (x - recCoordinates.x)*this.W/recCoordinates.width;
  };
- var fY = function(y){
+ let fY = function(y){
      return (y - recCoordinates.y)*this.H/recCoordinates.height;
  };
  this.applyTransformationFunctions(fX, fY);
@@ -6394,12 +6393,12 @@ Forces.prototype.forcesForNetwork=function(network, initRadius, initCenter, eqDi
  this.nodes = new ndL()
 
   var node0;
- var node1;
- var nNodes = network.nodes.length;
- var i;
- var j;
- var relations = network.relations;
- var angle;
+ let node1;
+ let nNodes = network.nodes.length;
+ let i;
+ let j;
+ let relations = network.relations;
+ let angle;
   //use positions from previous network if find nodes with same id
   if(this.previousNetwork){
    initRadius = 0;
@@ -6407,7 +6406,7 @@ Forces.prototype.forcesForNetwork=function(network, initRadius, initCenter, eqDi
    var x1=-100000;
    var y0=100000;
    var y1=-100000;
-   for(var i=0; i<this.previousNetwork.nodes.length; i++){
+   for(i=0; i<this.previousNetwork.nodes.length; i++){
      x0 = Math.min(x0, this.previousNetwork.nodes[i].x);
      x1 = Math.max(x1, this.previousNetwork.nodes[i].x);
      y0 = Math.min(y0, this.previousNetwork.nodes[i].y);
@@ -6510,12 +6509,12 @@ Forces.prototype.addForce=function(node0, node1, type, equilibriumDistance) {
  //this.equilibriumDistances.push(equilibriumDistance); //testing
 }
 Forces.prototype.calculate=function() {
- var i;
- var node0, node1;
- var type;
- var force;
- var dx, dy, d;
- var eqDistance;
+ let i;
+ let node0, node1;
+ let type;
+ let force;
+ let dx, dy, d;
+ let eqDistance;
   // 1. reset accelerations
  //this._resetAccelerations(); //TODO: this can be removed if accelerations are resetd in applyForces [!]
   // 2. calculate new accelerations from forces
@@ -6596,11 +6595,11 @@ Forces.prototype.applyForces=function() {
 
 Forces.prototype.attractionToPoint=function(point, strength, limit) {
  strength = strength == null ? 1 : strength;
- var node;
- var force;
- var dx;
- var dy;
- var d2;
+ let node;
+ let force;
+ let dx;
+ let dy;
+ let d2;
  for(var i = 0; this.nodes[i] != null; i++) {
    node = this.nodes[i];
    dx = point.x - node.x;
@@ -6617,13 +6616,13 @@ Forces.prototype.attractionToPoint=function(point, strength, limit) {
 }
 Forces.prototype.avoidOverlapping=function(delta=0) {
   var i;
- var node0;
- var node1;
- var x0l, y0t, x0r, y0b, x1l, y1t, x1r, y1b;
- var vx;
- var vy;
- var dM = delta * 0.5;
- var l = this.nodes.length;
+ let node0;
+ let node1;
+ let x0l, y0t, x0r, y0b, x1l, y1t, x1r, y1b;
+ let vx;
+ let vy;
+ let dM = delta * 0.5;
+ let l = this.nodes.length;
 
   for(i = 0; this.nodes[i + 1] != null; i++) {
    node0 = this.nodes[(i + this._i0) % l];
@@ -6667,16 +6666,16 @@ Forces.prototype.avoidOverlapping=function(delta=0) {
 Forces.prototype.avoidOverlappingRadial=function(delta, K) {
  delta = delta || 0;
  K = K || 1;
- var i;
- var node0;
- var node1;
- var l = this.nodes.length;
- var vx;
- var vy;
- var d;
- var dMin;
- var k;
- var delta2 = delta * 2;
+ let i;
+ let node0;
+ let node1;
+ let l = this.nodes.length;
+ let vx;
+ let vy;
+ let d;
+ let dMin;
+ let k;
+ let delta2 = delta * 2;
   for(i = 0; this.nodes[i + 1] != null; i++) {
    node0 = this.nodes[(i + this._i0) % l];
    for(var j = i + 1; this.nodes[j] != null; j++) {
@@ -6704,7 +6703,7 @@ Forces.prototype.deactivateForcesFromNode=function(node) {
 }
 
 Forces.prototype._resetAccelerations=function() {
- var node;
+ let node;
  for(var i = 0; this.nodes[i] != null; i++) {
    node = this.nodes[i];
    node.ax = 0;
@@ -6741,7 +6740,7 @@ Engine3D.prototype.applyRotation=function(planeVector){
 
 /**useful only for calculating inverse rotation (for analgyphs)**/
 Engine3D.prototype.projectPoint3D_complete=function(point3D) {
- var prescale = 1// this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
+ let prescale = 1// this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
     return new P3D(
         (this._basis[0].x * point3D.x + this._basis[1].x * point3D.y + this._basis[2].x * point3D.z) * prescale,
         (this._basis[0].y * point3D.x + this._basis[1].y * point3D.y + this._basis[2].y * point3D.z) * prescale, 
@@ -6771,8 +6770,8 @@ Engine3D.prototype.scale=function(point3D) {
  return this.lens / (this.lens + (this._basis[0].z * point3D.x + this._basis[1].z * point3D.y + this._basis[2].z * point3D.z));
 }
 Engine3D.prototype.sortedIndexesByPointsScale=function(polygon3D) {
- var pairsArray = [];
- var i;
+ let pairsArray = [];
+ let i;
  for(i = 0; polygon3D[i] != null; i++) {
    pairsArray[i] = [polygon3D[i], i];
  }
@@ -6784,8 +6783,8 @@ Engine3D.prototype.sortedIndexesByPointsScale=function(polygon3D) {
   return indexes;
 }
 Engine3D.prototype.sortListByPointsScale=function(list, polygon3D) {
- var pairsArray = [];
- var i;
+ let pairsArray = [];
+ let i;
  for(i = 0; list[i] != null; i++) {
    pairsArray[i] = [polygon3D[i], list[i]];
  }
@@ -6799,8 +6798,8 @@ Engine3D.prototype.sortListByPointsScale=function(list, polygon3D) {
   return newList;
 }
 Engine3D.prototype._sortingCriteria=function(array0, array1) {
- var point3D0 = array0[0];
- var point3D1 = array1[0];
+ let point3D0 = array0[0];
+ let point3D1 = array1[0];
  return(this._basis[0].z * point3D0.x + this._basis[1].z * point3D0.y + this._basis[2].z * point3D0.z < this._basis[0].z * point3D1.x + this._basis[1].z * point3D1.y + this._basis[2].z * point3D1.z) ? 1 : -1;
 }
 Engine3D.prototype.updateAngles=function() {
@@ -6810,12 +6809,12 @@ Engine3D.prototype.getEulerAngles=function() {
  return new P3D(Math.atan2(-this._basis[1].z, this._basis[2].z), Math.asin(this._basis[0].z), Math.atan2(-this._basis[0].y, this._basis[0].x));
 }
 Engine3D.prototype.basis3DRotation=function(basis, angles) {
- var ca = Math.cos(angles.x);
- var sa = Math.sin(angles.x);
- var cb = Math.cos(angles.y);
- var sb = Math.sin(angles.y);
- var cg = Math.cos(angles.z);
- var sg = Math.sin(angles.z);
+ let ca = Math.cos(angles.x);
+ let sa = Math.sin(angles.x);
+ let cb = Math.cos(angles.y);
+ let sb = Math.sin(angles.y);
+ let cg = Math.cos(angles.z);
+ let sg = Math.sin(angles.z);
   return new Pol3D(
    new P3D(basis[0].x * cg * cb + basis[0].y * (cg * sa * sb + sg * ca) + basis[0].z * (sg * sa - cg * ca * sb), -basis[0].x * sg * cb + basis[0].y * (cg * ca - sg * sa * sb) + basis[0].z * (sg * ca * sb + cg * sa), basis[0].x * sb - basis[0].y * sa * cb + basis[0].z * cb * ca), 
    new P3D(basis[1].x * cg * cb + basis[1].y * (cg * sa * sb + sg * ca) + basis[1].z * (sg * sa - cg * ca * sb), -basis[1].x * sg * cb + basis[1].y * (cg * ca - sg * sa * sb) + basis[1].z * (sg * ca * sb + cg * sa), basis[1].x * sb - basis[1].y * sa * cb + basis[1].z * cb * ca), 
@@ -6823,21 +6822,21 @@ Engine3D.prototype.basis3DRotation=function(basis, angles) {
  );
 }
 Engine3D.prototype.point3DRotation=function(point, angles) {
- var ca = Math.cos(angles.x);
- var sa = Math.sin(angles.x);
- var cb = Math.cos(angles.y);
- var sb = Math.sin(angles.y);
- var cg = Math.cos(angles.z);
- var sg = Math.sin(angles.z);
+ let ca = Math.cos(angles.x);
+ let sa = Math.sin(angles.x);
+ let cb = Math.cos(angles.y);
+ let sb = Math.sin(angles.y);
+ let cg = Math.cos(angles.z);
+ let sg = Math.sin(angles.z);
  return new P3D(
    point.x * cg * cb + point.y * (cg * sa * sb + sg * ca) + point.z * (sg * sa - cg * ca * sb), -point.x * sg * cb + point.y * (cg * ca - sg * sa * sb) + point.z * (sg * ca * sb + cg * sa),
    point.x * sb - point.y * sa * cb + point.z * cb * ca
  );
 }
 Engine3D.prototype.line3DCoordinates=function(x0, y0, z0, x1, y1, z1) {
- var polygon = new Pol();
+ let polygon = new Pol();
   var prescale0 = this.lens / (this.lens + (this._basis[0].z * x0 + this._basis[1].z * y0 + this._basis[2].z * z0));
- var prescale1 = this.lens / (this.lens + (this._basis[0].z * x1 + this._basis[1].z * y1 + this._basis[2].z * z1));
+ let prescale1 = this.lens / (this.lens + (this._basis[0].z * x1 + this._basis[1].z * y1 + this._basis[2].z * z1));
   if(prescale0 > 0 || prescale1 > 0) {
    if(prescale0 > 0 && prescale1 > 0) {
      polygon.push(new P((this._basis[0].x * x0 + this._basis[1].x * y0 + this._basis[2].x * z0 + this._dx) * prescale0, (this._basis[0].y * x0 + this._basis[1].y * y0 + this._basis[2].y * z0) * prescale0));
@@ -6865,11 +6864,11 @@ Engine3D.prototype.line3D=function(point0, point1) {
  return this.line3DCoordinates(point0.x, point0.y, point0.z, point1.x, point1.y, point1.z);
 }
 Engine3D.prototype.quadrilater=function(p0, p1, p2, p3) {
- var polygon3D = new Pol3D();
+ let polygon3D = new Pol3D();
   var l0 = this.line3D(p0, p1);
- var l1 = this.line3D(p1, p2);
- var l2 = this.line3D(p2, p3);
- var l3 = this.line3D(p3, p0);
+ let l1 = this.line3D(p1, p2);
+ let l2 = this.line3D(p2, p3);
+ let l3 = this.line3D(p3, p0);
   if(l0 != null) {
    if(l3 == null ||  (l0[0].x != l3[1].x && l0[0].y != l3[1].y)) polygon3D.push(l0[0]);
    polygon3D.push(l0[1]);
@@ -6891,99 +6890,99 @@ Engine3D.prototype.quadrilater=function(p0, p1, p2, p3) {
 
 //---------------functions-----------------
 
-var interpolateColors=function(color0, color1, value, bUseSquaredIntensities) {
- var result = interpolateColorsRGB(colorStringToRGB(color0), colorStringToRGB(color1), value, bUseSquaredIntensities);
+let interpolateColors=function(color0, color1, value, bUseSquaredIntensities) {
+ let result = interpolateColorsRGB(colorStringToRGB(color0), colorStringToRGB(color1), value, bUseSquaredIntensities);
  return 'rgb('+Math.floor(result[0])+','+Math.floor(result[1])+','+Math.floor(result[2])+')';
 }
-var interpolateColorsRGB=function(color0, color1, value, bUseSquaredIntensities) {
- var s = 1 - value;
+let interpolateColorsRGB=function(color0, color1, value, bUseSquaredIntensities) {
+ let s = 1 - value;
  if(bUseSquaredIntensities)
    return [Math.floor(Math.sqrt(s * color0[0]*color0[0] + value * color1[0]*color1[0])),
            Math.floor(Math.sqrt(s * color0[1]*color0[1] + value * color1[1]*color1[1])),
            Math.floor(Math.sqrt(s * color0[2]*color0[2] + value * color1[2]*color1[2]))];
  return [Math.floor(s * color0[0] + value * color1[0]), Math.floor(s * color0[1] + value * color1[1]), Math.floor(s * color0[2] + value * color1[2])];
 }
-var distanceColorsRGB=function(color0, color1) {
- var d = Math.abs(color0[0]-color1[0]) + Math.abs(color0[1]-color1[1]) + Math.abs(color0[2]-color1[2]);
+let distanceColorsRGB=function(color0, color1) {
+ let d = Math.abs(color0[0]-color1[0]) + Math.abs(color0[1]-color1[1]) + Math.abs(color0[2]-color1[2]);
  return Number((d/(765)).toFixed(4)); // 765 = 3*255, the max diff
 }
 
-var addAlpha=function(color, alpha) {
+let addAlpha=function(color, alpha) {
  alpha = alpha == null ? 1 : alpha;
- var rgb = colorStringToRGB(color);
+ let rgb = colorStringToRGB(color);
  if(rgb == null) return 'black';
  return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
 }
-var invertColor=function(color) {
- var rgb = colorStringToRGB(color);
+let invertColor=function(color) {
+ let rgb = colorStringToRGB(color);
  rgb = invertColorRGB(rgb[0], rgb[1], rgb[2]);
  return RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
-var stringToColor=function(string){
+let stringToColor=function(string){
  if(string==null) return;
  if(string=='null' || string=='undefined') return "#202020";
- var colors =  [
+ let colors =  [
  "#d62728", "#1f77b4", "#2ca02c", "#ff7f00", "#9467bd", "#bcbd22", "#8c564b", "#17becf", "#dd4411", "#206010", "#e377c2", "#3330ff", "#dd8811", "#ff220e", "#1f66a3", "#8c453a", "#2ba01c", "#dfc500", "#945600", "#ff008b", "#e37700", "#7f7f7f",
  "#d62720", "#1f77b0", "#2ca02a", "#ff7f08", "#9467ba", "#bcbd20", "#8c564f", "#17bece", "#dd4418", "#206011", "#e377c9", "#3330fe", "#dd8818", "#ff220a", "#1f66a9", "#8c453f", "#2ba01f", "#dfc508", "#945608", "#ff008f", "#e37708"
  ];
- var number = 0;
+ let number = 0;
  for(var i = 0; i<string.length; i++){
    number += string.charCodeAt(i)*(i*i+1);
  }
  return colors[ Math.floor(  getRandomWithSeed(number)*colors.length ) ];
 }
-var HEXtoRGB=function(hexColor) {
+let HEXtoRGB=function(hexColor) {
  return [parseInt(hexColor.substr(1, 2), 16), parseInt(hexColor.substr(3, 2), 16), parseInt(hexColor.substr(5, 2), 16)];
 }
-var RGBtoHEX=function(red, green, blue) {
+let RGBtoHEX=function(red, green, blue) {
  return "#" + toHex(Math.floor(red)) + toHex(Math.floor(green)) + toHex(Math.floor(blue));
 }
-var RGBArrayToString=function(array) {
+let RGBArrayToString=function(array) {
  return 'rgb(' + array[0] + ',' + array[1] + ',' + array[2] + ')';
 }
-var colorStringToHEX=function(color_string) {
- var rgb = colorStringToRGB(color_string);
+let colorStringToHEX=function(color_string) {
+ let rgb = colorStringToRGB(color_string);
  return RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
-var numberToHex=function(number) {
- var hex = number.toString(16);
+let numberToHex=function(number) {
+ let hex = number.toString(16);
  while(hex.length < 2) hex = "0" + hex;
  return hex;
 }
-var uinttoRGB=function(color) {
- var rgbColor = new Array(color >> 16, (color >> 8) - ((color >> 16) << 8), color - ((color >> 8) << 8));
+let uinttoRGB=function(color) {
+ let rgbColor = new Array(color >> 16, (color >> 8) - ((color >> 16) << 8), color - ((color >> 8) << 8));
  return rgbColor;
 }
-var uinttoHEX=function(color) {
- var rgbColor = uinttoRGB(color);
- var hexColor = RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
+let uinttoHEX=function(color) {
+ let rgbColor = uinttoRGB(color);
+ let hexColor = RGBToHEX(rgbColor[0], rgbColor[1], rgbColor[2]);
  return hexColor;
 }
-var RGBtouint=function(red, green, blue) {
+let RGBtouint=function(red, green, blue) {
  return Number(red) << 16 | Number(green) << 8 | Number(blue);
 }
-var HEXtouint=function(hexColor) {
- var colorArray = HEXtoRGB(hexColor);
- var color = RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
+let HEXtouint=function(hexColor) {
+ let colorArray = HEXtoRGB(hexColor);
+ let color = RGBtouint(colorArray[0], colorArray[1], colorArray[2]);
  return color;
 }
-var grayByLevel=function(level) {
+let grayByLevel=function(level) {
  level = Math.floor(level * 255);
  return 'rgb(' + level + ',' + level + ',' + level + ')';
 }
-var HEXtoHSV=function(hexColor) {
- var rgb = HEXtoRGB(hexColor);
+let HEXtoHSV=function(hexColor) {
+ let rgb = HEXtoRGB(hexColor);
  return RGBtoHSV(rgb[0], rgb[1], rgb[2]);
 }
-var HSVtoHEX=function(hue, saturation, value) {
- var rgb = HSVtoRGB(hue, saturation, value);
+let HSVtoHEX=function(hue, saturation, value) {
+ let rgb = HSVtoRGB(hue, saturation, value);
  return RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
-var HSLtoHEX=function(hue, saturation, light) {
- var rgb = HSLtoRGB(hue, saturation, light);
+let HSLtoHEX=function(hue, saturation, light) {
+ let rgb = HSLtoRGB(hue, saturation, light);
  return RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
-var RGBtoHSV=function(r, g, b) {
+let RGBtoHSV=function(r, g, b) {
    var h;
    var s;
    var v;
@@ -7010,19 +7009,19 @@ var RGBtoHSV=function(r, g, b) {
    if(h < 0) h += 360;
    return new Array(h, s, v);
 }
-var HSVtoRGB=function(hue, saturation, value) {
+let HSVtoRGB=function(hue, saturation, value) {
  hue = hue ? hue : 0;
  saturation = saturation ? saturation : 0;
  value = value ? value : 0;
- var r;
- var g;
- var b;
+ let r;
+ let g;
+ let b;
  //
- var i;
- var f;
- var p;
- var q;
- var t;
+ let i;
+ let f;
+ let p;
+ let q;
+ let t;
  if(saturation === 0) {
    r = g = b = value;
    return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
@@ -7067,8 +7066,8 @@ var HSVtoRGB=function(hue, saturation, value) {
  }
  return new Array(Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255));
 }
-var HSLtoRGB=function(hue, saturation, light) {
- var r, g, b;
+let HSLtoRGB=function(hue, saturation, light) {
+ let r, g, b;
   function hue2rgb(p, q, t) {
    if(t < 0) t += 1;
    if(t > 1) t -= 1;
@@ -7088,18 +7087,19 @@ var HSLtoRGB=function(hue, saturation, light) {
  }
   return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
 }
-var invertColorRGB=function(r, g, b) {
+let invertColorRGB=function(r, g, b) {
  return [255 - r, 255 - g, 255 - b];
 }
-var toHex=function(number) {
- var hex = number.toString(16);
+let toHex=function(number) {
+ let hex = number.toString(16);
  while(hex.length < 2) hex = "0" + hex;
  return hex;
 }
-var getRandomColor=function() {
- return 'rgb(' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ')';
+let getRandomColor=function() {
+    return '#'+Math.floor(Math.random()*16777215).toString(16)
+ //return 'rgb(' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ',' + String(Math.floor(Math.random() * 256)) + ')';
 }
-var colorStringToRGB=function(color_string, factor) {
+let colorStringToRGB=function(color_string, factor) {
  if(color_string==null) return;
  factor = factor==null?1:factor;
  
@@ -7109,7 +7109,7 @@ var colorStringToRGB=function(color_string, factor) {
  if(color_string[0] == '#') { // remove # if any
    color_string = color_string.substr(1, 6)
  }
- var simple_colors = {
+ let simple_colors = {
    beige: 'f5f5dc',
    black: '000000',
    blue: '0000ff',
@@ -7132,7 +7132,7 @@ var colorStringToRGB=function(color_string, factor) {
  };
   if(simple_colors[color_string] != null) color_string = simple_colors[color_string];
    // array of color definition objects
- var color_defs = [
+ let color_defs = [
  {
    re: /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/,
    //example: ['rgb(123, 234, 45)', 'rgb(255,234,245)'],
@@ -7188,29 +7188,29 @@ var colorStringToRGB=function(color_string, factor) {
   }
   return null;
 }
-var createSortedNumberList=function(nValues, start, step, name) {
+let createSortedNumberList=function(nValues, start, step, name) {
  if(nValues==null) return null;
  if(Array.isArray(nValues)) nValues=nValues.length;
  nValues = Number(nValues);
   start = start || 0;
  step = step==null?1:step;
- var i;
- var nl = new nL();
+ let i;
+ let nl = new nL();
  for(i = 0; i < nValues; i++) {
    nl.push(start + i * step);
  }
   if(name != null) nl.name = name;
   return nl;
 }
-var createNumberListWithinInterval=function(nValues, interval, mode, randomSeed) {
+let createNumberListWithinInterval=function(nValues, interval, mode, randomSeed) {
  if(interval == null) interval = new I(0, 1);
   if(mode==1) return createSortedNumberList(nValues, interval.x, (interval.y-interval.x)/nValues);
   mode = mode==null?0:mode;
- var random = randomSeed!=null ? new _Alea("my", randomSeed, "seeds") : NumberOperators_random;
+ let random = randomSeed!=null ? new _Alea("my", randomSeed, "seeds") : NumberOperators_random;
   var nl = new nL();
- var range = interval.getAmplitude();
- var min = Number(interval.getMin());
- var i;
+ let range = interval.getAmplitude();
+ let min = Number(interval.getMin());
+ let i;
  switch(mode){
    case 0://random
      for(i = 0; i < nValues; i++) {
@@ -7221,9 +7221,9 @@ var createNumberListWithinInterval=function(nValues, interval, mode, randomSeed)
  
  return nl;
 }
-var createRandomNormalDistribution=function(nValues, mean, standardDeviation) {
- var nL = new nL();
- var i;
+let createRandomNormalDistribution=function(nValues, mean, standardDeviation) {
+ let nL = new nL();
+ let i;
  
  for(i=0; i<nValues; i++){
    nL.push(normal(mean,standardDeviation));
@@ -7231,15 +7231,15 @@ var createRandomNormalDistribution=function(nValues, mean, standardDeviation) {
  
  return nL;
 }
-var createRandomBetaPERTDistribution=function(nValues,min,max,mode,lambda,randomSeed) {
+let createRandomBetaPERTDistribution=function(nValues,min,max,mode,lambda,randomSeed) {
  min = (min == null) ? 0 : min;
  max = (max == null) ? 1 : max;
  mode = (mode == null) ? .5 : mode;
  lambda = (lambda == null) ? 1 : lambda;
  if(randomSeed)
    randomSeed(randomSeed);
- var nL = new nL();
- var i;
+ let nL = new nL();
+ let i;
  
  for(i=0; i<nValues; i++){
    nL.push(betaPERT(min,max,mode,lambda));
@@ -7248,7 +7248,7 @@ var createRandomBetaPERTDistribution=function(nValues,min,max,mode,lambda,random
    randomSeedPop();
  return nL;
 }
-var createRandomBimodalDistribution=function(nValues,min,max,mode1,mode2,lambda,balance,randomSeed) {
+let createRandomBimodalDistribution=function(nValues,min,max,mode1,mode2,lambda,balance,randomSeed) {
  min = (min == null) ? 0 : min;
  max = (max == null) ? 1 : max;
  mode1 = (mode1 == null) ? .25 : mode1;
@@ -7257,8 +7257,8 @@ var createRandomBimodalDistribution=function(nValues,min,max,mode1,mode2,lambda,
  balance = (balance == null) ? .5 : balance;
  if(randomSeed!=null)
    randomSeed(randomSeed);
- var nL = new nL();
- var i;
+ let nL = new nL();
+ let i;
  
  for(i=0; i<nValues; i++){
    if(random() > balance)
@@ -7270,11 +7270,11 @@ var createRandomBimodalDistribution=function(nValues,min,max,mode1,mode2,lambda,
    randomSeedPop();
  return nL;
 }
-var createRandomNumbers=function(nValues, interval, seed, func) {
+let createRandomNumbers=function(nValues, interval, seed, func) {
  seed = seed == null ? -1 : seed;
  interval = interval == null ? new I(0, 1) : interval;
   var nl = new nL();
- var amplitude = interval.getAmplitude();
+ let amplitude = interval.getAmplitude();
   var random = seed == -1 ? NumberOperators_random : new _Alea("my", seed, "seeds");
   for(var i = 0; i < nValues; i++) {
    //seed = (seed*9301+49297) % 233280; //old method, close enough: http://moebio.com/research/randomseedalgorithms/
@@ -7283,8 +7283,8 @@ var createRandomNumbers=function(nValues, interval, seed, func) {
  }
   return nl;
 }
-var createUniformTable=function(nLists, nRows, element, sLNames) {
- var table = new T();
+let createUniformTable=function(nLists, nRows, element, sLNames) {
+ let table = new T();
  for(var i = 0; i < nLists; i++) {
    table[i] = createListWithSameElement(nRows, element);
    if(sLNames && sLNames[i])
@@ -7292,18 +7292,18 @@ var createUniformTable=function(nLists, nRows, element, sLNames) {
  }
  return table.downcast();
 }
-var dotProduct=function(nl1, nl2) {
- var sum = 0;
- var i;
- var nElements = Math.min(nl1.length, nl2.length);
+let dotProduct=function(nl1, nl2) {
+ let sum = 0;
+ let i;
+ let nElements = Math.min(nl1.length, nl2.length);
  for(i = 0; i < nElements; i++) {
    sum += nl1[i] * nl2[i];
  }
  return sum;
 }
-var linearRegression=function(nlX, nlY, returnType) {
+let linearRegression=function(nlX, nlY, returnType) {
  returnType = returnType == null || returnType > 2 ? 0:returnType;
- var nlR = new nL();
+ let nlR = new nL();
   if(nlX == null ||
     (nlY != null && nlX.length != nlY.length) ||
     nlX.length === 0)
@@ -7321,24 +7321,24 @@ var linearRegression=function(nlX, nlY, returnType) {
    sumxy += nlX[i]*nlY[i];
    sumy2 += nlY[i]*nlY[i];
  }
- var denominator = n*sumx2 - sumx*sumx;
- var slope = denominator===0?0 : (n * sumxy - sumx * sumy) / denominator;
+ let denominator = n*sumx2 - sumx*sumx;
+ let slope = denominator===0?0 : (n * sumxy - sumx * sumy) / denominator;
  if(returnType==2) return slope
   var intercept = (sumy / n) - (slope * sumx) / n;
  if(returnType==1)
    return new P(slope,intercept);
- var r2 = Math.pow((n*sumxy - sumx*sumy)/Math.sqrt((n*sumx2-sumx*sumx)*(n*sumy2-sumy*sumy)),2);
+ let r2 = Math.pow((n*sumxy - sumx*sumy)/Math.sqrt((n*sumx2-sumx*sumx)*(n*sumy2-sumy*sumy)),2);
  nlR.push(slope);
  nlR.push(intercept);
  nlR.push(r2);
  nlR.push(n);
  return nlR;
 }
-var distance=function(nl1, nl2, distanceMetric) {
+let distance=function(nl1, nl2, distanceMetric) {
  if(nl1==null || nl2==null) return;
- var sum = 0;
- var i;
- var nElements = Math.min(nl1.length, nl2.length);
+ let sum = 0;
+ let i;
+ let nElements = Math.min(nl1.length, nl2.length);
  distanceMetric = distanceMetric == null ? 'euclidean' : distanceMetric;
  distanceMetric = distanceMetric.toLowerCase();
  if(distanceMetric == 'cosine')
@@ -7357,17 +7357,17 @@ var distance=function(nl1, nl2, distanceMetric) {
  }
  return Math.sqrt(sum);
 }
-var cosineSimilarity=function(nl0, nl1, norm0, norm1) {
+let cosineSimilarity=function(nl0, nl1, norm0, norm1) {
  norm0 = norm0==null?nl0.getNorm():norm0;
  norm1 = norm1==null?nl1.getNorm():norm1;
- var norms = norm0 * norm1;
+ let norms = norm0 * norm1;
  if(norms === 0) return 0;
  return dotProduct(nl0, nl1) / norms;
 }
-var covariance=function(nl0, nl1,bUseInfoObject) {
+let covariance=function(nl0, nl1,bUseInfoObject) {
  if(nl0==null || nl1==null) return;
   var l = Math.min(nl0.length, nl1.length);
- var i,av0,av1,s=0;
+ let i,av0,av1,s=0;
  if(bUseInfoObject && nl0.infoObject)
     av0 = nl0.infoObject.average;
  else
@@ -7382,17 +7382,17 @@ var covariance=function(nl0, nl1,bUseInfoObject) {
  }
   return s/l;
 }
-var standardDeviationTwoNumberLists=function(nl0, nl1) {
+let standardDeviationTwoNumberLists=function(nl0, nl1) {
  if(nl0==null || nl1==null) return;
- var s = 0;
- var l = Math.min(nl0.length, nl1.length);
- var i;
+ let s = 0;
+ let l = Math.min(nl0.length, nl1.length);
+ let i;
   for(i = 0; i < l; i++) {
    s += Math.pow(nl0[i] - nl1[i], 2);
  }
   return s/l;
 }
-var numericCorrelation=function(nl0, nl1, sd0, sd1) {
+let numericCorrelation=function(nl0, nl1, sd0, sd1) {
  if(nl0==null || nl1==null) return;
  if(nl0?.infoObject?.standardDeviation) sd0 = nl0.infoObject.standardDeviation;
  if(nl1?.infoObject?.standardDeviation) sd1 = nl1.infoObject.standardDeviation;
@@ -7400,18 +7400,18 @@ var numericCorrelation=function(nl0, nl1, sd0, sd1) {
  if(nl1?.standardDeviation) sd1 = nl1.standardDeviation;
  if(sd0==null) sd0 = nl0.getStandardDeviation();
  if(sd1==null) sd1 = nl1.getStandardDeviation();
- var stndDeviations = sd0*sd1;//nl0.getStandardDeviation() * nl1.getStandardDeviation();
+ let stndDeviations = sd0*sd1;//nl0.getStandardDeviation() * nl1.getStandardDeviation();
  if(stndDeviations===0) return 0;
  return covariance(nl0, nl1) / stndDeviations;
 }
-var slidingWindowCorrelation=function(nl0, nl1, nPoints) {
+let slidingWindowCorrelation=function(nl0, nl1, nPoints) {
  if(nl0==null || nl1==null || nl0.length != nl1.length) return;
  if(nPoints == null || isNaN(nPoints) || nPoints < 1)
    nPoints = 5;
  nPoints = Math.round(nPoints);
   var i,j,nLt0,nLt1,corr;
- var len = nl0.length;
- var nLResult = new nL();
+ let len = nl0.length;
+ let nLResult = new nL();
  for(i=0;i<len;i++){
    nLt0 = new nL();
    nLt1 = new nL();
@@ -7425,14 +7425,14 @@ var slidingWindowCorrelation=function(nl0, nl1, nPoints) {
  }
  return nLResult;
 }
-var normalizeToSum=function(numberlist, factor, sum) {
+let normalizeToSum=function(numberlist, factor, sum) {
  if(numberlist==null) return;
  
  factor = factor == null ? 1 : factor;
- var newNumberList = new nL();
+ let newNumberList = new nL();
  newNumberList.name = numberlist.name;
  if(numberlist.length === 0) return newNumberList;
- var i;
+ let i;
  sum = sum == null ? numberlist.getSum() : sum;
  if(sum === 0) return numberlist.clone();
   factor/=sum;
@@ -7442,12 +7442,12 @@ var normalizeToSum=function(numberlist, factor, sum) {
  }
  return newNumberList;
 }
-var normalizeByZScore=function(numberlist) {
+let normalizeByZScore=function(numberlist, mean, sd) {
  if(numberlist==null) return;
  if(numberlist.length === 0) return null;
   var i;
- var mean = numberlist.getMean();
- var stddev = numberlist.getStandardDeviation();
+    mean = mean||numberlist.getMean();
+ let stddev = sd||numberlist.getStandardDeviation(mean);
  if(stddev===0) stddev=1; // all returned values will be zero
   var newNumberList = new nL();
  for(i = 0; i < numberlist.length; i++) {
@@ -7456,7 +7456,7 @@ var normalizeByZScore=function(numberlist) {
  newNumberList.name = numberlist.name;
  return newNumberList;
 }
-var normalizeToMax=function(numberlist, factor) {
+let normalizeToMax=function(numberlist, factor) {
  if(numberlist==null) return;
  
  factor = factor == null ? 1 : factor;
@@ -7466,30 +7466,30 @@ var normalizeToMax=function(numberlist, factor) {
    max = numberlist.getMin();
    if(max === 0) return createListWithSameElement(numberlist.length, 0);
  }
- var newNumberList = new nL();
+ let newNumberList = new nL();
  for(var i = 0; numberlist[i] != null; i++) {
    newNumberList.push(factor * (numberlist[i] / max));
  }
  newNumberList.name = numberlist.name;
  return newNumberList;
 }
-var normalizeToInterval=function(numberlist, interval) {
+let normalizeToInterval=function(numberlist, interval) {
  if(numberlist==null || interval==null || numberlist.length === 0) return;
  interval = interval==null?numberlist.getInterval():interval
   var i;
- var nlInterval = numberlist.getInterval();
- var nLAmplitude = nlInterval.getAmplitude();
+ let nlInterval = numberlist.getInterval();
+ let nLAmplitude = nlInterval.getAmplitude();
  if(nLAmplitude===0) return ListGenerators.createListWithSameElement (numberlist.length, interval.x, numberlist.name);
- var amplitude = interval.getSignedAmplitude();
- var factor = amplitude/nLAmplitude;
- var newNumberList = new nL();
+ let amplitude = interval.getSignedAmplitude();
+ let factor = amplitude/nLAmplitude;
+ let newNumberList = new nL();
  for(i = 0; i < numberlist.length; i++) {
    newNumberList.push( interval.x + factor*(numberlist[i] - nlInterval.x) );
  }
  newNumberList.name = numberlist.name;
  return newNumberList;
 }
-var trimNumberList=function(numberlist, min, max) {
+let trimNumberList=function(numberlist, min, max) {
  return numberlist.trim(min, max);
  // var newNumberList = new nL();
  // for(var i = 0; i < numberlist.length; i++) {
@@ -7498,7 +7498,7 @@ var trimNumberList=function(numberlist, min, max) {
  // }
  // return newNumberList;
 }
-var getAccumulativeSum=function(numberlist) {
+let getAccumulativeSum=function(numberlist) {
  if(numberlist==null || numberlist.length === 0) return;
   var newNumberList = new nL();
   newNumberList[0] = numberlist[0];
@@ -7507,14 +7507,14 @@ var getAccumulativeSum=function(numberlist) {
  }
   return newNumberList;
 }
-var shorten=function(nl, newLength) {
+let shorten=function(nl, newLength) {
  if(nl==null) return null;
  if(newLength==null || newLength>=nl.length) return nl;
   var windowSize = nl.length/newLength;
- var newNumberList = new nL();
- var windowSizeInt = Math.floor(windowSize);
- var val;
- var i, j, j0;
+ let newNumberList = new nL();
+ let windowSizeInt = Math.floor(windowSize);
+ let val;
+ let i, j, j0;
   newNumberList.name = nl.name;
   for(i=0; i<newLength; i++){
    j0 = Math.floor(i*windowSize);
@@ -7526,7 +7526,7 @@ var shorten=function(nl, newLength) {
  }
  return newNumberList;
 }
-var simplify=function(nl, method, param) {
+let simplify=function(nl, method, param) {
  if(nl==null) return;
   method = method||0;
  param = param||0;
@@ -7545,7 +7545,7 @@ var simplify=function(nl, method, param) {
  }
   return newList;
 }
-var segmentNumberList=function(nL,limits,mode) {
+let segmentNumberList=function(nL,limits,mode) {
    if(nL == null || limits == null) return null;
    mode = mode==null?0:mode;
     var ranges = mode==0?new nL():new sL();
@@ -7564,19 +7564,19 @@ var segmentNumberList=function(nL,limits,mode) {
    return ranges;
 }
 
-var averageSmoother=function(nl, intensity, nIterations) {
+let averageSmoother=function(nl, intensity, nIterations) {
  if(nl==null) return;
   nIterations = nIterations == null ? 1 : nIterations;
  intensity = intensity == null ? 0.1 : intensity;
   intensity = Math.max(Math.min(intensity, 0.5), 0);
  intensity *= 0.6; // we can get rippling if intensity is too high
- var n = nl.length;
+ let n = nl.length;
   var list1 = nl.clone();
- var list2 = nl.clone();
- var i,j;
+ let list2 = nl.clone();
+ let i,j;
   // Use values in L1 to construct smoothed values in L2
  // alternate lists so we don't need to copy full list back and forth
- var L1,L2,nNeighbors,val;
+ let L1,L2,nNeighbors,val;
  for(i = 0; i < nIterations; i++) {
    L1 = i % 2 ? list2 : list1;
    L2 = i % 2 ? list1 : list2;
@@ -7596,12 +7596,12 @@ var averageSmoother=function(nl, intensity, nIterations) {
  }
   return L2;
 }
-var closestValue=function(nl, value, returnValue, mode) {
+let closestValue=function(nl, value, returnValue, mode) {
  if(nl==null) return;
  returnValue = returnValue==null?true:returnValue;
   var dMin = Math.abs(nl[0]-value);
- var iMin = 0;
- var d;
+ let iMin = 0;
+ let d;
   for(var i=1; i<nl.length; i++){
    d = Math.abs(nl[i]-value);
    if(d<dMin){
@@ -7612,13 +7612,13 @@ var closestValue=function(nl, value, returnValue, mode) {
  }
  return returnValue?nl[iMin]:iMin;
 }
-var filterNumberListByInterval=function(nl, min, max, includeMin, includeMax, returnMode) {
+let filterNumberListByInterval=function(nl, min, max, includeMin, includeMax, returnMode) {
  return null;
 }
-var filterNumberListByNumber=function(nl, value, comparisonOperator, returnIndexes) {
+let filterNumberListByNumber=function(nl, value, comparisonOperator, returnIndexes) {
  returnIndexes = returnIndexes || false;
- var newNumberList = new nL();
- var i;
+ let newNumberList = new nL();
+ let i;
   if(returnIndexes) {
    switch(comparisonOperator) {
      case "<":
@@ -7712,24 +7712,24 @@ var filterNumberListByNumber=function(nl, value, comparisonOperator, returnIndex
  }
   return newNumberList;
 }
-var frameFromTwoNumberLists=function(nlX, nlY){
+let frameFromTwoNumberLists=function(nlX, nlY){
  if(nlX==null || nlY==null) return;
- var intX = nlX.getInterval();
- var intY = nlY.getInterval();
+ let intX = nlX.getInterval();
+ let intY = nlY.getInterval();
  return new Rec(intX.x, intY.x, intX.getAmplitude(), intY.getAmplitude());
 }
-var rangeCounts=function(nl, nBins, interval, mode){
+let rangeCounts=function(nl, nBins, interval, mode){
  if(nl==null) return;
  nBins = nBins == null ? 10 : nBins;
  
  mode = mode || 0;
- var nLCounts = mode==1?[]:createListWithSameElement(nBins,0);
+ let nLCounts = mode==1?[]:createListWithSameElement(nBins,0);
  interval = interval==null ? nl.getInterval() : interval;
  if(interval == null)
    return nLCounts;
- var amp = interval.y-interval.x;
- var bin,len=nl.length;
- var binIndexes = new nL();
+ let amp = interval.y-interval.x;
+ let bin,len=nl.length;
+ let binIndexes = new nL();
  for(var i=0;i<len;i++){
    bin = Math.min(Math.floor(nBins*(nl[i] - interval.x)/amp),nBins-1);
    binIndexes[i] = bin;
@@ -7739,11 +7739,11 @@ var rangeCounts=function(nl, nBins, interval, mode){
  return nLCounts;
 }
 
-var simpleCompression=function(nl, compress){
+let simpleCompression=function(nl, compress){
  if(nl==null) return null;
   compress = compress==null?true:compress;
   var i;
- var newNl = new nL();
+ let newNl = new nL();
  newNl.name = nl.name;
   if(nl.length===0) return newNl;
   newNl[0] = nl[0];
@@ -7759,7 +7759,7 @@ var simpleCompression=function(nl, compress){
  return newNl;
 }
 
-var regression=function(nlY, nlX, method, order) {
+let regression=function(nlY, nlX, method, order) {
  if(nlY == null || nlY.length == 0) return null;
  if(nlX == null)
    nlX = createSortedNumberList(nlY.length,1); 
@@ -7770,11 +7770,11 @@ var regression=function(nlY, nlX, method, order) {
  order = order == null ? 2 : order;
  
  // make paired array using data
- var data = [];
+ let data = [];
  for(var i=0;i<nlX.length;i++){
    data.push([nlX[i],nlY[i] == null ? null : nlY[i]]);
  }
- var result = _Regression(method, data, order, {precision:3});
+ let result = _Regression(method, data, order, {precision:3});
   var nLY = new nL(); nLY.name = method + ' Regression Series';
  for(i=0; i<result.points.length; i++){
    nLY.push(result.points[i][1]);
@@ -7814,19 +7814,19 @@ var regression=function(nlY, nlX, method, order) {
    }
  ];
 }
-var getDecimalsInterval=function(nl){
+let getDecimalsInterval=function(nl){
  if(nl == null) return null;
- var intDecimals = new I(0,0);
- var i,d;
+ let intDecimals = new I(0,0);
+ let i,d;
  for(i = 0;i < nl.length; i++){
    d = decimalPlaces(nl[i]);
    intDecimals.adjustToContain(d);
  }
  return intDecimals;
 }
-var setDecimals=function(nl,nDecimals){
+let setDecimals=function(nl,nDecimals){
  if(nl == null) return null;
- var i,d;
+ let i,d;
  if(nl.isTable){
    var nT = instanceSameType(nl);
    nT.name = nl.name;
@@ -7838,7 +7838,7 @@ var setDecimals=function(nl,nDecimals){
    }
    return nT;
  }
- var newList = new nL();
+ let newList = new nL();
  newList.name = nl.name;
  for(i = 0;i < nl.length; i++){
    d = nl[i] == null ? null : Number(nl[i].toFixed(nDecimals));
@@ -7847,7 +7847,7 @@ var setDecimals=function(nl,nDecimals){
  return newList;
 }
 
-var getDistributionHeights=function(nL,mode,nBins) {
+let getDistributionHeights=function(nL,mode,nBins) {
    if(nL == null) return null;
    mode = (mode == null || mode != 1) ? 0 : mode;
    nBins = nBins == null ? 50 : nBins;
@@ -7869,14 +7869,14 @@ var getDistributionHeights=function(nL,mode,nBins) {
    randomSeedPop();
    return nLY;
 }
-var kNearestNeighbours=function(nT, nL, k, mode, bItemsInColumns, distanceMetric, bFindFarthest) {
+let kNearestNeighbours=function(nT, nL, k, mode, bItemsInColumns, distanceMetric, bFindFarthest) {
  if(nT == null || nL == null || nT.length == 0) return;
  k = k == null ? 1 : k;
  mode = mode == null ? 0 : mode;
  bItemsInColumns = bItemsInColumns == null ? false : bItemsInColumns;
  bFindFarthest = bFindFarthest == null ? false : bFindFarthest;
- var bInsideInput = typeof nL == 'number';
- var iRowInside;
+ let bInsideInput = typeof nL == 'number';
+ let iRowInside;
   if(!bItemsInColumns)
    nT = nT.transpose();
  if(bInsideInput){
@@ -7886,7 +7886,7 @@ var kNearestNeighbours=function(nT, nL, k, mode, bItemsInColumns, distanceMetric
    nL = nT[iRowInside];
  }
  if(nL.length != nT[0].length) throw new Error('The input nl must have the same number of values as columns of the numberTable.');
- var nTDistances = new nT();
+ let nTDistances = new nT();
  nTDistances.push(new nL());
  nTDistances.push(new nL());
  nTDistances.assignNames('index,distance');
@@ -7903,9 +7903,9 @@ var kNearestNeighbours=function(nT, nL, k, mode, bItemsInColumns, distanceMetric
    return nTDistances[0];
  return nTDistances;
 }
-var skewness=function(nL, mode){
+let skewness=function(nL, mode){
  if(nL==null) return;
- var mean = nL.getMean();
+ let mean = nL.getMean();
  mode = mode==null?0:mode;
   if(mode>=2){
    return Math.log2(mean/nL.getMedian());
@@ -7931,7 +7931,7 @@ var skewness=function(nL, mode){
  }
 }
 
-var TableToObject=function(table, fields) { // To-Do: should return a L instead of Array?
+let TableToObject=function(table, fields) { // To-Do: should return a L instead of Array?
    if(!table)
      return;
     // If no field names supplied, take them from first element
@@ -7952,17 +7952,17 @@ var TableToObject=function(table, fields) { // To-Do: should return a L instead 
      array: result
    };
 }
-var ArrayOfArraysToTable=function(arrayOfArrays) {
+let ArrayOfArraysToTable=function(arrayOfArrays) {
  if(arrayOfArrays===null || !isArray(arrayOfArrays)) return;
   var l = arrayOfArrays.length;
- var i;
- var table = new T();
+ let i;
+ let table = new T();
   for(i=0; i<l; i++){
    if(isArray(arrayOfArrays[i])) table.push(L.toL(arrayOfArrays[i]).downcast());
  }
   return table.downcast();
 }
-var tableToHtml=function(table,maxRows,styleTable,styleCol,styleRow,styleRowOdd,tCellStyles,bRenderImageURLs,nLColsWithBars,clrBar) {
+let tableToHtml=function(table,maxRows,styleTable,styleCol,styleRow,styleRowOdd,tCellStyles,bRenderImageURLs,nLColsWithBars,clrBar) {
  if(table==null) return;
  if(table.length == 0) return '';
   if(!table.isTable && (table.isList || Array.isArray(table))){
@@ -7979,10 +7979,10 @@ var tableToHtml=function(table,maxRows,styleTable,styleCol,styleRow,styleRowOdd,
  bRenderImageURLs = bRenderImageURLs == null ? true : bRenderImageURLs;
  clrBar = clrBar == null ? 'rgba(100,160,255,.5)' : clrBar;
   var std = (typeof styleCol =='string') ? '<td style="' + styleCol + '">' : '';
- var str = '<tr style="' + styleRow + '">';
- var strOdd = '<tr style="' + styleRowOdd + '">';
+ let str = '<tr style="' + styleRow + '">';
+ let strOdd = '<tr style="' + styleRowOdd + '">';
   var sHTML = '';
- var fnGetHTMLBarIndicator,cs;
+ let fnGetHTMLBarIndicator,cs;
  if(nLColsWithBars){
    fnGetHTMLBarIndicator = function(p,pMax,clr){
      if(pMax == 0) pMax = 1;
@@ -7994,11 +7994,11 @@ var tableToHtml=function(table,maxRows,styleTable,styleCol,styleRow,styleRowOdd,
    }
    buildInformationObjectForTable(table); // to get min/max for numberlists
  }
- var c,r;
+ let c,r;
  // headers
  sHTML += '<table style="' + styleTable + '">';
  // if all column names are empty then do not show column header row
- var bShowHeaders = false;
+ let bShowHeaders = false;
  for(c=0; c < table.length; c++){
    if(table[c].name != '' && table[c].name != null){
      bShowHeaders = true;
@@ -8052,15 +8052,15 @@ var tableToHtml=function(table,maxRows,styleTable,styleCol,styleRow,styleRowOdd,
  sHTML += '</table>';
  return sHTML;
 }
-var tableToList=function(table) {
+let tableToList=function(table) {
  if(table == null) return;
  // in future provide option to concat rows together
- var list = new L();
+ let list = new L();
  for(var i=0;i<table.length;i++)
    list = list.concat(table[i]);
  return list.downcast();
 }
-var createColorScaleFromColors=function(colorList, positions) {
+let createColorScaleFromColors=function(colorList, positions) {
  if(colorList == null ) return null;
  if(colorList.length==1){
    cS = function(t){return colorList[0]};
@@ -8102,22 +8102,22 @@ var createColorScaleFromColors=function(colorList, positions) {
  };
   return cS;
 }
-var blackScale=function() {
+let blackScale=function() {
  return 'black';
 }
-var grayscale=function(value) {
- var rgb = interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
+let grayscale=function(value) {
+ let rgb = interpolateColorsRGB([0, 0, 0], [255, 255, 255], value);
  return RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
-var antiGrayscale=function(value) {
- var rgb = interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
+let antiGrayscale=function(value) {
+ let rgb = interpolateColorsRGB([255, 255, 255], [0, 0, 0], value);
  return RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
-var antiTemperature=function(value) {
+let antiTemperature=function(value) {
  return temperature(1 - value);
 }
-var temperature=function(value) { //todo:make it efficient
- var color = "#FFFFFF";
+let temperature=function(value) { //todo:make it efficient
+ let color = "#FFFFFF";
  if(value < 0.2) {
    color = interpolateColors('#000000', HSVtoHEX(234, 1, 1), value * 5);
  } else if(value > 0.85) {
@@ -8127,49 +8127,49 @@ var temperature=function(value) { //todo:make it efficient
  }
  return color;
 }
-var lightTemperature=function(value) {
+let lightTemperature=function(value) {
  return temperature(0.1+value*0.9);
 }
-var sqrtTemperature=function(value) {
+let sqrtTemperature=function(value) {
  return temperature(Math.sqrt(value));
 }
-var sqrt4Temperature=function(value) {
+let sqrt4Temperature=function(value) {
  return temperature(Math.pow(value, 0.25));
 }
-var quadraticTemperature=function(value) {
+let quadraticTemperature=function(value) {
  return temperature(Math.pow(value, 2));
 }
-var cubicTemperature=function(value) {
+let cubicTemperature=function(value) {
  return temperature(Math.pow(value, 3));
 }
-var greenToRed=function(value) { //todo:make it efficient
- var rgb = interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
+let greenToRed=function(value) { //todo:make it efficient
+ let rgb = interpolateColorsRGB([50, 255, 50], [255, 50, 50], value);
  return RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
-var greenToBlue=function(value) { //todo:make it efficient
- var rgb = interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
+let greenToBlue=function(value) { //todo:make it efficient
+ let rgb = interpolateColorsRGB([50, 255, 50], [50, 50, 255], value);
  return RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
-var grayToOrange=function(value) {
+let grayToOrange=function(value) {
  return 'rgb(' + Math.floor(100 + value*155) + ','+ Math.floor(100 + value*10) +',' + Math.floor(100 - value*100) + ')';
 }
-var sqrt4GrayToOrange=function(value){
+let sqrt4GrayToOrange=function(value){
  return grayToOrange(Math.pow(value, 0.25));
 }
-var blueToRed=function(value) {
+let blueToRed=function(value) {
  return 'rgb(' + Math.floor(value * 255) + ',0,' + Math.floor((1 - value) * 255) + ')';
 }
 
-var whiteToRed=function(value) {
- var gg = Math.floor(255 - value * 255);
+let whiteToRed=function(value) {
+ let gg = Math.floor(255 - value * 255);
  return 'rgb(255,' + gg + ',' + gg + ')';
 }
-var redToBlue=function(value) {
- var rgb = interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
+let redToBlue=function(value) {
+ let rgb = interpolateColorsRGB([255, 0, 0], [0, 0, 255], value);
  return RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
-var greenWhiteRed=function(value) { //TODO: make it + efficient
- var rgb = [0,0,0];
+let greenWhiteRed=function(value) { //TODO: make it + efficient
+ let rgb = [0,0,0];
  if(value < 0.5) {
    rgb = interpolateColorsRGB([50, 255, 50], [255, 255, 255], value * 2);
  } else {
@@ -8177,20 +8177,20 @@ var greenWhiteRed=function(value) { //TODO: make it + efficient
  }
  return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
 }
-var blueWhiteRed=function(value) {
- var rr = value < 0.5 ? Math.floor(510 * value) : 255;
- var gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
- var bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
+let blueWhiteRed=function(value) {
+ let rr = value < 0.5 ? Math.floor(510 * value) : 255;
+ let gg = value < 0.5 ? Math.floor(510 * value) : Math.floor(510 * (1 - value));
+ let bb = value < 0.5 ? 255 : Math.floor(510 * (1 - value));
   return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
 }
-var blueBlackRed=function(value) {
- var rr = value < 0.5 ? 0 : Math.floor(512*(value-0.5));
- var gg = 0;
- var bb = value < 0.5 ? Math.floor(255 - 512*value) : 0;
+let blueBlackRed=function(value) {
+ let rr = value < 0.5 ? 0 : Math.floor(512*(value-0.5));
+ let gg = 0;
+ let bb = value < 0.5 ? Math.floor(255 - 512*value) : 0;
   return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
 }
-var grayBlackOrange=function(value){ //TODO: make it + efficient
- var rgb = [0,0,0];
+let grayBlackOrange=function(value){ //TODO: make it + efficient
+ let rgb = [0,0,0];
  if(value < 0.5) {
    rgb = interpolateColorsRGB([100, 100, 100], [0, 0, 0], value * 2);
  } else {
@@ -8198,8 +8198,8 @@ var grayBlackOrange=function(value){ //TODO: make it + efficient
  }
  return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
 }
-var grayWhiteOrange=function(value){ //TODO: make it + efficient
- var rgb = [0,0,0];
+let grayWhiteOrange=function(value){ //TODO: make it + efficient
+ let rgb = [0,0,0];
  if(value < 0.5) {
    rgb = interpolateColorsRGB([100, 100, 100], [255, 255, 255], value * 2);
  } else {
@@ -8207,17 +8207,17 @@ var grayWhiteOrange=function(value){ //TODO: make it + efficient
  }
  return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
 }
-var solar=function(value) {
- var rgb = interpolateColorsRGB([0, 0, 0], interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
+let solar=function(value) {
+ let rgb = interpolateColorsRGB([0, 0, 0], interpolateColorsRGB([255, 0, 0], [255, 255, 0], value), Math.pow(value * 0.99 + 0.01, 0.2));
  return RGBtoHEX(rgb[0], rgb[1], rgb[2]);
 }
-var antiSolar=function(value) {
+let antiSolar=function(value) {
  return invertColor(solar(value));
 }
-var get=function(list, indexOrName){
+let get=function(list, indexOrName){
  return list.get(indexOrName);
 }
-var getFirstElements=function(list, fromIndex) {
+let getFirstElements=function(list, fromIndex) {
  if(list == null){
    fromIndex = 0;
    // to clear all the outputs insted of just the first
@@ -8286,21 +8286,21 @@ var getFirstElements=function(list, fromIndex) {
    value: list[fromIndex + 9]
  }];
 }
-var containSameElements=function(list0, list1) {
+let containSameElements=function(list0, list1) {
  if(list0==null || list1==null) return null;
   var l = list0.length;
- var i;
+ let i;
   if(l!=list1.length) return;
   for(i=0; i<l; i++){
    if(list0[i]!=list1[i]) return false;
  }
   return true;
 }
-var fractionOfSameElements=function(list0, list1) {
+let fractionOfSameElements=function(list0, list1) {
  if(list0==null || list1==null) return null;
   var l = Math.max(list0.length,list1.length);
- var i;
- var n=0;
+ let i;
+ let n=0;
  for(i=0; i<l; i++){
    if(list0[i]==list1[i])
      n++;
@@ -8308,14 +8308,14 @@ var fractionOfSameElements=function(list0, list1) {
  if(l==0) return 0;
  return n/l;
 }
-var getCorrespondenceBetweenLists=function(list0, list1, valSame, valDiff) {
+let getCorrespondenceBetweenLists=function(list0, list1, valSame, valDiff) {
  if(list0==null || list1==null) return null;
  if(list0.length != list1.length)
    throw new Error('The two lists must be the same length');
  valDiff = valDiff == null ? false : valDiff;
   var newList = new L();
- var l = Math.max(list0.length,list1.length);
- var i;
+ let l = Math.max(list0.length,list1.length);
+ let i;
  for(i=0; i<l; i++){
    if(list0[i] == list1[i])
      newList.push(valSame == null ? list0[i] : valSame);
@@ -8324,13 +8324,13 @@ var getCorrespondenceBetweenLists=function(list0, list1, valSame, valDiff) {
  }
  return newList.downcast();;
 }
-var getConfusionMatrix=function(lista, listp) {
+let getConfusionMatrix=function(lista, listp) {
  if(lista==null || listp==null) return null;
  if(lista.length != listp.length)
    throw new Error('The two lists must be the same length');
   var listAll = union(lista,listp).getWithoutRepetitions().getSorted();
- var oCounts = {};
- var i,j,c = '-|-';
+ let oCounts = {};
+ let i,j,c = '-|-';
   for(i=0; i < listAll.length; i++){
    for(j=0; j < listAll.length; j++){
      oCounts[listAll[i] + c + listAll[j]] = 0;
@@ -8360,22 +8360,22 @@ var getConfusionMatrix=function(lista, listp) {
  return t;
 }
 
-var indexOf=function(list, element) {
+let indexOf=function(list, element) {
  if(list==null) return;
  return list.indexOf(element);
 }
-var replaceElement=function(list, elementToSearch, elementToPlace){
+let replaceElement=function(list, elementToSearch, elementToPlace){
  if(list==null || elementToSearch==null) return null;
   var newList = new L();
  newList.name = list.name;
- var l = list.length;
- var i;
+ let l = list.length;
+ let i;
  for(i=0; i<l; i++){
    newList[i] = (list[i]==elementToSearch)?elementToPlace:list[i];
  }
  return newList.downcast();
 }
-var replaceElementAtIndex=function(list, index, elementToPlace){
+let replaceElementAtIndex=function(list, index, elementToPlace){
  if(list==null || elementToPlace==null) return null;
  index = index == null ? 0 : index;
   if(typeof index != 'number' || index % 1 != 0 || index < 0 || index >= list.length)
@@ -8384,20 +8384,20 @@ var replaceElementAtIndex=function(list, index, elementToPlace){
  newList[index] = elementToPlace;
  return newList.downcast();
 }
-var replaceNullsInList=function(list, mode, element, nullElement){
+let replaceNullsInList=function(list, mode, element, nullElement){
  if(list==null || mode==null) return;
   if(mode===0 && element==null){
    throw new Error("when mode is 0, must provide a non-null element to replace nulls");
  }
   var n = list.length;
- var i;
- var average = 0;
- var nNumbers = 0;
- var previous;
- var next;
- var factor;
- var newList = new L();
- var i0, i1;
+ let i;
+ let average = 0;
+ let nNumbers = 0;
+ let previous;
+ let next;
+ let factor;
+ let newList = new L();
+ let i0, i1;
   switch(mode){
    case 6://most common element
      element = list.getWithoutElement(null).getMode();
@@ -8536,46 +8536,46 @@ var replaceNullsInList=function(list, mode, element, nullElement){
   newList.name = list.name;
  return newList.downcast();
 }
-var concat=function() {
+let concat=function() {
  if(arguments == null || arguments.length === 0 ||  arguments[0] == null) return null;
  if(arguments.length == 1) return arguments[0];
   var i;
- var list = arguments[0].concat(arguments[1]);
+ let list = arguments[0].concat(arguments[1]);
  for(i = 2; i<arguments.length; i++) {
    list = list.concat(arguments[i]);
  }
  return list;
 }
 
-var reverse=function(list) {
+let reverse=function(list) {
  if(list==null) return;
  return list.getReversed();
 }
-var getBooleanDictionaryForList=function(list){
+let getBooleanDictionaryForList=function(list){
  if(list==null) return;
   var dictionary = {};
- var l = list.length;
- var i;
+ let l = list.length;
+ let i;
  for(i=0;i<l;i++){
    dictionary[list[i]] = true;
  }
   return dictionary;
 }
-var getFirstOccurrenceDictionaryForList=function(list){
+let getFirstOccurrenceDictionaryForList=function(list){
  if(list==null) return;
   var i;
- var l = list.length;
+ let l = list.length;
   var dictionary = {};
  for(i=0; i<l; i++){
    dictionary[list[i]] = i;
  }
   return dictionary;
 }
-var getIndexesDictionary=function(list){
+let getIndexesDictionary=function(list){
  if(list==null) return;
- var indexesDictionary = {};
- var i;
- var l = list.length;
+ let indexesDictionary = {};
+ let i;
+ let l = list.length;
   //list.forEach(function(element, i){
  for(i=0; i<l; i++){
    if(indexesDictionary[list[i]]==null) indexesDictionary[list[i]]=new nL();
@@ -8583,15 +8583,15 @@ var getIndexesDictionary=function(list){
  }
   return indexesDictionary;
 }
-var getIndexesTable=function(list){
+let getIndexesTable=function(list){
  if(list==null) return;
- var indexesTable = new T();
+ let indexesTable = new T();
  indexesTable[0] = new L();
  indexesTable[1] = new nT();
- var indexesDictionary = {};
- var indexOnTable;
- var element;
- var i;
+ let indexesDictionary = {};
+ let indexOnTable;
+ let element;
+ let i;
   for(i=0; i<list.length; i++){
    element = list[i];
    indexOnTable = indexesDictionary[element];
@@ -8606,7 +8606,7 @@ var getIndexesTable=function(list){
   indexesTable[0] = indexesTable[0].downcast();
   return indexesTable;
 }
-var buildDictionaryObjectForDictionary=function(dictionary){
+let buildDictionaryObjectForDictionary=function(dictionary){
  if(dictionary==null || dictionary.length<2 || dictionary[0] == null || dictionary[1] == null) return;
   var dictionaryObject = {};
   dictionary[0].forEach(function(element, i){
@@ -8614,18 +8614,18 @@ var buildDictionaryObjectForDictionary=function(dictionary){
  });
   return dictionaryObject;
 }
-var mapWithTable=function(list, dictionary, nullElement, keepsOriginal) {
+let mapWithTable=function(list, dictionary, nullElement, keepsOriginal) {
  if(list==null || dictionary==null || dictionary.length<2) return;
   var dictionaryObject = buildDictionaryObjectForDictionary(dictionary);
   var newList = mapWithObject(list, dictionaryObject, nullElement, keepsOriginal);
   newList.dictionaryObject = dictionaryObject;
   return newList;
 }
-var mapWithObject=function(list, dictionaryObject, nullElement, keepsOriginal) {
+let mapWithObject=function(list, dictionaryObject, nullElement, keepsOriginal) {
  if(list==null || dictionaryObject==null) return;
   var newList = new L();
- var i;
- var nElements = list.length;
+ let i;
+ let nElements = list.length;
   for(i=0; i<nElements; i++){
    newList[i] = dictionaryObject[list[i]];
  }
@@ -8639,20 +8639,20 @@ var mapWithObject=function(list, dictionaryObject, nullElement, keepsOriginal) {
  newList.name = list.name;
  return newList.downcast();
 }
-var sortListByNumberList=function(list, nl, descending) {
+let sortListByNumberList=function(list, nl, descending) {
  if(descending == null) descending = true;
  if(nl == null || nl.length === 0) return list;
   return list.getSortedByList(nl,!descending,false,true);
 }
-var getRankingsList=function(list, ascendant, randomSortingForEqualElements, normalize){
+let getRankingsList=function(list, ascendant, randomSortingForEqualElements, normalize){
  if(list==null) return null;
  
  ascendant = ascendant==null?true:ascendant;
   var indexes = createSortedNumberList(list.length);
  indexes = indexes.getSortedByList(list, ascendant, randomSortingForEqualElements);
- var rankings = new nL();
- var l = list.length;
- var i;
+ let rankings = new nL();
+ let l = list.length;
+ let i;
  for(i=0;i<l; i++){
    rankings[indexes[i]] = i;
  }
@@ -8660,25 +8660,25 @@ var getRankingsList=function(list, ascendant, randomSortingForEqualElements, nor
   rankings.name = list.name;
   return rankings;
 }
-var sortListByIndexes=function(list, indexedArray) {
- var newList = instantiate(_typeOf(list));
+let sortListByIndexes=function(list, indexedArray) {
+ let newList = instantiate(_typeOf(list));
  newList.name = list.name;
- var nElements = list.length;
- var i;
+ let nElements = list.length;
+ let i;
  for(i = 0; i < nElements; i++) {
    newList.push(list[indexedArray[i]]);
  }
  return newList;
 }
-var concatWithoutRepetitions=function() {
- var l = arguments.length;
+let concatWithoutRepetitions=function() {
+ let l = arguments.length;
  if(l===0) return;
  if(l==1) return arguments[0];
   var i, j;
- var newList = arguments[0].clone();
- var newListBooleanDictionary = getBooleanDictionaryForList(newList);
- var addList;
- var nElements;
+ let newList = arguments[0].clone();
+ let newListBooleanDictionary = getBooleanDictionaryForList(newList);
+ let addList;
+ let nElements;
  for(i = 1; i < l; i++) {
    addList = arguments[i];
    nElements = addList.length;
@@ -8689,13 +8689,13 @@ var concatWithoutRepetitions=function() {
  }
  return newList.downcast();
 }
-var slidingWindowOnList=function(list, subListsLength, step, finalizationMode) {
+let slidingWindowOnList=function(list, subListsLength, step, finalizationMode) {
  finalizationMode = finalizationMode || 0;
- var table = new T();
- var newList;
- var nElements = list.length;
- var i;
- var j;
+ let table = new T();
+ let newList;
+ let nElements = list.length;
+ let i;
+ let j;
   step = Math.max(1, step);
   switch(finalizationMode) {
    case 0: //all sub-Lists same length, doesn't cover the L
@@ -8730,20 +8730,20 @@ var slidingWindowOnList=function(list, subListsLength, step, finalizationMode) {
  }
   return table.downcast();
 }
-var getNewListForObjectType=function(object) {
- var newList = new L();
+let getNewListForObjectType=function(object) {
+ let newList = new L();
  newList[0] = object;
  return instanceSameType(newList.downcast());
 }
-var union=function(list0, list1, list2, list3, list4) {
+let union=function(list0, list1, list2, list3, list4) {
  if(list0==null || list1==null) return;
   var union = new L();
- var l0 = list0.length;
- var l1 = list1.length;
- var l2 = list2 == null ? 0 : list2.length;
- var l3 = list3 == null ? 0 : list3.length;
- var l4 = list4 == null ? 0 : list4.length;
- var i, k;
+ let l0 = list0.length;
+ let l1 = list1.length;
+ let l2 = list2 == null ? 0 : list2.length;
+ let l3 = list3 == null ? 0 : list3.length;
+ let l4 = list4 == null ? 0 : list4.length;
+ let i, k;
   if(list0.type=='ndL' || list1.type=='ndL'){
    union = new ndL();
    union = list0.clone();
@@ -8767,20 +8767,20 @@ var union=function(list0, list1, list2, list3, list4) {
  }
  return union.downcast();
 }
-var intersection=function(list0, list1, list2, list3, list4) {
+let intersection=function(list0, list1, list2, list3, list4) {
  if(list0==null || list1==null) return;
   if(list0["isTable"] && list1["isTable"]) return list0.getColumns(list1.getNames());
   // handle optional case where list2 is actually a dictionary
- var bDictionary0 = null;
+ let bDictionary0 = null;
  if(!Array.isArray(list2) && typeof list2 == 'object'){
    bDictionary0 = list2;
    list2 = null;
  }
- var intersection;
- var l0  = list0.length;
- var l1  = list1.length;
- var i;
- var element;
+ let intersection;
+ let l0  = list0.length;
+ let l1  = list1.length;
+ let i;
+ let element;
   if(list0.type=="ndL" && list1.type=="ndL"){
    intersection = new ndL();
    for(i=0; i<l0; i++){
@@ -8793,10 +8793,10 @@ var intersection=function(list0, list1, list2, list3, list4) {
    return intersection;
  }
    var dictionary =  bDictionary0==null?getBooleanDictionaryForList(list0):bDictionary0;
- var dictionaryIntersected = {};
- var dict2 = list2 == null ? null : getBooleanDictionaryForList(list2);
- var dict3 = list3 == null ? null : getBooleanDictionaryForList(list3);
- var dict4 = list4 == null ? null : getBooleanDictionaryForList(list4);
+ let dictionaryIntersected = {};
+ let dict2 = list2 == null ? null : getBooleanDictionaryForList(list2);
+ let dict3 = list3 == null ? null : getBooleanDictionaryForList(list3);
+ let dict4 = list4 == null ? null : getBooleanDictionaryForList(list4);
  
  intersection = new L();
   // in case where we have list2->4 we want to avoid recursive calls so we don't do downcast over and over
@@ -8812,13 +8812,13 @@ var intersection=function(list0, list1, list2, list3, list4) {
  }
   return intersection.downcast();
 }
-var difference=function(list0, list1) {
+let difference=function(list0, list1) {
  if(list0==null || list1==null) return;
   var dictionary =  getBooleanDictionaryForList(list1);
- var dictionaryDif =  {};
- var i;
- var difference = new L();
- var l0  = list0.length;
+ let dictionaryDif =  {};
+ let i;
+ let difference = new L();
+ let l0  = list0.length;
   if(list0.type=="ndL"){
    //@todo:finish
  }
@@ -8830,15 +8830,15 @@ var difference=function(list0, list1) {
  }
   return difference.downcast();
 }
-var symmetricDifference=function(list0, list1) {
+let symmetricDifference=function(list0, list1) {
  if(list0==null || list1==null) return;
   var dictionary0 =  getBooleanDictionaryForList(list0);
- var dictionary1 =  getBooleanDictionaryForList(list1);
- var dictionaryDif =  {};
- var i;
- var difference = new L();
- var l0  = list0.length;
- var l1  = list1.length;
+ let dictionary1 =  getBooleanDictionaryForList(list1);
+ let dictionaryDif =  {};
+ let i;
+ let difference = new L();
+ let l0  = list0.length;
+ let l1  = list1.length;
   if(list0.type=="ndL"){
    //@todo:finish
  }
@@ -8856,7 +8856,7 @@ var symmetricDifference=function(list0, list1) {
  }
   return difference.downcast();
 }
-var jaccardIndex=function(list0, list1, sigma, bDictionary0) {//TODO: see if this can be more efficient, maybe one idctionar for doing union and interstection at the same time
+let jaccardIndex=function(list0, list1, sigma, bDictionary0) {//TODO: see if this can be more efficient, maybe one idctionar for doing union and interstection at the same time
  if(list0==null || list1==null) return;
  if(list0.length===0 && list1.length===0) return 0;
  sigma = sigma==null?0:sigma;
@@ -8864,19 +8864,19 @@ var jaccardIndex=function(list0, list1, sigma, bDictionary0) {//TODO: see if thi
  return (inter+sigma)/(list0.getWithoutRepetitions().length + list1.getWithoutRepetitions().length - inter);
 }
 
-var jaccardDistance=function(list0, list1) {
+let jaccardDistance=function(list0, list1) {
  return 1 - jaccardIndex(list0, list1);
 }
 
-var filterList=function(list, operator="=c", value, otherList, value2, mode){
+let filterList=function(list, operator="=c", value, otherList, value2, mode){
  if(list==null) return
 
  if(operator == '=') operator = '==';
   if(otherList==null) otherList = list;
   if(mode===true) mode=1
   
- var l = list.length;
- var i;
+ let l = list.length;
+ let i;
   if(mode==2){
    var booleans = new L();
     switch(operator){
@@ -8934,7 +8934,7 @@ var filterList=function(list, operator="=c", value, otherList, value2, mode){
    return booleans;
  }
   var newList = new L();
- var listToUse = (mode==1)?createSortedNumberList(list.length):list;
+ let listToUse = (mode==1)?createSortedNumberList(list.length):list;
   switch(operator){
    case "==":
      for(i=0; i<l; i++){
@@ -8989,7 +8989,7 @@ var filterList=function(list, operator="=c", value, otherList, value2, mode){
  }
  return newList.downcast();
 }
-var mapWithFunction=function(list, func, param0, param1, listName, param2, param3, param4, param5, iterator){
+let mapWithFunction=function(list, func, param0, param1, listName, param2, param3, param4, param5, iterator){
  if(list==null || func==null) return;
  if(iterator==null) iterator=true;
   if(typeof(func)=="string"){
@@ -8997,8 +8997,8 @@ var mapWithFunction=function(list, func, param0, param1, listName, param2, param
    func = stringToFunction(func);
  }
   var newList = new L();
- var l = list.length;
- var i;
+ let l = list.length;
+ let i;
   if(iterator){
    for(i=0; i<l; i++){
      newList[i] = func.call(this, list[i], i, param0, param1, param2, param3, param4, param5);
@@ -9019,10 +9019,10 @@ var mapWithFunction=function(list, func, param0, param1, listName, param2, param
   newList.name = listName;
   return newList.downcast();
 }
-var mapFunctionsOnList=function(list, functionList, param0, param1){
+let mapFunctionsOnList=function(list, functionList, param0, param1){
  if(list==null || functionList==null) return;
   var listResults = new L();
- var l = Math.min(list.length, functionList.length);
+ let l = Math.min(list.length, functionList.length);
   for(var i=0; i<l; i++){
    var func = functionList[i];
    if(typeof(func)=="string") func = stringToFunction(func);
@@ -9034,9 +9034,9 @@ var mapFunctionsOnList=function(list, functionList, param0, param1){
  return listResults.downcast();
 }
 
-var aggregateList=function(aggregatorList, toAggregateList, mode, indexesTable, weightList, aggregationFunction){
+let aggregateList=function(aggregatorList, toAggregateList, mode, indexesTable, weightList, aggregationFunction){
  if(aggregatorList==null || toAggregateList==null) return null;
- var table = new T();
+ let table = new T();
   if(mode!=null && _typeOf(mode)=='string') mode = ListOperators._aggregationDictionary[mode];
  if(mode == 18 && weightList == null) throw Error("weightList must be defined to aggregate to a weighted average.");
   indexesTable = aggregatorList.indexesTable;
@@ -9054,12 +9054,12 @@ var aggregateList=function(aggregatorList, toAggregateList, mode, indexesTable, 
  }
   mode = mode==null?0:mode;
   var list;
- var elementsTable;
- var nIndexes = indexesTable[1].length;
- var indexes;
- var index;
- var elements;
- var i, j;
+ let elementsTable;
+ let nIndexes = indexesTable[1].length;
+ let indexes;
+ let index;
+ let elements;
+ let i, j;
   switch(mode){
    case 0://first element
      table[1] = new L();
@@ -9255,12 +9255,12 @@ var aggregateList=function(aggregatorList, toAggregateList, mode, indexesTable, 
  }
   return null;
 }
-var subCategoricalAnalysis=function(list0, list1){
+let subCategoricalAnalysis=function(list0, list1){
  if(list0==null || list1==null) return;
   var dictionary = {};
- var element, projection;
- var i;
- var list0SubCategorical = true;
+ let element, projection;
+ let i;
+ let list0SubCategorical = true;
  for(i=0; list0[i]!=null; i++){
    element = list0[i];
    projection = dictionary[element];
@@ -9272,7 +9272,7 @@ var subCategoricalAnalysis=function(list0, list1){
    }
  }
   dictionary = {};
- var list1SubCategorical = true;
+ let list1SubCategorical = true;
  for(i=0; list1[i]!=null; i++){
    element = list1[i];
    projection = dictionary[element];
@@ -9288,7 +9288,7 @@ var subCategoricalAnalysis=function(list0, list1){
  if(list1SubCategorical) return 3;
  return 0;
 }
-var getListEntropy=function(list, valueFollowing, freqTable, normalizedMode) {
+let getListEntropy=function(list, valueFollowing, freqTable, normalizedMode) {
  if(list == null) return;
   if(list.length < 2) {
    if(list.length == 1) {
@@ -9303,17 +9303,17 @@ var getListEntropy=function(list, valueFollowing, freqTable, normalizedMode) {
   if(list.infoObject!=null) freqTable = list.infoObject.frequenciesTable;
   if(freqTable==null) freqTable = list.getFrequenciesTable(true);// countElementsRepetitionOnList(list, true);
   list._mostRepresentedValue = freqTable[0][0];
- var N = list.length;
+ let N = list.length;
  list._biggestProbability = freqTable[1][0] / N;
  if(freqTable[0].length == 1) {
    list._P_valueFollowing = list[0] == valueFollowing ? 1 : 0;
    return 0;
  }
- var entropy = 0;
+ let entropy = 0;
   var norm = Math.log(freqTable[0].length);
- var l = freqTable[1].length;//number of different elements (change the name of the variable!!!!!)
- var i;
- var val;
+ let l = freqTable[1].length;//number of different elements (change the name of the variable!!!!!)
+ let i;
+ let val;
  for(i=0; i<l; i++){
    val = freqTable[1][i];
    entropy -= val/N * Math.log(val/N);// / norm;
@@ -9343,7 +9343,7 @@ var getListEntropy=function(list, valueFollowing, freqTable, normalizedMode) {
  }
  return entropy;
 }
-var getListDiversity=function(list, mode, freqTable) {
+let getListDiversity=function(list, mode, freqTable) {
  mode = (mode == null? 0: mode);
  if ((mode < 0) || (mode > 2) || (list == null)) return;    
  if(list.length<2) return 0;    
@@ -9368,15 +9368,15 @@ var getListDiversity=function(list, mode, freqTable) {
  }
  return;
 }
-var getInformationGain=function(feature, supervised, reductionRatioNormalization) {
+let getInformationGain=function(feature, supervised, reductionRatioNormalization) {
  if(feature == null || supervised == null || feature.length != supervised.length) return null;
   var entS = supervised.infoObject==null?getListEntropy(supervised):supervised.infoObject.entropy;
- var ig = entS;
- var childrenObject = {};
- var childrenLists = new T();
- var i;
- var N = feature.length;
- var element;
+ let ig = entS;
+ let childrenObject = {};
+ let childrenLists = new T();
+ let i;
+ let N = feature.length;
+ let element;
    //feature.forEach(function(element, i) {
  for(i=0; i<N; i++){
    element = feature[i];
@@ -9387,15 +9387,15 @@ var getInformationGain=function(feature, supervised, reductionRatioNormalization
    childrenObject[element].push(supervised[i]);
  }//);
   N = childrenLists.length;//.getLengths().getSum();
- var n_total = supervised.length;//childrenLists.getLengths().getSum();
+ let n_total = supervised.length;//childrenLists.getLengths().getSum();
   var entropy;
- var enCond = 0; //conditional entropy
+ let enCond = 0; //conditional entropy
  
  for(i=0; i<N; i++){
    entropy = (childrenLists[i].infoObject==null?getListEntropy(childrenLists[i]):childrenLists[i].infoObject.entropy);
    enCond += (childrenLists[i].length / n_total) * entropy;
  }
-  var ig = entS - enCond; // non-normalized ig
+  ig = entS - enCond; // non-normalized ig
   if(reductionRatioNormalization) {
      ig = ig/entS; //ig normalizaed as ratio
  }
@@ -9408,7 +9408,7 @@ var getInformationGain=function(feature, supervised, reductionRatioNormalization
 //  var result = groupElementsByPropertyValue(list, null, sortedByValue, mode, fillBlanks);
 //  return result;
 // }
-var groupElementsByPropertyValue=function(list, propertyName, sortedByValue, mode, fillBlanks) {
+let groupElementsByPropertyValue=function(list, propertyName, sortedByValue, mode, fillBlanks) {
 //  if(!list)
 //    return;
 //  var result = _groupElements_Base(list, propertyName, sortedByValue, mode, fillBlanks);
@@ -9420,9 +9420,9 @@ var groupElementsByPropertyValue=function(list, propertyName, sortedByValue, mod
  if(mode == undefined){
    mode = 0;
  }
- var resultOb = {};
- var resultTable = new T();
- var pValue, item, minValue, maxValue, i;
+ let resultOb = {};
+ let resultTable = new T();
+ let pValue, item, minValue, maxValue, i;
  for(i = 0; i < list.length; i++) {
    item = list[i];
    pValue = propertyName == undefined ? item : item[propertyName];
@@ -9462,10 +9462,10 @@ var groupElementsByPropertyValue=function(list, propertyName, sortedByValue, mod
    resultTable = resultTable.getSortedByProperty("name"); // "valProperty"
   return resultTable;
 }
-var repeatElements=function(list, repetitions) {
+let repeatElements=function(list, repetitions) {
  if(!list || !repetitions)
    return;
- var newList = instanceSameType(list);
+ let newList = instanceSameType(list);
  newList.name = list.name;
   for (var i = 0; i<list.length; i++) {
    for (var j = 0; j < repetitions[i%repetitions.length]; j++) {
@@ -9474,18 +9474,18 @@ var repeatElements=function(list, repetitions) {
  };
   return newList;
 }
-var _isCategorical=function(list, numberOfDifferentElements){
+let _isCategorical=function(list, numberOfDifferentElements){
  //list unique < 20
  //at least one repeated
  return numberOfDifferentElements > 1 && numberOfDifferentElements<list.length && (list.length<=20 || numberOfDifferentElements/list.length<0.8);
 }
-var buildInformationObjectForList=function(list, bUseExistingObjectIfPresent){
+let buildInformationObjectForList=function(list, bUseExistingObjectIfPresent){
  if(list==null) return;
   bUseExistingObjectIfPresent = bUseExistingObjectIfPresent==null?true:bUseExistingObjectIfPresent;
   if(bUseExistingObjectIfPresent == true && list.infoObject != null) return list.infoObject;
  
- var n = list.length;
- var i, val;
+ let n = list.length;
+ let i, val;
   var infoObject = {
    isInfoObject:true,//useful for solving ambiguity when reading infoObject.type
    type:list.type,
@@ -9630,11 +9630,11 @@ var buildInformationObjectForList=function(list, bUseExistingObjectIfPresent){
   list.infoObject = infoObject;
   return infoObject;
 }
-var kCombinations=function(list, k){
+let kCombinations=function(list, k){
  if(list==null || k==null) return;
   var kCombinations = new T();
- var i, j;
- var head, tailkCombinations;
+ let i, j;
+ let head, tailkCombinations;
   if (k > list.length || k <= 0) {
    return kCombinations;
  }
@@ -9660,21 +9660,21 @@ var kCombinations=function(list, k){
  }
  return kCombinations.downcast();
 }
-var allSubLists=function(list, includeEmpty){
+let allSubLists=function(list, includeEmpty){
  if(list==null) return null;
   var allSubLists  = new T();
- var k;
+ let k;
  if(includeEmpty) allSubLists.push(new L());
  for(k=1; k<=list.length; k++){
    allSubLists = T.toL( allSubLists.concat( kCombinations(list, k) ) );
  }
  return allSubLists.downcast();
 }
-var crossCombineLists=function(list1, list2, sep){
+let crossCombineLists=function(list1, list2, sep){
  if(list1 == null || list2 == null) return null;
  sep = sep == null ? ' ' : sep;
- var i,j;
- var newList = new sL();
+ let i,j;
+ let newList = new sL();
  for(i=0;i<list1.length;i++){
    for(j=0;j<list2.length;j++){
      newList.push(list1[i] + sep + list2[j]);
@@ -9682,7 +9682,7 @@ var crossCombineLists=function(list1, list2, sep){
  }
  return newList;
 }
-var characterizeList=function(list, mode, bShowMode){
+let characterizeList=function(list, mode, bShowMode){
  if(list == null) return null;
  if(!list.isList) throw new Error('first inlet must be a list');
  if(list.isTable){
@@ -9794,14 +9794,14 @@ var characterizeList=function(list, mode, bShowMode){
  return sRes;
 }
 
-var createDefaultCategoricalColorList=function(nColors, alpha, invert, bDarken = false) {
- var colors = createCategoricalColors(2, nColors,null,null,null,null,null,bDarken);
+let createDefaultCategoricalColorList=function(nColors, alpha, invert, bDarken = false) {
+ let colors = createCategoricalColors(2, nColors,null,null,null,null,null,bDarken);
  if(alpha!=null && alpha <= 1) colors = colors.addAlpha(alpha);
   if(invert) colors = colors.getInverted();
   return colors;
 }
 
-var colorsForCategoricalList=function(list, colorList, stableColors){
+let colorsForCategoricalList=function(list, colorList, stableColors){
  if(list==null) return;
   if(stableColors){
    var colors = new cL();
@@ -9814,12 +9814,12 @@ var colorsForCategoricalList=function(list, colorList, stableColors){
   return createCategoricalColorListForList(list, colorList)[0].value;
 }
 
-var createCategoricalColorListForList=function(list, colorList, alpha, color, interpolate, invert, bDarken){
+let createCategoricalColorListForList=function(list, colorList, alpha, color, interpolate, invert, bDarken){
   if(list==null) return null
 
  interpolate = interpolate==null?0:interpolate;
- var diffValues = list.getWithoutRepetitions();
- var diffColors;
+ let diffValues = list.getWithoutRepetitions();
+ let diffColors;
  if(colorList && interpolate>0){
    diffColors = colorList.getInterpolated(color, interpolate);
  } else {
@@ -9828,7 +9828,7 @@ var createCategoricalColorListForList=function(list, colorList, alpha, color, in
  if(alpha!=null && alpha<=1) diffColors = diffColors.addAlpha(alpha);
   if(invert) diffColors = diffColors.getInverted();
   var colorDictTable = T.toL([diffValues, diffColors]);
- var dictionaryObject = buildDictionaryObjectForDictionary(colorDictTable);
+ let dictionaryObject = buildDictionaryObjectForDictionary(colorDictTable);
   var fullColorList = mapWithTable(list, colorDictTable, 'black');
   fullColorList = cL.toL(fullColorList)
 
@@ -9852,12 +9852,12 @@ var createCategoricalColorListForList=function(list, colorList, alpha, color, in
  ];
 }
 
-var createColorListFromColorScale=function(n, colorScale, transformation){
+let createColorListFromColorScale=function(n, colorScale, transformation){
  if(n==null) return;
  transformation = transformation==null?0:transformation;
   colorScale = colorScale==null?grayToOrange:colorScale;
   var i;
- var colorList = new cL();
+ let colorList = new cL();
   switch(transformation){
    case 0:
      for(i=0; i<n; i++){
@@ -9887,14 +9887,14 @@ var createColorListFromColorScale=function(n, colorScale, transformation){
  }
   return colorList;
 }
-var createColorListFromNumberList=function(nl, colorScale, mode) {
+let createColorListFromNumberList=function(nl, colorScale, mode) {
  if(nl==null) return null;
   mode = mode == null ? 0 : mode;
  colorScale = colorScale==null?grayToOrange:colorScale;
   var colorList = new cL();
- var newNumberList;
- var i;
- var l = nl.length;
+ let newNumberList;
+ let i;
+ let l = nl.length;
   switch(mode) {
    case 0: //0 to max
      newNumberList = normalizeToMax(nl);
@@ -9910,18 +9910,18 @@ var createColorListFromNumberList=function(nl, colorScale, mode) {
  }
   return colorList;
 }
-var createSymmetricalColorListFromNumberList=function(nl, colorNeg, color0, colorPos, emphasize, interval){
+let createSymmetricalColorListFromNumberList=function(nl, colorNeg, color0, colorPos, emphasize, interval){
  if(nl==null) return;
- var inter = interval==null?nl.getInterval():interval;
- var maxAbs = Math.max(Math.abs(inter.x),Math.abs(inter.y));
+ let inter = interval==null?nl.getInterval():interval;
+ let maxAbs = Math.max(Math.abs(inter.x),Math.abs(inter.y));
   colorNeg = colorNeg==null?'red':colorNeg;
  color0 = color0==null?'gray':color0;
  colorPos = colorPos==null?'blue':colorPos;
   var rgb0 = colorStringToRGB(colorNeg);
- var rgb1 = colorStringToRGB(color0);
- var rgb2 = colorStringToRGB(colorPos);
+ let rgb1 = colorStringToRGB(color0);
+ let rgb2 = colorStringToRGB(colorPos);
   var colorList = new cL();
- var abs;
+ let abs;
   for(var i = 0; i<nl.length; i++){
    abs = Math.abs(nl[i])/maxAbs;
    if(emphasize>0) abs = Math.sqrt(abs);
@@ -9936,30 +9936,30 @@ var createSymmetricalColorListFromNumberList=function(nl, colorNeg, color0, colo
  }
   return colorList;
 }
-var createColorListWithSingleColor=function(nColors, color) {
- var colorList = new cL();
+let createColorListWithSingleColor=function(nColors, color) {
+ let colorList = new cL();
  for(var i = 0; i < nColors; i++) {
    colorList.push(color);
  }
  return colorList;
 }
-var createColorListBetweenTwoColors=function(nColors, color1, color2) {
+let createColorListBetweenTwoColors=function(nColors, color1, color2) {
  nColors = nColors == null? 8:nColors;
  if(color1 == null || color2 == null) return;
- var colorList = new cL();
+ let colorList = new cL();
  for(var i = 0; i < nColors; i++) {
    var clr = nColors == 1 ? color1 : interpolateColors(color1,color2,i/(nColors-1),true);
    colorList.push(clr);
  }
  return colorList;
 }
-var createColorListSpectrum=function(nColors, saturation, value) {
+let createColorListSpectrum=function(nColors, saturation, value) {
  // use HSV and rotate through hues
  nColors = nColors == null? 8:nColors;
  saturation = saturation == null? 1:saturation;
  value = value == null? 1:value;
- var colorList = new cL();
- var hue;
+ let colorList = new cL();
+ let hue;
  for(var i = 0; i < nColors; i++) {
    // hue of 0 == hue of 360 so we go to nColors-1
    hue = 360*i/nColors;
@@ -9968,7 +9968,7 @@ var createColorListSpectrum=function(nColors, saturation, value) {
  return colorList;
 }
 
-var stringsToColors=function(list,dictionary){
+let stringsToColors=function(list,dictionary){
  if(list==null) return;
   if(dictionary != null && dictionary.isTable)
    dictionary = buildDictionaryObjectForDictionary(dictionary);
@@ -9981,10 +9981,10 @@ var stringsToColors=function(list,dictionary){
   return colors;
 }
 
-var createCategoricalColors=function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue=0.5, colorList, bDarken) {
+let createCategoricalColors=function(mode, nColors, colorScaleFunction, alpha, interpolateColor, interpolateValue=0.5, colorList, bDarken) {
  colorScaleFunction = colorScaleFunction == null ? temperature : colorScaleFunction;
- var i, j;
- var newColorList = new cL();
+ let i, j;
+ let newColorList = new cL();
  switch(mode) {
    case 0: //picking from cScale
      for(i = 0; i < nColors; i++) {
@@ -10062,23 +10062,23 @@ var createCategoricalColors=function(mode, nColors, colorScaleFunction, alpha, i
  }
    return newColorList;
 }
-var _sortingVariation=function(nl, rnd0, rnd1) { //private
- var newNumberList = nl.clone();
- var pos0 = Math.floor(rnd0 * newNumberList.length);
- var pos1 = Math.floor(rnd1 * newNumberList.length);
- var cache = newNumberList[pos1];
+let _sortingVariation=function(nl, rnd0, rnd1) { //private
+ let newNumberList = nl.clone();
+ let pos0 = Math.floor(rnd0 * newNumberList.length);
+ let pos1 = Math.floor(rnd1 * newNumberList.length);
+ let cache = newNumberList[pos1];
  newNumberList[pos1] = newNumberList[pos0];
  newNumberList[pos0] = cache;
  return newNumberList;
 }
-var _evaluationFunction=function(nl, bCircular, bExtendedNeighbourhood) { //private
+let _evaluationFunction=function(nl, bCircular, bExtendedNeighbourhood) { //private
  // bCircular == true means distance between 0 and n-1 is 1
  // bExtendedNeighbourhood == true means consider diffs beyond adjacent pairs
- var sum = 0;
- var i,d,r2,
+ let sum = 0;
+ let i,d,r2,
    len=nl.length,
    h=Math.floor(len/2);
- var range = bExtendedNeighbourhood ? 4 : 1;
+ let range = bExtendedNeighbourhood ? 4 : 1;
  for(var r=1; r <= range; r++){
    r2 = r*r;
    for(i = 0; nl[i + r] != null; i++) {
@@ -10091,7 +10091,7 @@ var _evaluationFunction=function(nl, bCircular, bExtendedNeighbourhood) { //priv
  }
  return sum;
 }
-var createCategoricalColorListDictionaryObject=function(list, colorList, alpha, color, interpolate, invert){
+let createCategoricalColorListDictionaryObject=function(list, colorList, alpha, color, interpolate, invert){
  if(list==null) return;
   if(list.isTable){
    // special processing for tables, look at all categorical lists
@@ -10123,8 +10123,7 @@ var createCategoricalColorListDictionaryObject=function(list, colorList, alpha, 
   var diffColors = createCategoricalColors(2, diffValues.length, null, alpha, color, interpolate, colorList);
   if(invert) diffColors = diffColors.getInverted();
   var dictionaryObject = {};
-  var l = diffColors.length;
- var i;
+  var l = diffColors.length
   for(i=0; i<l; i++){
    dictionaryObject[diffValues[i]] = diffColors[i];
  }
@@ -10133,7 +10132,7 @@ var createCategoricalColorListDictionaryObject=function(list, colorList, alpha, 
  // });
   return dictionaryObject;
 }
-var stringToDate=function(string, formatCase, separator) {// @todo: move to StringConversions
+let stringToDate=function(string, formatCase, separator) {// @todo: move to StringConversions
  if(string == null) return null;
  separator = separator == null ? "-" : separator;
  formatCase = formatCase == null ? 1 : formatCase;
@@ -10156,7 +10155,7 @@ var stringToDate=function(string, formatCase, separator) {// @todo: move to Stri
    return new Date(string);
  }
   var y;
- var parts = string.split(separator);
+ let parts = string.split(separator);
  switch(formatCase) {
    case 0: //MM-DD-YYYY
      return new Date(Number(parts[2]), Number(parts[0]) - 1, Number(parts[1]));
@@ -10184,7 +10183,7 @@ var stringToDate=function(string, formatCase, separator) {// @todo: move to Stri
      return new Date(y, m - 1, d) ;
  }
 }
-var dateToString=function(date, formatCase, separator) {// @todo: move to DateConversions
+let dateToString=function(date, formatCase, separator) {// @todo: move to DateConversions
  if(date == null) return null;
  if(date.type == 'dL' || _typeOf(date) == 'Array'){
    // operate on each element
@@ -10199,10 +10198,10 @@ var dateToString=function(date, formatCase, separator) {// @todo: move to DateCo
  formatCase = formatCase == null ? 0 : formatCase;
  if(typeof date == 'string')
    date = new Date(date);
- var year = date.getFullYear();
- var yearTwoLast = String(year).substr(2);
- var month = date.getMonth() + 1;
- var day = date.getDate();
+ let year = date.getFullYear();
+ let yearTwoLast = String(year).substr(2);
+ let month = date.getMonth() + 1;
+ let day = date.getDate();
   switch(formatCase) {
    case 0: //MM-DD-YYYY
      return month + separator + day + separator + year;
@@ -10245,71 +10244,71 @@ var dateToString=function(date, formatCase, separator) {// @todo: move to DateCo
      return (day < 10 ? '0'+day : day) + separator + (month < 10 ? '0'+month : month) + separator + year;
  }
 }
-var clearHoursMinutesSeconds=function(date) {
+let clearHoursMinutesSeconds=function(date) {
  if(date==null) return null;
- var s = dateToString(date,1); // converts to YYYY-MM-DD
+ let s = dateToString(date,1); // converts to YYYY-MM-DD
  return stringToDate(s,1);
 }
-var currentDate=function(trigger) {
+let currentDate=function(trigger) {
  return new Date();
 }
-var addDaysToDate=function(date, nDays) {
+let addDaysToDate=function(date, nDays) {
  if(date == null) return null;
  nDays = nDays==null?0:nDays;
  if(typeof date == 'string')
    date = parseDate(date);
- var date2 = new Date(date);
+ let date2 = new Date(date);
  date2.setDate(date2.getDate() + nDays);
  return date2;
 }
-var addMillisecondsToDate=function(date, nMilliseconds) {
+let addMillisecondsToDate=function(date, nMilliseconds) {
  return new Date(date.getTime() + nMilliseconds);
 }
-var parseDate=function(string) {
+let parseDate=function(string) {
  string = String(string);
  // javascript date handling is problematic. See for example: new Date('1994-10-9') and new Date('1994-10-09')
  // We use numeric form for the special case of YYYY-MM-DD to make them consistent
- var aParts = string.match(/^(\d{4})[\-\.](\d{1,2})[\-\.](\d{1,2})$/);
+ let aParts = string.match(/^(\d{4})[\-\.](\d{1,2})[\-\.](\d{1,2})$/);
  if(aParts && aParts.length == 4)
    return new Date(aParts[1],aParts[2]-1,aParts[3]);
  return new Date(Date.parse(string));
 }
-var parseDates=function(sl) {
- var dateList = new dL();
- var i;
+let parseDates=function(sl) {
+ let dateList = new dL();
+ let i;
  for(i = 0; sl[i] != null; i++) {
    dateList.push(this.parseDate(sl[i]));
  }
  return dateList;
 }
-var hoursBetweenDates=function(date0, date1) {
+let hoursBetweenDates=function(date0, date1) {
  return(date1.getTime() - date0.getTime()) * DateOperators_millisecondsToHours;
 }
-var daysBetweenDates=function(date0, date1) {
+let daysBetweenDates=function(date0, date1) {
  return(date1.getTime() - date0.getTime()) * DateOperators_millisecondsToDays;
 }
-var weeksBetweenDates=function(date0, date1) {
+let weeksBetweenDates=function(date0, date1) {
  return(date1.getTime() - date0.getTime()) * DateOperators_millisecondsToWeeks;
 }
-var yearsBetweenDates=function(date0, date1) {
+let yearsBetweenDates=function(date0, date1) {
  return(date1.getTime() - date0.getTime()) * DateOperators_millisecondsToYears;
 }
-var nDayInYear=function(date) {
+let nDayInYear=function(date) {
  return Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) * DateOperators_millisecondsToDays);
 }
-var getDateDaysAgo=function(nDays) {
+let getDateDaysAgo=function(nDays) {
  return addDaysToDate(new Date(), -nDays);
 }
-var getWeekInYear=function(date) {
+let getWeekInYear=function(date) {
  if(date == null) return null;
- var onejan = new Date(date.getFullYear(), 0, 1);
+ let onejan = new Date(date.getFullYear(), 0, 1);
  return Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
 }
-var getNDaysInMonth=function(month, year) {
+let getNDaysInMonth=function(month, year) {
  return new Date(year, month, 0).getDate();
 }
-var getDecimalDate=function(d0) {
- var date;
+let getDecimalDate=function(d0) {
+ let date;
  if(d0 == null) return null;
  if(typeof d0 == 'string'){
    date = new Date(d0);
@@ -10319,11 +10318,11 @@ var getDecimalDate=function(d0) {
  else
    date = d0;
   var year = date.getFullYear();
- var d0 = new Date(year, 0, 1);
- var d1 = new Date(year + 1, 0, 1);
+ d0 = new Date(year, 0, 1);
+ let d1 = new Date(year + 1, 0, 1);
  return year + (date.getTime() - d0.getTime()) / (d1.getTime() - d0.getTime());
 }
-var convertFromDecimalDate=function(nDate) {
+let convertFromDecimalDate=function(nDate) {
  if(nDate == null) return null;
  if(nDate.type == 'nL'){
    var dL = new dL();
@@ -10332,16 +10331,16 @@ var convertFromDecimalDate=function(nDate) {
      dL.push(convertFromDecimalDate(nDate[i]));
    return dL;
  }
- var year = Math.floor(nDate);
- var d0 = new Date(year, 0, 1);
- var d1 = new Date(year + 1, 0, 1);
- var ntime = d0.getTime() + (d1.getTime()-d0.getTime())*(nDate-year);
- var date = new Date(Math.round(ntime));
+ let year = Math.floor(nDate);
+ let d0 = new Date(year, 0, 1);
+ let d1 = new Date(year + 1, 0, 1);
+ let ntime = d0.getTime() + (d1.getTime()-d0.getTime())*(nDate-year);
+ let date = new Date(Math.round(ntime));
  if(isNaN(date))
    throw new Error('Invalid decimal date value:' + nDate);
  return date;
 }
-var extractPropertiesFromDate=function(dt, cType){
+let extractPropertiesFromDate=function(dt, cType){
  if(dt == null) return null;
  cType = cType == null ? 0 : cType;
  if(isNaN(cType) || cType % 1 !== 0 || cType < 0 || cType > 15)
@@ -10413,61 +10412,61 @@ var extractPropertiesFromDate=function(dt, cType){
  }
  return res;
 }
-var StringListToNumberList=function(stringlist) {
- var numbers = new nL();
+let StringListToNumberList=function(stringlist) {
+ let numbers = new nL();
  numbers.name = stringlist.name;
- var i;
+ let i;
  for(i = 0; stringlist[i] != null; i++) {
    numbers[i] = Number(stringlist[i]);
  }
  return numbers;
 }
-var toDateList=function(sl, formatCase, separator) {
+let toDateList=function(sl, formatCase, separator) {
  if(sl==null) return;
  
- var dateList = new dL();
+ let dateList = new dL();
  dateList.name = sl.name;
- var i;
- var l = sl.length;
+ let i;
+ let l = sl.length;
  for(i = 0; i<l; i++) {
    dateList.push(stringToDate(sl[i], formatCase, separator));
  }
  return dateList;
 }
 
-var _y=function(date) {
+let _y=function(date) {
  return date.getFullYear();
 }
-var _m=function(date) {
+let _m=function(date) {
  return date.getMonth();
 }
-var _d=function(date) {
+let _d=function(date) {
  return date.getDate() - 1;
 }
-var _h=function(date) {
+let _h=function(date) {
  return date.getHours();
 }
-var _mn=function(date) {
+let _mn=function(date) {
  return date.getMinutes();
 }
-var _s=function(date) {
+let _s=function(date) {
  return date.getSeconds();
 }
-var _ms=function(date) {
+let _ms=function(date) {
  return date.getMilliseconds();
 }
-var getDateLists=function(table){
- var newT = new T();
+let getDateLists=function(table){
+ let newT = new T();
  for(var i=0; i<table.length; i++){
    if(table[i].type=="dL") newT.push(table[i]);
  }
  return newT;
 }
-var buildSummaryTableFromDates=function(dates,outputType,nlValues,intDates){
+let buildSummaryTableFromDates=function(dates,outputType,nlValues,intDates){
  if(dates == null || dates.type != 'dL') return null;
  outputType = outputType == null ? 0 : outputType;
- var nameType = 'Weekday by Hour Summary';
- var sCol0 = 'Hour';
+ let nameType = 'Weekday by Hour Summary';
+ let sCol0 = 'Hour';
  if(outputType == 1){
    nameType = 'Month by Day Summary';
    sCol0 = 'Day';
@@ -10476,16 +10475,16 @@ var buildSummaryTableFromDates=function(dates,outputType,nlValues,intDates){
    nameType = 'Sequence';
    sCol0 = 'Date';
  }
- var tab = new T();
+ let tab = new T();
  if(dates.name != null)
    tab.name = dates.name + ' ' + nameType;
  else
    tab.name = nameType;
  tab.push(new sL());
  tab[0].name = sCol0;
- var lang = window && window.navigator && window.navigator.language ? window.navigator.language : 'en-US';
- var dt0 = new Date(2016,0,17,10,0,0,0); // sunday
- var i,dt,nL,j,d,h;
+ let lang = window && window.navigator && window.navigator.language ? window.navigator.language : 'en-US';
+ let dt0 = new Date(2016,0,17,10,0,0,0); // sunday
+ let i,dt,nL,j,d,h;
  if(outputType == 2){
    // do this separately, it's too different from the other two outputs
    if(intDates == null || intDates.type != 'dI')
@@ -10512,8 +10511,8 @@ var buildSummaryTableFromDates=function(dates,outputType,nlValues,intDates){
    return tab;
  }
   var bValues = nlValues && nlValues.length == dates.length;
- var nCols = outputType == 0 ? 7 : 12;
- var inc = outputType == 0 ? 1 : 30;
+ let nCols = outputType == 0 ? 7 : 12;
+ let inc = outputType == 0 ? 1 : 30;
  for(i=0;i<nCols;i++){
    dt = i == 0 ? dt0 : addDaysToDate(dt0,i*inc);
    nL = new nL();
@@ -10557,7 +10556,7 @@ var buildSummaryTableFromDates=function(dates,outputType,nlValues,intDates){
  }
   return tab;
 }
-var transformDateList=function(dates, nLOutputs, sBaseName, dStart) {
+let transformDateList=function(dates, nLOutputs, sBaseName, dStart) {
  if(dates == null) return null;
  if(dates.type == 'sL')
    dates = toDateList(dates);
@@ -10566,10 +10565,10 @@ var transformDateList=function(dates, nLOutputs, sBaseName, dStart) {
  if(nLOutputs.type != 'nL' && !(nLOutputs instanceof Array) )
    throw new Error('Invalid input. Second argument must be a nL.');
  sBaseName = sBaseName == null ? '' : sBaseName;
- var aNames=['year','month','day of month','day of week','hour','minute','second','decimal date','day number of year','quarter','decimal hour','day','month','day name','month name','week number in year','day number'];
- var aDays=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
- var aMonths=['January','February','March','April','May','June','July','August','September','October','November','December'];
- var table;
+ let aNames=['year','month','day of month','day of week','hour','minute','second','decimal date','day number of year','quarter','decimal hour','day','month','day name','month name','week number in year','day number'];
+ let aDays=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+ let aMonths=['January','February','March','April','May','June','July','August','September','October','November','December'];
+ let table;
   dStart = dStart == null ? '2000-01-01' : dStart;
  if(dStart.type == 'dL'){
    dStart = dStart.getMin();
@@ -10592,7 +10591,7 @@ var transformDateList=function(dates, nLOutputs, sBaseName, dStart) {
    table = new T();
  else
    table = new nT();
- var k,s2,cur;
+ let k,s2,cur;
  for(var c=0; c < nLOutputs.length; c++){
    var cType = nLOutputs[c];
    cur = table.length;
@@ -10692,7 +10691,7 @@ var transformDateList=function(dates, nLOutputs, sBaseName, dStart) {
  }
  return table;
 }
-var changeTimeResolution=function(dates, mode, maxPeriods,bAdaptiveUseActualPeriodsInData,modeOutput) {
+let changeTimeResolution=function(dates, mode, maxPeriods,bAdaptiveUseActualPeriodsInData,modeOutput) {
  if(dates == null) return;
  maxPeriods = maxPeriods == null ? 100 : maxPeriods;
  mode = mode == null ? 0 : mode;
@@ -10701,7 +10700,7 @@ var changeTimeResolution=function(dates, mode, maxPeriods,bAdaptiveUseActualPeri
  if(mode != Math.floor(mode) || mode < 0 || mode > 9)
    throw new Error('Invalid mode value provided in changeTimeResolution');
  // convert to regular dates
- var typeInitial = dates.type;
+ let typeInitial = dates.type;
  if(dates.type == 'sL')
    dates = toDateList(dates);
  else if(dates.type == 'nL'){
@@ -10710,15 +10709,15 @@ var changeTimeResolution=function(dates, mode, maxPeriods,bAdaptiveUseActualPeri
  }
  if(dates.type != 'dL')
    throw new Error('changeTimeResolution input must be a dL, sL containing dates, or a nL of decimal dates');
- var tEncoded = encodeDatesAsNumericFeatures(dates,[0,1,2,3,4,5,6,7]);
- var i,numPeriods,dt,dtTemp;
+ let tEncoded = encodeDatesAsNumericFeatures(dates,[0,1,2,3,4,5,6,7]);
+ let i,numPeriods,dt,dtTemp;
  // get interval of dates
- var intDates = tEncoded[7].getInterval();
- var dt0 = convertFromDecimalDate(intDates.x);
- var dt1 = convertFromDecimalDate(intDates.y);
- var nSecondsInSpan = (dt1.getTime() - dt0.getTime())/1000;
+ let intDates = tEncoded[7].getInterval();
+ let dt0 = convertFromDecimalDate(intDates.x);
+ let dt1 = convertFromDecimalDate(intDates.y);
+ let nSecondsInSpan = (dt1.getTime() - dt0.getTime())/1000;
  // number of seconds in each time resolution, quarters/months/years/decades are approximate due to varying lengths
- var aTimeScales = [3652*24*3600,365*24*3600,91*24*3600,31*24*3600,7*24*3600,24*3600,3600,60,1];
+ let aTimeScales = [3652*24*3600,365*24*3600,91*24*3600,31*24*3600,7*24*3600,24*3600,3600,60,1];
  if(mode == 0){
    // choose mode 1->9
    mode = 9;
@@ -10739,12 +10738,12 @@ var changeTimeResolution=function(dates, mode, maxPeriods,bAdaptiveUseActualPeri
  }
  if(mode < 1) mode = 1;
  // now mode is set to 1->9, convert dates to proper resolution based on mode
- var datesRet = new dL();
+ let datesRet = new dL();
  datesRet.name = dates.name;
- var sLLabel = new sL();
+ let sLLabel = new sL();
  sLLabel.name = dates.name == null ? 'label' : dates.name + ' label';
- var year,month,day,hour,minute,second,s;
- var fn0 = function(n){
+ let year,month,day,hour,minute,second,s;
+ let fn0 = function(n){
      if(n<10) return '0'+n;
      return ''+n;
  }
@@ -10811,7 +10810,7 @@ var changeTimeResolution=function(dates, mode, maxPeriods,bAdaptiveUseActualPeri
    datesRet = dateToString(datesRet,1);
  if(modeOutput == 0)
    return datesRet;
- var tabOutput = new T();
+ let tabOutput = new T();
  tabOutput.push(datesRet);
  tabOutput.push(sLLabel);
  if(modeOutput == 1)
@@ -10829,15 +10828,15 @@ var changeTimeResolution=function(dates, mode, maxPeriods,bAdaptiveUseActualPeri
   oResult.name = dates.name + "("+mode+")";
   return oResult;
 }
-var getElementFromTable=function(table, i, j) {//deprecated, replaced by getCell
+let getElementFromTable=function(table, i, j) {//deprecated, replaced by getCell
  if(table[i] == null) return null;
  return table[i][j];
 }
-var getSubTable=function(table, x, y, width, height) {
+let getSubTable=function(table, x, y, width, height) {
  if(table == null) return table;
   var nLists = table.length;
  if(nLists === 0) return null;
- var result = new T();
+ let result = new T();
   if(width <= 0) width = (nLists - x) + width;
  x = Math.min(x, nLists - 1);
  width = Math.min(width, nLists - x);
@@ -10847,10 +10846,10 @@ var getSubTable=function(table, x, y, width, height) {
   y = Math.min(y, nRows - 1);
  height = Math.min(height, nRows - y);
   var column;
- var newColumn;
- var i;
- var j;
- var element;
+ let newColumn;
+ let i;
+ let j;
+ let element;
  for(i = x; i < x + width; i++) {
    column = table[i];
    newColumn = new L();
@@ -10863,12 +10862,12 @@ var getSubTable=function(table, x, y, width, height) {
  }
  return result.downcast();
 }
-var sliceColumns=function(table, indexColumn0, indexColumn1){
+let sliceColumns=function(table, indexColumn0, indexColumn1){
  if(typeof(indexColumn0)=='string') indexColumn0=table.getNames().indexOf(indexColumn0);
  if(indexColumn1!=null && typeof(indexColumn1)=='string') indexColumn1=table.getNames().indexOf(indexColumn1);
  return table.getSubList(indexColumn0, indexColumn1);
 }
-var filterTable=function(table, operator, value, listToCheck, value2, bIgnoreCase, returnIndexes, multiplValuesMode, onNames){
+let filterTable=function(table, operator, value, listToCheck, value2, bIgnoreCase, returnIndexes, multiplValuesMode, onNames){
   // input validation and defaults
  if(table==null || table.length === 0 || table[0]==null) return;
  if(table.isList && !table.isTable){
@@ -10884,12 +10883,12 @@ var filterTable=function(table, operator, value, listToCheck, value2, bIgnoreCas
  if(operator == '=') operator = '==';
  operator = operator.toLowerCase();
   var nLKeep = new nL();
- var nRows = table.getLengths().getMax();
- var r,c,val,val0,bKeep,score;
- var cStart=0;
- var cEnd=table.length;
- var type = _typeOf(value);
- var bExternalList = listToCheck != null && listToCheck.isList === true;
+ let nRows = table.getLengths().getMax();
+ let r,c,val,val0,bKeep,score;
+ let cStart=0;
+ let cEnd=table.length;
+ let type = _typeOf(value);
+ let bExternalList = listToCheck != null && listToCheck.isList === true;
   var multipleValues = value!= null && value["isList"]==true && value.length>0;
  if(multipleValues){
    multiplValuesMode = multiplValuesMode==null?0:multiplValuesMode;
@@ -10956,9 +10955,9 @@ var filterTable=function(table, operator, value, listToCheck, value2, bIgnoreCas
    operator = '!=i';
  
   var stringedValue = String(value);
- var stringedValue2 = value2==null?null:String(value2);
+ let stringedValue2 = value2==null?null:String(value2);
   var isString = type=='string';
- var isNumber = type=='number';
+ let isNumber = type=='number';
   var list;
   switch(operator){
    case "==":
@@ -11200,16 +11199,16 @@ var filterTable=function(table, operator, value, listToCheck, value2, bIgnoreCas
   if(returnIndexes) return nLKeep;
   var newTable = new T();
  newTable.name = table.name;
- var len = table.length;
+ let len = table.length;
   for(c=0; c<len; c++){
    newTable.push(table[c].getElements(nLKeep,true)); // need second parm to handle null elements properly
  }
  return newTable.downcast();
 }
-var filterColumns=function(table, minMumberDifferentValues, maxProportionDifferentValues, minEntropy, maxEntropy, mode){
+let filterColumns=function(table, minMumberDifferentValues, maxProportionDifferentValues, minEntropy, maxEntropy, mode){
  if(table==null) return;
  
- var newTable = new T();
+ let newTable = new T();
   var column, iO;
   for(var i=0; i<table.length; i++){
    column = table[i];
@@ -11245,10 +11244,10 @@ var filterColumns=function(table, minMumberDifferentValues, maxProportionDiffere
  }
   return newTable.downcast();
 }
-var getSubTableByElementOnList=function(table, nList, element){
+let getSubTableByElementOnList=function(table, nList, element){
  if(table==null || nList==null || element==null) return;
   var i, j;
- var nLists = table.length;
+ let nLists = table.length;
   if(nList<0) nList = nLists+nList;
  nList = nList%nLists;
   var newTable = instanceSameType(table);
@@ -11264,8 +11263,8 @@ var getSubTableByElementOnList=function(table, nList, element){
  //   newTable.push(newList);
  // });
   var supervised = table[nList];
- var nSupervised = supervised.length;
- var nElements;
+ let nSupervised = supervised.length;
+ let nElements;
   for(i=0; i<nSupervised; i++){
    if(element==supervised[i]){
      nElements = newTable.length;
@@ -11283,7 +11282,7 @@ var getSubTableByElementOnList=function(table, nList, element){
  // });
   return newTable.downcast();
 }
-var getSubTableByElementsOnList=function(table, nList, list){
+let getSubTableByElementsOnList=function(table, nList, list){
  if(table==null || nList==null || list==null) return;
   var i, j;
   if(nList<0) nList = table.length+nList;
@@ -11309,33 +11308,33 @@ var getSubTableByElementsOnList=function(table, nList, list){
  });
   return newTable.downcast();
 }
-var getRandomRows=function(table, f, avoidRepetitions, shuffle, randomSeed) {
+let getRandomRows=function(table, f, avoidRepetitions, shuffle, randomSeed) {
  if(table == null || table[0] == null) return null;
  avoidRepetitions = avoidRepetitions == null ? true : avoidRepetitions;
   if(f == null) f=0.5;
  if(f < 0) return null;
- var nRows = table[0].length;
- var n;
+ let nRows = table[0].length;
+ let n;
  if(f <= 1)
    n=Math.round(f*nRows);
  else
    n=Math.round(f);
- var listIndexes = createSortedNumberList(nRows, 0, 1);
+ let listIndexes = createSortedNumberList(nRows, 0, 1);
   //if(shuffle) listIndexes = listIndexes.getSortedRandom();
   listIndexes = listIndexes.getRandomElements(n, avoidRepetitions, randomSeed);
   if(!shuffle) listIndexes = listIndexes.getSorted();
   return table.getRows(listIndexes);
 }
-var transpose=function(table, firstListAsHeaders, headersAsFirstList) {
+let transpose=function(table, firstListAsHeaders, headersAsFirstList) {
  if(table == null || !table.isTable) return null;
  return table.transpose(firstListAsHeaders, headersAsFirstList);
 }
-var replaceElementInTable=function(table, elementToBeRemoved, elementToBePlaced){
+let replaceElementInTable=function(table, elementToBeRemoved, elementToBePlaced){
  if(table==null) return;
   var nLists = table.length;
- var l;
- var i, j;
- var list, newList;
+ let l;
+ let i, j;
+ let list, newList;
   var newTable = new T();
   for(i=0; i<nLists; i++){
    list = table[i];
@@ -11350,12 +11349,12 @@ var replaceElementInTable=function(table, elementToBeRemoved, elementToBePlaced)
  }
   return newTable.downcast();
 }
-var replaceSectionInTable=function(table, elementListOrTable, column0, column1, row0, row1){
+let replaceSectionInTable=function(table, elementListOrTable, column0, column1, row0, row1){
  if(table==null) return;
   var onlyColumn = column0!=null && column0==column1;
- var onlyRow = row0!=null && row0==row1;
- var names;
- var i, j;
+ let onlyRow = row0!=null && row0==row1;
+ let names;
+ let i, j;
   if(column0==null) column0 = 0;
  if(column1==null) column1 = table.length-1;
  if(row0==null) row0 = 0;
@@ -11425,20 +11424,20 @@ var replaceSectionInTable=function(table, elementListOrTable, column0, column1, 
  }
   return newTable.downcast();
 }
-var replaceNullsInTable=function(table, modeForNumbers, modeForNotnumbers, number, element, nullElement){
+let replaceNullsInTable=function(table, modeForNumbers, modeForNotnumbers, number, element, nullElement){
  if(table==null) return;
   if(number!=null) modeForNumbers = modeForNumbers==null?0:modeForNumbers;
  if(element!=null) modeForNotnumbers = modeForNotnumbers==null?0:modeForNotnumbers;
  number = (number==null && modeForNumbers!=null)?0:number;
  element = (element==null && modeForNotnumbers!=null)?"-":element;
   var nLists = table.length;
- var l;
- var i, j;
- var list, newList;
- var notNumeric;
- var containsNull;
+ let l;
+ let i, j;
+ let list, newList;
+ let notNumeric;
+ let containsNull;
   var modesList = (modeForNumbers!=null && modeForNumbers["length"] && modeForNumbers["isList"])?modeForNumbers:null;
- var elements = (element!=null && element["length"] && element["isList"])?element:null;
+ let elements = (element!=null && element["length"] && element["isList"])?element:null;
   var newTable = new T();
   if(modesList){
    nLists = Math.min(nLists, modesList.length);
@@ -11474,7 +11473,7 @@ var replaceNullsInTable=function(table, modeForNumbers, modeForNotnumbers, numbe
 }
 
 
-var testClassificationModel=function(numberTable, classes, model, metric) {
+let testClassificationModel=function(numberTable, classes, model, metric) {
  if(numberTable == null || classes == null || model == null) return null;
   metric = metric || 0;
   var nErrors = 0;
@@ -11485,11 +11484,11 @@ var testClassificationModel=function(numberTable, classes, model, metric) {
  });
   return nErrors / classes.length;
 }
-var getRows=function(table, indexes) {
- var newTable = new T();
+let getRows=function(table, indexes) {
+ let newTable = new T();
  newTable.name = table.name;
- var list;
- var newList;
+ let list;
+ let newList;
  for(var i = 0; table[i] != null; i++) {
    list = table[i];
    newList = instanceSameType(list);
@@ -11501,14 +11500,14 @@ var getRows=function(table, indexes) {
  }
  return newTable;
 }
-var sortListsByNumberList=function(table, nl, descending) {
+let sortListsByNumberList=function(table, nl, descending) {
  if(descending == null) descending = true;
   var newTable = instantiate(_typeOf(table));
  newTable.name = table.name;
- var nElements = table.length;
- var i;
+ let nElements = table.length;
+ let i;
  // only need to do the sort once, not for each column
- var indexList = nl.clone();
+ let indexList = nl.clone();
  // save original index
  for(i = 0; i < indexList.length; i++) {
    indexList[i] = i;
@@ -11523,7 +11522,7 @@ var sortListsByNumberList=function(table, nl, descending) {
  }
  return newTable;
 }
-var aggregateTable=function(table, indexAggregationList, indexesListsToAggregate, modes, newListsNames, weightList, aggregationModesForReminaingLists, aggregationFunction){
+let aggregateTable=function(table, indexAggregationList, indexesListsToAggregate, modes, newListsNames, weightList, aggregationModesForReminaingLists, aggregationFunction){
   indexAggregationList = indexAggregationList||0;
   if(table==null) return;
   if(indexesListsToAggregate==null) indexesListsToAggregate = createSortedNumberList( table.length);
@@ -11650,12 +11649,12 @@ var aggregateTable=function(table, indexAggregationList, indexesListsToAggregate
    }
  }
     var aggregatorList = aggregatorList==null?table[indexAggregationList]:aggregatorList;
- var indexesTable = getIndexesTable(aggregatorList);
- var newTable = new T();
- var newList;
- var toAggregateList;
- var i, index;
- var l = indexesListsToAggregate.length;
+ let indexesTable = getIndexesTable(aggregatorList);
+ let newTable = new T();
+ let newList;
+ let toAggregateList;
+ let index;
+ let l = indexesListsToAggregate.length;
   //indexesListsToAggregate.forEach(function(index, i){
  for(i=0; i<l; i++){
    index = indexesListsToAggregate[i];
@@ -11671,14 +11670,14 @@ var aggregateTable=function(table, indexAggregationList, indexesListsToAggregate
  //});
   return newTable.downcast();
 }
-var disAggregateTable=function(table, indexesExpansion, indexToSplit, tagsSeparator = ","){
+let disAggregateTable=function(table, indexesExpansion, indexToSplit, tagsSeparator = ","){
  if(table==null || indexToSplit==null) return;
  if(typeof(indexesExpansion)=="number") indexesExpansion = [indexesExpansion]
   var lists = indexesExpansion==null?table:table.getColumns(indexesExpansion);
- var toSplit = table.get(indexToSplit);
+ let toSplit = table.get(indexToSplit);
   var split = new L();
  split.name = toSplit.name;
- var newTable = new T();
+ let newTable = new T();
   for(var i=0; i<lists.length; i++){
    newTable[i] = instanceSameType(lists[i]);
    newTable[i].name = lists[i].name;
@@ -11697,7 +11696,7 @@ var disAggregateTable=function(table, indexesExpansion, indexToSplit, tagsSepara
   split = split.downcast()
     return newTable;
 }
-var deSegmentTable=function(table, weights, expansionFactor) {
+let deSegmentTable=function(table, weights, expansionFactor) {
    expansionFactor = expansionFactor==null?10:expansionFactor;
    
    var repetitions = normalizeToSum(weights, expansionFactor*weights.length);
@@ -11732,10 +11731,10 @@ var deSegmentTable=function(table, weights, expansionFactor) {
    
    return newTable;
 }
-var pivotTable=function(table, firstAggregationList, secondAggregationList, listToAggregate, aggregationMode, fillMode, resultMode, sortingMode, fillValue){
+let pivotTable=function(table, firstAggregationList, secondAggregationList, listToAggregate, aggregationMode, fillMode, resultMode, sortingMode, fillValue){
  if(table==null || !table.length || firstAggregationList==null || secondAggregationList==null || listToAggregate==null) return;
- var listFirstAggregation = firstAggregationList["isList"]?firstAggregationList:table.get(firstAggregationList);
-var listSecondAggregation = secondAggregationList["isList"]?secondAggregationList:table.get(secondAggregationList);
+ let listFirstAggregation = firstAggregationList["isList"]?firstAggregationList:table.get(firstAggregationList);
+let listSecondAggregation = secondAggregationList["isList"]?secondAggregationList:table.get(secondAggregationList);
 listToAggregate = listToAggregate["isList"]?listToAggregate:table.get(listToAggregate);
   /*
  if(typeof(firstAggregationList)=='string') firstAggregationList = table.getNames().indexOf(firstAggregationList);
@@ -11757,11 +11756,11 @@ listToAggregate = listToAggregate["isList"]?listToAggregate:table.get(listToAggr
      break;
  }
   var element1;
- var coordinate, indexes;
+ let coordinate, indexes;
  //var listToAggregate = table[listToAggregate];
   var newTable = new T();
- var sum;
- var i;
+ let sum;
+ let i;
   if(resultMode==1){//two lists of elements and a list of aggregation value
    var indexesDictionary = {};
    var elementsDictionary = {};
@@ -11827,10 +11826,10 @@ listToAggregate = listToAggregate["isList"]?listToAggregate:table.get(listToAggr
   ////////////////////////resultMode==0, a table whose first list is the first aggregation list, and each i+i list is the aggregations with elements for the second aggregation list
   newTable[0] = new L();
   var elementsPositions0 = {};
- var elementsPositions1 = {};
+ let elementsPositions1 = {};
   var x, y;
- var element;
- var newList;
+ let element;
+ let newList;
   //table[firstAggregationList].forEach(function(element0, i){
  listFirstAggregation.forEach(function(element0, i){
    //element1 = table[secondAggregationList][i];
@@ -11961,7 +11960,7 @@ listToAggregate = listToAggregate["isList"]?listToAggregate:table.get(listToAggr
   newTable[0] = newTable[0].downcast();
  return newTable.downcast();
 }
-var unpivotTable=function(table, entitiesColumn, variablesColumns) {
+let unpivotTable=function(table, entitiesColumn, variablesColumns) {
    var entities = table.get(entitiesColumn);
    var variables = table.getColumns(variablesColumns);
    var entity;
@@ -11987,7 +11986,7 @@ var unpivotTable=function(table, entitiesColumn, variablesColumns) {
    
    return newT.downcast();
 }
-var getCountPairsMatrix=function(table, bListsFromSameDomain,iValues,iOrder,maxItems) {
+let getCountPairsMatrix=function(table, bListsFromSameDomain,iValues,iOrder,maxItems) {
  if(table == null || table.length < 2 || table[0] == null || table[0][0] == null) return null;
  bListsFromSameDomain = bListsFromSameDomain == null ? false : bListsFromSameDomain;
  iValues = iValues == null ? 0 : iValues;
@@ -12095,13 +12094,13 @@ var getCountPairsMatrix=function(table, bListsFromSameDomain,iValues,iOrder,maxI
    }
  }
   // add the list of actual strings so we can tell what the rows correspond to
- var tw = new T();
+ let tw = new T();
  list0.name = table[0].name;
  tw.push(list0);
  matrix = tw.concat(matrix);
  return matrix;
 }
-var getPairsFrequencyTable=function(table) {
+let getPairsFrequencyTable=function(table) {
  if(table == null || table.length < 2 || table[0] == null || table[0][0] == null || table[0].length != table[1].length) return null;
   var dict={};
  for(var i=0;i<table[0].length;i++){
@@ -12140,12 +12139,12 @@ var getPairsFrequencyTable=function(table) {
  }
   return t;
 }
-var concatenateRowElements=function(table, separator) {
+let concatenateRowElements=function(table, separator) {
  if(table == null || !table.isTable) return null;
  separator = separator == null ? ' ' : separator;
- var sL = new sL();
- var s,row,col,maxRows = table.getLengths().getMax();
- var bAllEmpty = true;
+ let sL = new sL();
+ let s,row,col,maxRows = table.getLengths().getMax();
+ let bAllEmpty = true;
  for(row = 0; row < maxRows; row++){
    s = '';
    for(col = 0; col < table.length; col++){
@@ -12165,7 +12164,7 @@ var concatenateRowElements=function(table, separator) {
  if(bAllEmpty) sL.name = '';
  return sL;
 }
-var filterTableByElementInList=function(table, nList, element, keepRowIfElementIsPresent) {
+let filterTableByElementInList=function(table, nList, element, keepRowIfElementIsPresent) {
  if(table == null ||  table.length <= 0 || nList == null) return;
  if(element == null) return table;
   keepRowIfElementIsPresent = keepRowIfElementIsPresent==null?true:keepRowIfElementIsPresent;
@@ -12176,9 +12175,9 @@ var filterTableByElementInList=function(table, nList, element, keepRowIfElementI
    nList = iList;
  }
   var newTable = new T();
- var i, j;
- var l = table.length;
- var l0 = table[0].length;
+ let i, j;
+ let l = table.length;
+ let l0 = table[0].length;
   newTable.name = table.name;
   for(j = 0; j<l; j++) {
    newTable[j] = instanceSameType(table[j]);
@@ -12208,7 +12207,7 @@ var filterTableByElementInList=function(table, nList, element, keepRowIfElementI
  }
   return newTable;
 }
-var filterTableByElementsInList=function(table, nList, elements, keepRowIfElementIsPresent) {
+let filterTableByElementsInList=function(table, nList, elements, keepRowIfElementIsPresent) {
  if(table == null ||  table.length <= 0 || nList == null) return;
  if(elements == null || elements.length===0) return table;
   keepRowIfElementIsPresent = keepRowIfElementIsPresent==null?true:keepRowIfElementIsPresent;
@@ -12220,9 +12219,9 @@ var filterTableByElementsInList=function(table, nList, elements, keepRowIfElemen
  }
   var elementsDictionary = getBooleanDictionaryForList(elements);
   var newTable = new T();
- var i, j;
- var l = table.length;
- var l0 = table[0].length;
+ let i, j;
+ let l = table.length;
+ let l0 = table[0].length;
   newTable.name = table.name;
   for(j = 0; j<l; j++) {
    newTable[j] = new L();
@@ -12250,7 +12249,7 @@ var filterTableByElementsInList=function(table, nList, elements, keepRowIfElemen
  }
   return newTable;
 }
-var selectRows=function(table, lists, values, keepMatchingRows, returnIndexes) {
+let selectRows=function(table, lists, values, keepMatchingRows, returnIndexes) {
  if(table == null ||  table.length <= 0) return;
  keepMatchingRows = keepMatchingRows==null?true:keepMatchingRows;
  returnIndexes = returnIndexes==null?false:returnIndexes;
@@ -12259,9 +12258,9 @@ var selectRows=function(table, lists, values, keepMatchingRows, returnIndexes) {
    values = [values];
  if(lists.length != values.length && lists.length != 1) return;
   var nLMatch = new nL();
- var nRows = table[0].length;
- var bOrValues = lists.length == 1 && values.length > 1;
- var dictValues = {};
+ let nRows = table[0].length;
+ let bOrValues = lists.length == 1 && values.length > 1;
+ let dictValues = {};
  if(bOrValues)
    dictValues = getBooleanDictionaryForList(values);
   for(var r=0; r < nRows; r++){
@@ -12293,10 +12292,10 @@ var selectRows=function(table, lists, values, keepMatchingRows, returnIndexes) {
    newTable = table.getWithoutRows(nLMatch);
   return newTable;
 }
-var joinTables=function(table0, table1, keyIndex0, keyIndex1, mode){
+let joinTables=function(table0, table1, keyIndex0, keyIndex1, mode){
  if(table0==null || table1==null) return;
   var joinTable = new T();
- var list0, list1;
+ let list0, list1;
   keyIndex0 = keyIndex0==null?0:keyIndex0;
  keyIndex1 = keyIndex1==null?0:keyIndex1;
  mode = mode==null?0:mode;
@@ -12331,14 +12330,14 @@ var joinTables=function(table0, table1, keyIndex0, keyIndex1, mode){
  }
   var dictionary1 = getIndexesDictionary(list1);
   var n0 = table0.length;
- var n1 = table1.length;
+ let n1 = table1.length;
   var l0 = list0.length;
   var val0;
- var indexes1;
+ let indexes1;
   var i, j, k;
- var list;
+ let list;
   //prepares de table
- var joinList = new L();
+ let joinList = new L();
  joinList.name = list0.name;
  joinTable[0] = joinList;
   for(k=0; k<n0; k++){
@@ -12397,28 +12396,28 @@ var joinTables=function(table0, table1, keyIndex0, keyIndex1, mode){
  }
   return joinTable.downcast();
 }
-var joinMultipleTables=function(listOfTables, listOfIndexes, mode){
+let joinMultipleTables=function(listOfTables, listOfIndexes, mode){
  if(listOfTables==null || listOfIndexes==null) return;
   if(listOfTables.length<2) throw new Error("listOfTables must have at least two tables");
  if(listOfIndexes.length!=listOfTables.length) throw new Error("listOfIndexes must have same length as listOfTables");
  if(listOfTables[0]==null) throw new Error("listOfTables[0] is null");
  if(listOfTables[1]==null) throw new Error("listOfTables[1] is null");
   var joinTable = joinTables(listOfTables[0], listOfTables[1], listOfIndexes[0], listOfIndexes[1], mode);
- var i;
- var l = listOfTables.length;
+ let i;
+ let l = listOfTables.length;
   for(i=2; i<l; i++){
    joinTable = joinTables(joinTable, listOfTables[i], 0, listOfIndexes[i], mode);
  }
   return joinTable;
 }
-var combineLists=function(table, returnNumberFinalRows) {
+let combineLists=function(table, returnNumberFinalRows) {
  if(table==null) return null;
  returnNumberFinalRows = returnNumberFinalRows==null?true:returnNumberFinalRows;
   var newTable = new T();
- var combinedTable = new T();
- var indexes = new nL();
- var lengths = new nL();
- var nRows = 1;
+ let combinedTable = new T();
+ let indexes = new nL();
+ let lengths = new nL();
+ let nRows = 1;
  for(var i=0; i<table.length; i++){
    combinedTable[i] = new L();
    newTable[i] = table[i].getWithoutRepetitions();
@@ -12449,13 +12448,13 @@ var combineLists=function(table, returnNumberFinalRows) {
   return combinedTable.downcast();
 }
 
-var completeTable=function(table, nRows, value) {
+let completeTable=function(table, nRows, value) {
  value = value === undefined ? 0 : value;
   var newTable = new T();
  newTable.name = table.name;
   var list;
- var newList;
- var j;
+ let newList;
+ let j;
   for(var i = 0; i < table.length; i++) {
    list = table[i];
    newList = list == null ? getNewListForObjectType(value) : instanceSameType(list);
@@ -12468,12 +12467,12 @@ var completeTable=function(table, nRows, value) {
  return newTable;
 }
 
-var getNumberTableFromTable=function(table) {
+let getNumberTableFromTable=function(table) {
  if(table == null ||  table.length <= 0) {
    return null;
  }
   var i;
- var newTable = new nT();
+ let newTable = new nT();
  newTable.name = table.name;
  for(i = 0; table[i] != null; i++) {
    if(table[i].type == "nL") newTable.push(table[i]);
@@ -12481,7 +12480,7 @@ var getNumberTableFromTable=function(table) {
  return newTable;
 }
 
-var getVariablesInformationGain=function(variablesTable, supervised) {
+let getVariablesInformationGain=function(variablesTable, supervised) {
  if(variablesTable == null) return null;
   var igs = new nL();
  variablesTable.forEach(function(feature) {
@@ -12490,12 +12489,12 @@ var getVariablesInformationGain=function(variablesTable, supervised) {
  return igs;
 }
 
-var splitTableByCategoricList=function(table, listCategories, bReturnObject) {
+let splitTableByCategoricList=function(table, listCategories, bReturnObject) {
  if(table == null || listCategories == null) return null;
   var list = listCategories["isList"]?listCategories:table.get(listCategories);
   var childrenTable;
- var tablesList = new L();
- var childrenObject = {};
+ let tablesList = new L();
+ let childrenObject = {};
   list.forEach(function(element, i) {
    childrenTable = childrenObject[element];
    if(childrenTable == null) {
@@ -12518,7 +12517,7 @@ var splitTableByCategoricList=function(table, listCategories, bReturnObject) {
  return tablesList;
 }
 
-var buildCorrelationsNetwork=function(table, nodesAreRows, names, colorsByList, correlationThreshold, negativeCorrelation, mode, weightByList, minConnectionsPerNode){
+let buildCorrelationsNetwork=function(table, nodesAreRows, names, colorsByList, correlationThreshold, negativeCorrelation, mode, weightByList, minConnectionsPerNode){
  if(table==null) return null;
   nodesAreRows = nodesAreRows==null?true:Boolean(nodesAreRows);
  correlationThreshold = correlationThreshold==null?0.9:correlationThreshold;
@@ -12526,23 +12525,23 @@ var buildCorrelationsNetwork=function(table, nodesAreRows, names, colorsByList, 
  mode = mode==null?0:mode;
  minConnectionsPerNode = minConnectionsPerNode==null?3:minConnectionsPerNode;
   //var types = table.getTypes();
- var i, j;
- var l = table.length;
- var nRows = table[0].length;
- var node, node1, relation;
- var id, name;
- var pearson, jaccard, weight;
- var colorsList, colors;
+ let i, j;
+ let l = table.length;
+ let nRows = table[0].length;
+ let node, node1, relation;
+ let id, name;
+ let pearson, jaccard, weight;
+ let colorsList, colors;
   var someCategorical = false;
- var someText = false;
- var someNumeric = false;
+ let someText = false;
+ let someNumeric = false;
   var network = new Net();
    var pseudoKinds = new sL(); //numbers, categories and texts; similar to kind
- var type;
+ let type;
   var nNodes = nodesAreRows?nRows:l;
   var nNumbers=0;
- var nCategories=0;
- var nTexts=0;
+ let nCategories=0;
+ let nTexts=0;
   for(i=0; i<l;i++){
    type = table[i].type;
    if(type == "nL"){
@@ -12722,11 +12721,11 @@ var buildCorrelationsNetwork=function(table, nodesAreRows, names, colorsByList, 
  }
   return network;
 }
-var buildSimpleDecisionTree=function(table, supervised, supervisedValue, min_entropy, min_size_node, min_info_gain, generatePattern, colorScale){
+let buildSimpleDecisionTree=function(table, supervised, supervisedValue, min_entropy, min_size_node, min_info_gain, generatePattern, colorScale){
  if(table==null || supervised==null) return;
- var newTable = new T();
- var iO;
- var nL;
+ let newTable = new T();
+ let iO;
+ let nL;
   var newSupervised = supervised["isList"]?supervised:table.get(supervised);
   for(var i=0; i<table.length; i++){
    if(table[i]==newSupervised) continue;
@@ -12743,7 +12742,7 @@ var buildSimpleDecisionTree=function(table, supervised, supervisedValue, min_ent
  //if(iO.isNumeric) newSupervised = newSupervised.getQuantiles(3, 3); //used to be a good idea…
   return buildDecisionTree(newTable, newSupervised, supervisedValue, min_entropy, min_size_node, min_info_gain, generatePattern, colorScale);
 }
-var buildDecisionTree=function(variablesTable, supervised, supervisedValue, min_entropy, min_size_node, min_info_gain, generatePattern, colorScale){
+let buildDecisionTree=function(variablesTable, supervised, supervisedValue, min_entropy, min_size_node, min_info_gain, generatePattern, colorScale){
  if(variablesTable == null ||  supervised == null) return;
   if(colorScale==null) colorScale = blueWhiteRed;
   if(_typeOf(supervised)=='number'){
@@ -12755,7 +12754,7 @@ var buildDecisionTree=function(variablesTable, supervised, supervisedValue, min_
  min_size_node = min_size_node || 10;
  min_info_gain = min_info_gain || 0.002;
   var indexes = createSortedNumberList(supervised.length);
- var tree = new Tr();
+ let tree = new Tr();
   
   tree.supervisedValue = supervisedValue;
   if(supervisedValue==null){
@@ -12767,8 +12766,8 @@ var buildDecisionTree=function(variablesTable, supervised, supervisedValue, min_
  tree.supervised = supervised;
   return tree;
 }
-var _buildDecisionTreeNode=function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern, colorScale) {
- var MAX_LEVEL_FOR_CONSOLE = 0
+let _buildDecisionTreeNode=function(tree, variablesTable, supervised, level, min_entropy, min_size_node, min_info_gain, parent, value, supervisedValue, indexes, generatePattern, colorScale) {
+ let MAX_LEVEL_FOR_CONSOLE = 0
   var nullSupervisedValue = supervisedValue==null;
   if(nullSupervisedValue){
    var fT = supervised.getFrequenciesTable(true);
@@ -12777,8 +12776,8 @@ var _buildDecisionTreeNode=function(tree, variablesTable, supervised, level, min
   var entropy = getListEntropy(supervised, supervisedValue) 
    
   var maxIg = 0;
- var iBestFeature = 0;
- var informationGains = 0;
+ let iBestFeature = 0;
+ let informationGains = 0;
   if(entropy >= min_entropy) {
    informationGains = getVariablesInformationGain(variablesTable, supervised);
    informationGains.forEach(function(ig, i){
@@ -12790,8 +12789,8 @@ var _buildDecisionTreeNode=function(tree, variablesTable, supervised, level, min
  }
   var subDivide = entropy >= min_entropy && maxIg > min_info_gain && supervised.length >= min_size_node && level<9 && supervised._P_valueFollowing>0 && supervised._P_valueFollowing<1;
   var id = tree.nodes.getNewId();
- var name = (value == null ? '' : value + ':') + (subDivide ? variablesTable[iBestFeature].name : 'P=' + supervised._biggestProbability + '(' + supervised._mostRepresentedValue + ')');
- var node = new Nd(id, name);
+ let name = (value == null ? '' : value + ':') + (subDivide ? variablesTable[iBestFeature].name : 'P=' + supervised._biggestProbability + '(' + supervised._mostRepresentedValue + ')');
+ let node = new Nd(id, name);
   tree.addNodeToTree(node, parent);
   if(parent == null) {
    tree.informationGainTable = new T();
@@ -12880,9 +12879,9 @@ var _buildDecisionTreeNode=function(tree, variablesTable, supervised, level, min
   node.label = node.bestFeatureName;
   var expanded = variablesTable.concat([supervised, indexes]);
   var tables = splitTableByCategoricList(expanded, variablesTable[iBestFeature]);
- var childTable;
- var childSupervised;
- var childIndexes;
+ let childTable;
+ let childSupervised;
+ let childIndexes;
   tables.forEach(function(expandedChild) {
    childTable = expandedChild.getSubList(0, expandedChild.length - 3);
    childSupervised = expandedChild[expandedChild.length - 2];
@@ -12892,9 +12891,9 @@ var _buildDecisionTreeNode=function(tree, variablesTable, supervised, level, min
   node.to = node.to.getSortedByProperty('valueFollowingProbability', false);
   return node;
 }
-var _decisionTreeGenerateColorsMixture=function(ctxt, width, height, colors, weights){
- var x, y, i; //, rgb;
- var allColors = createListWithSameElement(weights[0], colors[0]);
+let _decisionTreeGenerateColorsMixture=function(ctxt, width, height, colors, weights){
+ let x, y, i; //, rgb;
+ let allColors = createListWithSameElement(weights[0], colors[0]);
   for(i = 1; colors[i] != null; i++) {
    allColors = allColors.concat(createListWithSameElement(weights[i], colors[i]));
  }
@@ -12906,31 +12905,31 @@ var _decisionTreeGenerateColorsMixture=function(ctxt, width, height, colors, wei
    }
  }
 }
-var allListsSameLength=function(table){
+let allListsSameLength=function(table){
  if(table==null) return null;
   var l = table.length;
- var length = table[0].length;
- var i;
+ let length = table[0].length;
+ let i;
  for(i=1; i<l; i++){
    if(table[i].length!=length) return false;
  }
   return true;
 }
-var getListsWithoutRepetition=function(table){
+let getListsWithoutRepetition=function(table){
  if(table==null) return;
   var l = table.length;
- var i;
- var newTable = new T();
+ let i;
+ let newTable = new T();
   for(i=0; i<l; i++){
    newTable[i] = table[i].getWithoutRepetitions();
  }
   return newTable.downcast();
 }
-var getNumberOfDifferentElementsOfLists=function(table, proprotion){
+let getNumberOfDifferentElementsOfLists=function(table, proprotion){
  if(table==null) return;
   var l = table.length;
- var i;
- var nList = new nL();
+ let i;
+ let nList = new nL();
  nList.name = "count different elements"+proprotion?"(proportion)":"";
   for(i=0; i<l; i++){
    nList[i] = table[i].countDifferentElements();// table[i].getWithoutRepetitions().length;
@@ -12938,16 +12937,16 @@ var getNumberOfDifferentElementsOfLists=function(table, proprotion){
  }
   return nList;
 }
-var buildInformationObjectForTable=function(table, bUseExistingObjectIfPresent){
+let buildInformationObjectForTable=function(table, bUseExistingObjectIfPresent){
  if(table==null) return;
   bUseExistingObjectIfPresent = bUseExistingObjectIfPresent==null?true:bUseExistingObjectIfPresent; // <------- not sure if this could cause issues
   if(bUseExistingObjectIfPresent == true && table.infoObject != null) return table.infoObject;
   var n = table.length;
- var i, listInfoObject;
- var min = 999999999999;
- var max = -999999999999;
- var average = 0;
- var intsAndCats = true;
+ let i, listInfoObject;
+ let min = 999999999999;
+ let max = -999999999999;
+ let average = 0;
+ let intsAndCats = true;
   var infoObject = {
    type:table.type,
    name:table.name,
@@ -13020,8 +13019,8 @@ var buildInformationObjectForTable=function(table, bUseExistingObjectIfPresent){
   table.infoObject = infoObject
   return infoObject;
 }
-var getCategoricalLists=function(table){
- var infoObject = buildInformationObjectForTable(table);
+let getCategoricalLists=function(table){
+ let infoObject = buildInformationObjectForTable(table);
   var catTable = new T();
   for(var i=0;i<table.length; i++){
    if(table[i].infoObject.isCategorical) catTable.push(table[i]);
@@ -13029,12 +13028,12 @@ var getCategoricalLists=function(table){
   return catTable.downcast();
 }
 
-var getTableSimplified=function(table, nCategories, othersElement, quantilesMode) {
+let getTableSimplified=function(table, nCategories, othersElement, quantilesMode) {
  if(table==null || !(table.length>0)) return null;
 nCategories = nCategories||20;
- var i;
-var l = table.length;
-var newTable = new T();
+ let i;
+let l = table.length;
+let newTable = new T();
 newTable.name = table.name;
  for(i=0; i<l; i++){
   newTable.push(
@@ -13046,7 +13045,7 @@ newTable.name = table.name;
 }
  return newTable.downcast();
 }
-var concatTables=function(table0, table1){
+let concatTables=function(table0, table1){
  if(table0==null || table1==null || table0.length!=table1.length) return;
   var newT = new T();
   for(var i=0;i<table0.length;i++){
@@ -13055,12 +13054,12 @@ var concatTables=function(table0, table1){
  }
   return newT.downcast();
 }
-var concatRows=function() {
+let concatRows=function() {
  if(arguments == null || arguments.length === 0 ||  arguments[0] == null) return null;
  if(arguments.length == 1) return arguments[0];
   var i,j,tab1,tabResult,namePrev;
  // find maximum number of cols
- var maxCols=0;
+ let maxCols=0;
  for(i = 0; i<arguments.length; i++) {
    if(arguments[i] == null) continue;
    maxCols = Math.max(maxCols,arguments[i].length);
@@ -13094,7 +13093,7 @@ var concatRows=function() {
  }
   return tabResult;
 }
-var concatLists=function(table){
+let concatLists=function(table){
  if(table==null) return;
   var nL = table[0];
  for(var i=1; i <table.length; i++){
@@ -13103,12 +13102,12 @@ var concatLists=function(table){
   //note: slightly more efficient with _concat (only one downcast())
  return nL;
 }
-var unionListsFromTables=function(table){
+let unionListsFromTables=function(table){
  if(table==null) return;
   var list = table[0].getWithoutRepetitions();
- var i, j;
- var l = table.length;
- var n;
+ let i, j;
+ let l = table.length;
+ let n;
   for(i=1; i<l; i++){
    n = table[i].length;
    for(j=0; j<n; j++){
@@ -13117,18 +13116,18 @@ var unionListsFromTables=function(table){
  }
   return list;
 }
-var intersectListsFromTables=function(table){
+let intersectListsFromTables=function(table){
  if(table==null) return;
   var list = table[0].getWithoutRepetitions();
- var i;
- var l = table.length;
+ let i;
+ let l = table.length;
   for(i=1; i<l; i++){
    list = intersection(list, table[i]);
  }
   return list;
 }
 
-var encodeStringLists=function(table, method, maxUniqueValues, bRemove){
+let encodeStringLists=function(table, method, maxUniqueValues, bRemove){
  if(table==null) return;
   method = method == null ? 0 : method;
  maxUniqueValues = maxUniqueValues == null ? 20 : maxUniqueValues;
@@ -13136,7 +13135,7 @@ var encodeStringLists=function(table, method, maxUniqueValues, bRemove){
   var tResult = new T();
  // builds table[i].infoObject
  buildInformationObjectForTable(table,true);
- var i,j,tt,bLeaveAlone,list;
+ let i,j,tt,bLeaveAlone,list;
  for(i=0;i < table.length;i++){
    bLeaveAlone = false;
    list = table[i];
@@ -13165,7 +13164,7 @@ var encodeStringLists=function(table, method, maxUniqueValues, bRemove){
  return tResult;
 }
 
-var translateListsWithDictionary=function(table, dictionary, nullElement, keepsOriginal) {
+let translateListsWithDictionary=function(table, dictionary, nullElement, keepsOriginal) {
  if(table == null || dictionary==null) return;
   var newT = new T();
  for(var i=0; i<table.length; i++){
@@ -13174,7 +13173,7 @@ var translateListsWithDictionary=function(table, dictionary, nullElement, keepsO
  return newT.downcast();
 }
 
-var getModes=function(table, bInCols=true) {
+let getModes=function(table, bInCols=true) {
     if(table == null) return
     if(!bInCols) table = table.transpose()
     let newList = toL(table.map(l=>l.getMode())).downcast()
@@ -13182,9 +13181,9 @@ var getModes=function(table, bInCols=true) {
     return newList
 }
 
-var getSubTables=function(table, columnsList){
+let getSubTables=function(table, columnsList){
  if(table==null) return;
- var subTablesList = new L();
+ let subTablesList = new L();
  subTablesList.name = "subtables";
  for(var i=0; i<columnsList.length; i++){
    subTablesList.push(table.getColumns(columnsList[i]));
@@ -13192,27 +13191,27 @@ var getSubTables=function(table, columnsList){
  return subTablesList;
 }
 
-var mapFunctionOnLists=function(table, func, param0, param1, param2, param3, param4, param5, iterator){
+let mapFunctionOnLists=function(table, func, param0, param1, param2, param3, param4, param5, iterator){
  if(table==null) return;
- var listResults = new L();
- var l = table.length;
+ let listResults = new L();
+ let l = table.length;
   for(var i=0; i<l; i++){
    listResults.push(mapWithFunction(table[i], func, param0, param1, null, param2, param3, param4, param5, iterator));
  }
   return listResults.downcast();
 }
 
-var mapFunctionsOnLists=function(table, functionList, param0, param1, param2, param3, param4, param5, iterator){
+let mapFunctionsOnLists=function(table, functionList, param0, param1, param2, param3, param4, param5, iterator){
  if(table==null) return;
- var listResults = new L();
- var l = Math.min(table.length, functionList.length);
+ let listResults = new L();
+ let l = Math.min(table.length, functionList.length);
   for(var i=0; i<l; i++){
    listResults.push(mapWithFunction(table[i], functionList[i], param0, param1, null, param2, param3, param4, param5, iterator));
  }
   return listResults.downcast();
 }
 
-var useVariablesDictionary=function(table, variablesDictionaryTable) {
+let useVariablesDictionary=function(table, variablesDictionaryTable) {
    if(table==null || variablesDictionaryTable==null) return;
    
    var dNames = variablesDictionaryTable.get('name',null,null,true)||variablesDictionaryTable[0];
@@ -13240,7 +13239,7 @@ var useVariablesDictionary=function(table, variablesDictionaryTable) {
    return table;
 }
 
-var matrixToTwoColumns=function(matrix){
+let matrixToTwoColumns=function(matrix){
    var nT = new T();
    nT[0] = new sL();
    nT[0].name = matrix[0].name;
@@ -13257,23 +13256,23 @@ var matrixToTwoColumns=function(matrix){
    return nT;
 }
 
-var _preserveOrder=function(newTable,oldTable){
- var oldNames = oldTable.getNames();
- var newNames = newTable.getNames().getWithoutElements(oldNames);
+let _preserveOrder=function(newTable,oldTable){
+ let oldNames = oldTable.getNames();
+ let newNames = newTable.getNames().getWithoutElements(oldNames);
   return newTable.getColumns(oldNames.concat(newNames));
 }
 
-var concatStrings=function(sl, joinString) { //deprecated
+let concatStrings=function(sl, joinString) { //deprecated
  if(joinString == null) joinString = "";
  return sL.toL(sl.join(joinString));
 }
-var join=function(sl, character = "", prefix = "", sufix = "", byEnter) {
+let join=function(sl, character = "", prefix = "", sufix = "", byEnter) {
  if(sl == null) return;
   if(byEnter) character="\n"
  return prefix + sl.join(character) + sufix;
 }
 
-var cleanTexts=function(strings, rmvEnters, rmvTabs, replaceTabsAndEntersBy, rmvPunctuation, toLowerCase, stopWords, rmvDoubleSpaces, rmvAccentsAndDiacritics){
+let cleanTexts=function(strings, rmvEnters, rmvTabs, replaceTabsAndEntersBy, rmvPunctuation, toLowerCase, stopWords, rmvDoubleSpaces, rmvAccentsAndDiacritics){
  if(strings==null) return null;
   var newStrings = new sL();
  newStrings.name = strings.name;
@@ -13284,12 +13283,12 @@ var cleanTexts=function(strings, rmvEnters, rmvTabs, replaceTabsAndEntersBy, rmv
   return newStrings;
 }
 
-var filterStringListByString=function(sl, string, asWord, returnIndexes) {
+let filterStringListByString=function(sl, string, asWord, returnIndexes) {
  if(sl==null || string==null) return null;
   var i;
- var newList = returnIndexes ? new nL() : new sL();
- var regex;
- var l = sl.length;
+ let newList = returnIndexes ? new nL() : new sL();
+ let regex;
+ let l = sl.length;
   if(asWord) {
    regex = new RegExp("\\b" + string + "\\b");
  }
@@ -13308,13 +13307,13 @@ var filterStringListByString=function(sl, string, asWord, returnIndexes) {
  return newList;
 }
 
-var replaceStringsInTexts=function(texts, strings, replacement) {
+let replaceStringsInTexts=function(texts, strings, replacement) {
  if(texts==null || strings==null || replacement==null) return null;
   var newTexts = new sL();
  newTexts.name = texts.name;
- var nTexts = texts.length;
- var nStrings = strings.length;
- var i, j;
+ let nTexts = texts.length;
+ let nStrings = strings.length;
+ let i, j;
   for(i = 0; i<nTexts; i++) {
    newTexts[i] = texts[i];
    if(newTexts[i] == null) continue;
@@ -13325,26 +13324,26 @@ var replaceStringsInTexts=function(texts, strings, replacement) {
   return newTexts;
 }
 
-var replaceStringInTexts=function(texts, string, replacement) {
+let replaceStringInTexts=function(texts, string, replacement) {
  if(texts==null || string==null ||replacement==null) return null;
   var newTexts = new sL();
  newTexts.name = texts.name;
- var nTexts = texts.length;
- var i;
+ let nTexts = texts.length;
+ let i;
   for(i = 0; i<nTexts; i++) {
    newTexts[i] = texts[i]==null?null:replaceStringInText(texts[i],string,replacement);
  }
   return newTexts;
 }
 
-var replaceStringsInTextsByStrings=function(texts, strings, replacements) {
+let replaceStringsInTextsByStrings=function(texts, strings, replacements) {
  if(texts==null || strings==null || replacements==null) return null;
   var newTexts = new sL();
  newTexts.name = texts.name;
- var nTexts = texts.length;
- var nStrings = strings.length;
- var i, j;
- var string;
+ let nTexts = texts.length;
+ let nStrings = strings.length;
+ let i, j;
+ let string;
   for(i = 0; i<nTexts; i++) {
    newTexts[i] = texts[i];
    if(newTexts[i] == null)
@@ -13356,17 +13355,17 @@ var replaceStringsInTextsByStrings=function(texts, strings, replacements) {
   return newTexts;
 }
 
-var countStringsOccurrencesOnTexts=function(strings, texts, asWords) {
+let countStringsOccurrencesOnTexts=function(strings, texts, asWords) {
  if(strings == null || texts == null) return null;
- var occurrencesTable = new nT();
+ let occurrencesTable = new nT();
   var i;
- var j;
- var string;
- var nl;
+ let j;
+ let string;
+ let nl;
  //var splitArray;
- var nStrings = strings.length;
- var nTexts = texts.length;
- var wordRegex;
+ let nStrings = strings.length;
+ let nTexts = texts.length;
+ let wordRegex;
   for(i = 0; i<nStrings; i++) {
    string = strings[i];
    wordRegex = new RegExp("\\b" + string + "\\b");
@@ -13384,18 +13383,18 @@ var countStringsOccurrencesOnTexts=function(strings, texts, asWords) {
  return occurrencesTable;
 }
 
-var getWordsInTextsOccurrencesTable=function(texts, weightsMode, stopWords=1, includeLinks, wordsLimitPerString=500, totalWordsLimit=1000, sortByTotalWeight, minSizeWords=3, addTotalList, minSupportFraction=0, wordDelimiter) {
+let getWordsInTextsOccurrencesTable=function(texts, weightsMode, stopWords=1, includeLinks, wordsLimitPerString=500, totalWordsLimit=1000, sortByTotalWeight, minSizeWords=3, addTotalList, minSupportFraction=0, wordDelimiter) {
  if(texts == null) return;
   var i, j;
- var matrix;
- var nTexts = texts.length;
+ let matrix;
+ let nTexts = texts.length;
  if(stopWords==1) stopWords = StringOperators_STOP_WORDS
- var normalize = weightsMode==1;
- var tfidf = weightsMode==2 || weightsMode==3 || weightsMode==4;
+ let normalize = weightsMode==1;
+ let tfidf = weightsMode==2 || weightsMode==3 || weightsMode==4;
  sortByTotalWeight = (sortByTotalWeight || true)
- var table;
- var oWordCounts = {};
- var tabCounts;
+ let table;
+ let oWordCounts = {};
+ let tabCounts;
  for(i = 0; i<nTexts; i++){
    table = getWordsOccurrencesTable(texts[i], stopWords, includeLinks, wordsLimitPerString, minSizeWords, wordDelimiter);
    for(j = 0; j<table[0].length; j++){
@@ -13410,7 +13409,7 @@ var getWordsInTextsOccurrencesTable=function(texts, weightsMode, stopWords=1, in
      tabCounts[1].push(table[1][j]);
    }
  }
- var sLWords = new sL();
+ let sLWords = new sL();
  for(var key in oWordCounts){
    if(!oWordCounts.hasOwnProperty(key)) continue;
    if(oWordCounts[key][0].length < minSupportFraction*nTexts){
@@ -13428,7 +13427,7 @@ var getWordsInTextsOccurrencesTable=function(texts, weightsMode, stopWords=1, in
      matrix[i].name = 'text ' + (i-1);
  }
  // fill with data
- var iWord = 0;
+ let iWord = 0;
  for(var key in oWordCounts){
    if(!oWordCounts.hasOwnProperty(key)) continue;
    matrix[0][iWord] = key;
@@ -13505,20 +13504,20 @@ var getWordsInTextsOccurrencesTable=function(texts, weightsMode, stopWords=1, in
    if(totalWordsLimit > 0 && totalWordsLimit < matrix[0].length) matrix = matrix.sliceRows(0, totalWordsLimit - 1);
   return matrix;
 }
-var createShortTextsNetwork=function(texts, stopWords, relationThreshold, mode, applyIntensity, wordsFrequencyTable, names, colors) {
+let createShortTextsNetwork=function(texts, stopWords, relationThreshold, mode, applyIntensity, wordsFrequencyTable, names, colors) {
  if(texts == null ||  texts.length == null || texts.length === 0) return;
   var _time = new Date().getTime();
   var network = new Net();
- var joined = texts.join(' *** ').toLowerCase();
- var textsLowerCase = joined.split(' *** ');
- var n_texts = texts.length;
- var i, j;
- var word;
- var nWords;
- var n_words;
- var weights;
- var weight;
- var maxWeight = 0;
+ let joined = texts.join(' *** ').toLowerCase();
+ let textsLowerCase = joined.split(' *** ');
+ let n_texts = texts.length;
+ let i, j;
+ let word;
+ let nWords;
+ let n_words;
+ let weights;
+ let weight;
+ let maxWeight = 0;
   if(colors!=null && !colors["isColorList"]) colors = colors.toColorList();
   relationThreshold = relationThreshold || 0.2;
  mode = mode || 0;
@@ -13614,19 +13613,19 @@ var createShortTextsNetwork=function(texts, stopWords, relationThreshold, mode, 
  }
   return network;
 }
-var splitStrings=function(texts, separator, maxComponents, bMergeExtraComponents, sLabel) {
+let splitStrings=function(texts, separator, maxComponents, bMergeExtraComponents, sLabel) {
  if(texts==null) return null;
  if(separator == null) separator = ',';
  if(maxComponents == null) maxComponents = 4;
  bMergeExtraComponents = bMergeExtraComponents == null ? true: bMergeExtraComponents;
  sLabel = sLabel == null ? '': sLabel;
   var tab = new T();
- var i,j,k;
+ let i,j,k;
  for(i=0;i<maxComponents;i++){
    tab.push(new sL());
    tab[i].name = 'Level ' + (i+1);
  }
- var nLUsed = new nL();
+ let nLUsed = new nL();
  for(i=0; i<texts.length; i++){
    var sComps = splitString(texts[i],separator);
    if(sComps == null){
@@ -13657,14 +13656,14 @@ var splitStrings=function(texts, separator, maxComponents, bMergeExtraComponents
  }
  return tab;
 }
-var encodeStringsAsNumericFeatures=function(texts, method, sLComplete, bmakeLowerCase, bUseListNamePrefix, bThrowError) {
+let encodeStringsAsNumericFeatures=function(texts, method, sLComplete, bmakeLowerCase, bUseListNamePrefix, bThrowError) {
  if(texts==null) return null;
  method = method == null ? 0 : method;
  bmakeLowerCase = bmakeLowerCase == null ? false : bmakeLowerCase;
  bUseListNamePrefix = bUseListNamePrefix == null ? false : bUseListNamePrefix;
  if(bThrowError == null)
    bThrowError = method == 3 ? false : true;
- var dict = {}, LNoReps, output, j;
+ let dict = {}, LNoReps, output, j;
  if(texts.type != 'sL')
    texts = texts.toStringList();
  if(bmakeLowerCase)
@@ -13676,12 +13675,12 @@ var encodeStringsAsNumericFeatures=function(texts, method, sLComplete, bmakeLowe
    LNoReps = bmakeLowerCase ? sLComplete.toLowerCase() : sLComplete;
    LNoReps = LNoReps.getWithoutRepetitions().getSorted();
  }
- var a = [];
+ let a = [];
  for(var i=0; i < LNoReps.length; i++){
    dict[LNoReps[i]] = i;
    a.push(LNoReps[i]);
  }
- var sNamePrefix = '';
+ let sNamePrefix = '';
  if(bUseListNamePrefix)
    sNamePrefix = texts.name == '' ? '' : texts.name + ':';
  output = new nT();
@@ -13770,7 +13769,7 @@ var encodeStringsAsNumericFeatures=function(texts, method, sLComplete, bmakeLowe
 }
 
 
-var correlationRatio=function(sL, nL, weightMode) {
+let correlationRatio=function(sL, nL, weightMode) {
  if(nL == null || sL == null) return null;
  if(sL.type == 'L')
    sL = sL.toStringList();
@@ -13787,18 +13786,18 @@ var correlationRatio=function(sL, nL, weightMode) {
  t.push(sL);
  t.push(nL);
  t = aggregateTable(t,0,[0,1],[0,7]);
- var SumSquaresOverall = nL.getVariance()*nL.length;
- var avgOverall = nL.getMean();
+ let SumSquaresOverall = nL.getVariance()*nL.length;
+ let avgOverall = nL.getMean();
  if(SumSquaresOverall == 0) return 0;
- var SumSquaresWeightedGroup, SumSquaresGroups = 0;
- var avgGroup, nLGroupAverages = new nL();
+ let SumSquaresWeightedGroup, SumSquaresGroups = 0;
+ let avgGroup, nLGroupAverages = new nL();
  for(var i=0; i < t[1].length; i++){
    avgGroup = t[1][i].getMean();
    nLGroupAverages.push(avgGroup);
    SumSquaresWeightedGroup = Math.pow(avgGroup-avgOverall,2)*t[1][i].length;
    SumSquaresGroups += SumSquaresWeightedGroup;
  }
- var f=1;
+ let f=1;
  if(weightMode != 0){
    // Tried using coefficient of variation as weighting factor but a simple sum of pairwise diffs works better
    // There is likely room to improve this by making it more scale and translation invariant
@@ -13827,11 +13826,11 @@ var correlationRatio=function(sL, nL, weightMode) {
 }
 
 
-var splitByEnter=function(string,trim) {
+let splitByEnter=function(string,trim) {
  if(string == null) {
    return null;
  }
- var sl = splitString(string, "\n", null, trim);
+ let sl = splitString(string, "\n", null, trim);
  if(sl.length > 1)
  {
   return sl;
@@ -13846,7 +13845,7 @@ var splitByEnter=function(string,trim) {
  }
  return new sL(string);
 }
-var replaceStringInText=function(text, string, replacement) {
+let replaceStringInText=function(text, string, replacement) {
  if(text == null || string == null || replacement == null) return null;
  if(typeof text == 'object') return text;
   if(Object.prototype.toString.call(string) != '[object RegExp]'){
@@ -13868,12 +13867,12 @@ var replaceStringInText=function(text, string, replacement) {
  }
   return String(text).replace(string, replacement);
 }
-var replaceStringsInText=function(text, strings, replacement, asWords) {
+let replaceStringsInText=function(text, strings, replacement, asWords) {
  if(text==null || strings==null || replacement==null) return null;
   var newText = text;
- var nStrings = strings.length;
- var j;
- var string;
+ let nStrings = strings.length;
+ let j;
+ let string;
   for(j=0; j<nStrings; j++){
    string = strings[j];
    if(asWords && Object.prototype.toString.call(string) != '[object RegExp]')
@@ -13882,7 +13881,7 @@ var replaceStringsInText=function(text, strings, replacement, asWords) {
  }
   return newText;
 }
-var removeTextsBetweenStrings=function(text, substring0, substring1, includeSubstring0, includeSubstring1, nMaxRemovals) {
+let removeTextsBetweenStrings=function(text, substring0, substring1, includeSubstring0, includeSubstring1, nMaxRemovals) {
  if(text==null || substring0==null || substring1==null) return null;
   var reduce_nextstep = function(txt){
       var index0 = txt.indexOf(substring0);
@@ -13906,14 +13905,14 @@ var removeTextsBetweenStrings=function(text, substring0, substring1, includeSubs
   
   return text;
 }
-var getWords=function(string, withoutRepetitions=true, stopWords=true, sortedByFrequency=true, includeLinks=true, limit=0, minSizeWords=3, wordDelimiter = " ") {
+let getWords=function(string, withoutRepetitions=true, stopWords=true, sortedByFrequency=true, includeLinks=true, limit=0, minSizeWords=3, wordDelimiter = " ") {
  if(string == null) return null;
   var links;
 
  wordDelimiter = wordDelimiter == '' ? ' ' : wordDelimiter
 
   var regexlink = StringOperators_LINK_REGEX;
- var i, j, list;
+ let i, j, list;
  if(typeof string != 'string')
    string = String(string);
  if(includeLinks) {
@@ -13994,7 +13993,7 @@ var getWords=function(string, withoutRepetitions=true, stopWords=true, sortedByF
      var occurrences = list.getFrequenciesTable();
      var list2 = new sL();
      for(i=0; i < occurrences[0].length; i++){
-       for(var j=0; j < occurrences[1][i]; j++)
+       for(j=0; j < occurrences[1][i]; j++)
          list2.push(occurrences[0][i]);
      }
      list = list2;
@@ -14009,7 +14008,7 @@ var getWords=function(string, withoutRepetitions=true, stopWords=true, sortedByF
  return list;
 }
 
-var getBigrams=function(string, withoutRepetitions=true, stopWords=true, sortedByFrequency=true, minSizeWords=3){
+let getBigrams=function(string, withoutRepetitions=true, stopWords=true, sortedByFrequency=true, minSizeWords=3){
     if(stopWords===true) stopWords = StringOperators_STOP_WORDS
     string = cleanText(string, true, true, " ", true, true, stopWords, true, true)
     let words = string.split(" ")
@@ -14022,12 +14021,12 @@ var getBigrams=function(string, withoutRepetitions=true, stopWords=true, sortedB
     return bigrams
 }
 
-var substr=function(string, i0, length) {
+let substr=function(string, i0, length) {
  if(string == null) return null;
  i0 = i0 || 0;
  return string.substr(i0, length);
 }
-var splitString=function(string, separator, segments, trim) {
+let splitString=function(string, separator, segments, trim) {
  if(string == null) return null;
  if(segments != null && !isNaN(segments) && segments != 0){
    var aWords = string.match(/\w+/g);
@@ -14066,23 +14065,23 @@ var splitString=function(string, separator, segments, trim) {
   if(trim) return sL.trim();
  return sL;
 }
-var getFirstTextBetweenStrings=function(text, subString0, subString1) {
+let getFirstTextBetweenStrings=function(text, subString0, subString1) {
  if(text == null) return null;
- var i0 = text.indexOf(subString0);
+ let i0 = text.indexOf(subString0);
  if(i0 == -1) return null;
  if(subString1 === "" || subString1 == null) return text.substr(i0 + subString0.length);
- var i1 = text.indexOf(subString1, i0 + subString0.length + 1);
+ let i1 = text.indexOf(subString1, i0 + subString0.length + 1);
  if(i1 == -1) return text.substring(i0 + subString0.length);
  return text.substr(i0 + subString0.length, i1 - (i0 + subString0.length));
 }
-var getAllTextsBetweenStrings=function(text, subString0, subString1) { //TODO: improve using indexOf(string, START_INDEX)
+let getAllTextsBetweenStrings=function(text, subString0, subString1) { //TODO: improve using indexOf(string, START_INDEX)
  if(text.indexOf(subString0) == -1) return new sL();
- var blocks = text.split(subString0);
- var nBlocks = blocks.length;
- var sl = new sL();
- var block;
- var index;
- var i;
+ let blocks = text.split(subString0);
+ let nBlocks = blocks.length;
+ let sl = new sL();
+ let block;
+ let index;
+ let i;
  for(i = 1; i < nBlocks; i++) {
    block = blocks[i];
    if(subString1 == subString0) {
@@ -14097,7 +14096,7 @@ var getAllTextsBetweenStrings=function(text, subString0, subString1) { //TODO: i
  return sl;
 }
 
-var textContainsString=function(text, string, asWord, caseSensitive) {
+let textContainsString=function(text, string, asWord, caseSensitive) {
  text = caseSensitive ? string : text.toLowerCase();
  string = caseSensitive ? string : string.toLowerCase();
  return asWord ?
@@ -14105,8 +14104,8 @@ var textContainsString=function(text, string, asWord, caseSensitive) {
    text.indexOf(string) != -1;
 }
 
-var getParenthesisContents=function(text, brackets) {
- var contents = new sL();
+let getParenthesisContents=function(text, brackets) {
+ let contents = new sL();
   var subText = text;
   var contentObject = getFirstParenthesisContentWithIndexes(text, brackets);
   var nAttempts = 0;
@@ -14119,14 +14118,14 @@ var getParenthesisContents=function(text, brackets) {
   return contents;
 }
 
-var getFirstParenthesisContent=function(text, brackets) {
+let getFirstParenthesisContent=function(text, brackets) {
  return getFirstParenthesisContentWithIndexes(text, brackets).content;
 }
-var getFirstParenthesisContentWithIndexes=function(text, brackets) {
- var open = brackets ? "[" : "(";
- var close = brackets ? "]" : ")";
+let getFirstParenthesisContentWithIndexes=function(text, brackets) {
+ let open = brackets ? "[" : "(";
+ let close = brackets ? "]" : ")";
   var openRegEx = brackets ? /\[/g : /\(/g;
- var closeRegEx = brackets ? /\]/g : /\)/g;
+ let closeRegEx = brackets ? /\]/g : /\)/g;
   var indexOpen = text.indexOf(open);
   if(indexOpen == -1) return {
    "content": "",
@@ -14136,9 +14135,9 @@ var getFirstParenthesisContentWithIndexes=function(text, brackets) {
   var indexClose = text.indexOf(close);
   var part = text.substring(indexOpen + 1, indexClose);
   var openMatch = part.match(openRegEx);
- var closeMatch = part.match(closeRegEx);
+ let closeMatch = part.match(closeRegEx);
   var nOpen = (openMatch == null ? 0 : openMatch.length) - (closeMatch == null ? 0 : closeMatch.length);
- var nAttempts = 0;
+ let nAttempts = 0;
    while((nOpen > 0 || indexClose == -1) && nAttempts < text.length) {
    indexClose = text.indexOf(close, indexClose);
    part = text.substring(indexOpen + 1, indexClose + 1);
@@ -14155,13 +14154,13 @@ var getFirstParenthesisContentWithIndexes=function(text, brackets) {
    "index1": indexClose == -1 ? (text.length - 1) : (indexClose - 1)
  };
 }
-var placeString=function(string, stringToPlace, index) {
+let placeString=function(string, stringToPlace, index) {
  return string.substr(0, index) + stringToPlace + string.substr(index + stringToPlace.length);
 }
-var insertString=function(string, stringToInsert, index) {
+let insertString=function(string, stringToInsert, index) {
  return string.substr(0, index) + stringToInsert + string.substr(index);
 }
-var cleanText=function(string, rmvEnters, rmvTabs, replaceTabsAndEntersBy, rmvPunctuation, toLowerCase, stopWords, rmveDoubleSpaces, rmveAccentsAndDiacritics){
+let cleanText=function(string, rmvEnters, rmvTabs, replaceTabsAndEntersBy, rmvPunctuation, toLowerCase, stopWords, rmveDoubleSpaces, rmveAccentsAndDiacritics){
  if(string==null) return null;
  if(string["isList"]) return cleanTexts(string, rmvEnters, rmvTabs, replaceTabsAndEntersBy, rmvPunctuation, toLowerCase, stopWords, rmveDoubleSpaces, rmveAccentsAndDiacritics);
  
@@ -14177,53 +14176,53 @@ var cleanText=function(string, rmvEnters, rmvTabs, replaceTabsAndEntersBy, rmvPu
   if(rmveAccentsAndDiacritics) string = removeAccentsAndDiacritics(string);
   return string;
 }
-var removeEnters=function(string, replaceBy) {
+let removeEnters=function(string, replaceBy) {
  if(string==null) return null;
  replaceBy = replaceBy==null?"":replaceBy
  return string.replace(/(\r|\n)/g, replaceBy);
 }
-var removeTabs=function(string, replaceBy) {
+let removeTabs=function(string, replaceBy) {
  if(string==null) return null;
  replaceBy = replaceBy || ""
  return string.replace(/\t/g, replaceBy);
 }
-var removePunctuation=function(string, replaceBy) {
+let removePunctuation=function(string, replaceBy) {
  if(string==null) return null;
  replaceBy = replaceBy || "";
  return string.replace(/[:,.;?!\(\)\"\']/gi, replaceBy);
 }
-var removeDoubleSpaces=function(string) {
+let removeDoubleSpaces=function(string) {
  if(string==null) return null;
- var retString = string;
- var regExpr = RegExp(/\s\s/g)
+ let retString = string;
+ let regExpr = RegExp(/\s\s/g)
  while(regExpr.test(retString)) {
    retString = retString.replace(regExpr, " ")
  }
  return retString;
 }
 
-var removeHtmlTags=function(html) {
- var tmp = document.createElement("DIV");
+let removeHtmlTags=function(html) {
+ let tmp = document.createElement("DIV");
  tmp.innerHTML = html;
  return tmp.textContent || tmp.innerText;
 }
 
-var escapeForRegExp=function(text) {
+let escapeForRegExp=function(text) {
  if(text==null) return null;
  return text.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
-var removeLinks=function(text) {
+let removeLinks=function(text) {
  text += ' ';
- var regexp = /https*:\/\/[a-zA-Z0-9\/\.]+( |:|;|\r|\t|\n|\v)/g;
+ let regexp = /https*:\/\/[a-zA-Z0-9\/\.]+( |:|;|\r|\t|\n|\v)/g;
  return(text.replace(regexp, ' ')).substr(0, text.length - 2);
 }
-var removeQuotes=function(string) { //TODO:improve
+let removeQuotes=function(string) { //TODO:improve
  if(string.charAt(0) == "\"") string = string.substr(1);
  if(string.charAt(string.length - 1) == "\"") string = string.substr(0, string.length - 1);
  return string;
 }
-var removeAccentsAndDiacritics=function(string) {
- var r = string.replace(new RegExp(/[àáâãäå]/g), "a");
+let removeAccentsAndDiacritics=function(string) {
+ let r = string.replace(new RegExp(/[àáâãäå]/g), "a");
  r = r.replace(new RegExp(/æ/g), "ae");
  r = r.replace(new RegExp(/ç/g), "c");
  r = r.replace(new RegExp(/[òóôõö]/g), "o");
@@ -14246,12 +14245,12 @@ var removeAccentsAndDiacritics=function(string) {
   return r;
 }
 
-var getWordsOccurrencesTable=function(string, stopWords, includeLinks, limit, minSizeWords, wordDelimiter) {
+let getWordsOccurrencesTable=function(string, stopWords, includeLinks, limit, minSizeWords, wordDelimiter) {
  if(string == null) return;
  if(string.length === 0) return new T(new sL(), new nL());
   if(stopWords==1) stopWords = StringOperators_STOP_WORDS
   var words = getWords(string, false, stopWords, false, includeLinks, null, minSizeWords, wordDelimiter)
- var table;
+ let table;
  if(limit != null)
    table = words.getFrequenciesTable(true).sliceRows(0, limit-1);
  else
@@ -14261,8 +14260,8 @@ var getWordsOccurrencesTable=function(string, stopWords, includeLinks, limit, mi
  return table
 }
 
-var indexesOf=function(text, string, asWord) { //TODO:test
- var indexes, index;
+let indexesOf=function(text, string, asWord) { //TODO:test
+ let indexes, index;
  
  if(asWord){
    indexes  = new nL()
@@ -14289,26 +14288,26 @@ var indexesOf=function(text, string, asWord) { //TODO:test
  }
  return indexes;
 }
-var indexesOfString=function(text, string, asWord){
+let indexesOfString=function(text, string, asWord){
  return indexesOf(text, string, asWord);
 }
-var repeatString=function(text, n) {
- var i;
- var newText = "";
+let repeatString=function(text, n) {
+ let i;
+ let newText = "";
  for(i = 0; i < n; i++) {
    newText += text;
  }
  return newText;
 }
 
-var countStringOccurrences=function(text, string, asWord) {
+let countStringOccurrences=function(text, string, asWord) {
  return countOccurrences(text, string, asWord);
 }
 
-var countOccurrences=function(text, string, asWord) { //seems to be th emost efficient: http://stackoverflow.com/questions/4009756/how-to-count-string-occurrence-in-string
+let countOccurrences=function(text, string, asWord) { //seems to be th emost efficient: http://stackoverflow.com/questions/4009756/how-to-count-string-occurrence-in-string
  if(asWord) return countWordOccurrences(text, string);
   var n = 0;
- var index = text.indexOf(string);
+ let index = text.indexOf(string);
  while(index != -1) {
    n++;
    index = text.indexOf(string, index + string.length);
@@ -14316,21 +14315,21 @@ var countOccurrences=function(text, string, asWord) { //seems to be th emost eff
  return n;
 }
 
-var countWordOccurrences=function(string, word) {
- var regex = new RegExp("\\b" + word + "\\b");
+let countWordOccurrences=function(string, word) {
+ let regex = new RegExp("\\b" + word + "\\b");
  return countRegexOccurrences(string, regex);
 }
 
-var countRegexOccurrences=function(string, regex) {
- var match = string.match(regex);
+let countRegexOccurrences=function(string, regex) {
+ let match = string.match(regex);
  return match == null ? 0 : match.length;
 }
 
-var countStringsOccurrences=function(text, strings, asWords) {
+let countStringsOccurrences=function(text, strings, asWords) {
  if(text==null || strings==null) return;
   var i;
- var nl = new nL();
- var nStrings = strings.length;
+ let nl = new nL();
+ let nStrings = strings.length;
  for(i = 0; i<nStrings; i++) {
    if(asWords){
      nl[i] = countRegexOccurrences(text, new RegExp("\\b" + strings[i] + "\\b"));
@@ -14340,14 +14339,14 @@ var countStringsOccurrences=function(text, strings, asWords) {
  }
  return nl;
 }
-var validateEmail=function(text) {
+let validateEmail=function(text) {
  return StringOperators_MAIL_REGEX.test(text);
 }
-var validateUrl=function(text) {
+let validateUrl=function(text) {
  return StringOperators_LINK_REGEX.test(text);
 }
 
-var getClosestLevenshtein = function(text, texts, mode=0){
+let getClosestLevenshtein = function(text, texts, mode=0){
     let closest = texts[0]
     let dMin = 99999
     texts.forEach(other=>{
@@ -14361,7 +14360,7 @@ var getClosestLevenshtein = function(text, texts, mode=0){
     return {closest, distance:dMin}
 }
 
-var getLevenshteinDistance=function(a, b, bNormalized) {
+let getLevenshteinDistance=function(a, b, bNormalized) {
     /*
     Copyright (c) 2011 Andrei Mackenzie
     Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -14382,12 +14381,12 @@ var getLevenshteinDistance=function(a, b, bNormalized) {
  if(b.length === 0) return bNormalized ? 1 : a.length;
   var matrix = [];
   // increment along the first column of each row 
- var i;
+ let i;
  for(i = 0; i <= b.length; i++){
    matrix[i] = [i];
  }
   // increment each column in the first row
- var j;
+ let j;
  for(j = 0; j <= a.length; j++){
    matrix[0][j] = j;
  }
@@ -14410,19 +14409,19 @@ var getLevenshteinDistance=function(a, b, bNormalized) {
   return matrix[b.length][a.length];
 }
 
-var getNgrams=function(text, minSequenceSize=2, maxSequenceSize=2, stopWords, limit=0, minSizeWords=0, iStopwordMode){
+let getNgrams=function(text, minSequenceSize=2, maxSequenceSize=2, stopWords, limit=0, minSizeWords=0, iStopwordMode){
  if(maxSequenceSize < minSequenceSize) maxSequenceSize = minSequenceSize;
  if(stopWords===true) stopWords = StringOperators_STOP_WORDS;
  iStopwordMode = iStopwordMode == null ? (stopWords == null ? 1 : 0) : iStopwordMode;
  if(iStopwordMode != 1 && stopWords == null) stopWords = StringOperators_STOP_WORDS;
  if(iStopwordMode == 1) stopWords=null;
- var i, j, sSeq;
- var sLSequences = new sL();
+ let i, j, sSeq;
+ let sLSequences = new sL();
  if(text == null || typeof text != 'string') return sLSequences;
   // get all the tokens
- var linkregex = StringOperators_LINK_REGEX;
+ let linkregex = StringOperators_LINK_REGEX;
  text = text.toLowerCase().replace(linkregex, "");
- var tokens = text.match(/\w+|[\.,-\/#!$%\^&\*;:{}=\-_`~()@\+\?><\[\]\+]/g);
+ let tokens = text.match(/\w+|[\.,-\/#!$%\^&\*;:{}=\-_`~()@\+\?><\[\]\+]/g);
  if(tokens == null) return sLSequences;
  tokens = sL.toL(tokens);
   var rePunct = /[\.,-\/#!$%\^&\*;:{}=\-_`~()@\+\?><\[\]\+]/;
@@ -14454,10 +14453,10 @@ var getNgrams=function(text, minSequenceSize=2, maxSequenceSize=2, stopWords, li
  return sLSequences;
 }
 
-var stringToFunction=function(string){
+let stringToFunction=function(string){
  if(string==null) return;
   var realCode;
- var myTempraryFunction;
+ let myTempraryFunction;
   if(string.search(/function\(/)!=-1){
    realCode = "myTempraryFunction = " + string;
    eval(realCode);
@@ -14483,10 +14482,10 @@ var stringToFunction=function(string){
  eval(realCode);
  return myTempraryFunction;
 }
-var stringFormat=function(string,inputPattern,outputPattern,method){
+let stringFormat=function(string,inputPattern,outputPattern,method){
  if(string == null || inputPattern == null || outputPattern == null) return null;
  method = method == null ? 0 : method;
- var i,j;
+ let i,j;
  if(string.type == 'sL' || _typeOf(string) == 'Array'){
    // operate on each element
    var sLRet = new sL();
@@ -14517,7 +14516,7 @@ var stringFormat=function(string,inputPattern,outputPattern,method){
  }
  return sOutput;
 }
-var createListWithSameElement=function(nValues, element, name) {
+let createListWithSameElement=function(nValues, element, name) {
  if(nValues == null) return null;
  if(Array.isArray(nValues)) nValues=nValues.length;
   var list;
@@ -14552,17 +14551,17 @@ var createListWithSameElement=function(nValues, element, name) {
  return list;
 }
 
-var createIterationSequence=function(nValues, firstElement, dynamicFunction) {
- var list = createListWithSameElement(1, firstElement);
+let createIterationSequence=function(nValues, firstElement, dynamicFunction) {
+ let list = createListWithSameElement(1, firstElement);
  for(var i = 1; i < nValues; i++) {
    list[i] = dynamicFunction(list[i - 1]);
  }
  return list;
 }
 
-var createListWithUniqueElements=function(nValues, style=0, prefix, name, nWords=5) {
+let createListWithUniqueElements=function(nValues, style=0, prefix, name, nWords=5) {
  prefix = prefix == null ? '' : prefix
- var list;
+ let list;
  if(prefix == '' && style == 1)
    list = new nL();
  else
@@ -14609,12 +14608,12 @@ var createListWithUniqueElements=function(nValues, style=0, prefix, name, nWords
  }
   return list;
 }
-var replaceChomasInTextLine=function(line, separator) {
- var quoteBlocks = line.split("\"");
+let replaceChomasInTextLine=function(line, separator) {
+ let quoteBlocks = line.split("\"");
  if(quoteBlocks.length < 2) return line;
- var insideQuote;
- var i;
- var re;
+ let insideQuote;
+ let i;
+ let re;
  separator = separator==null?",":separator;
   // put escape in front of it in case it is something like | or +
  re = new RegExp('\\'+separator,'g');
@@ -14627,11 +14626,11 @@ var replaceChomasInTextLine=function(line, separator) {
  line = sL.toL(quoteBlocks).getConcatenated("");
  return line;
 }
-var _replaceSpacesInLine=function(line) {
- var quoteBlocks = line.split("\"");
+let _replaceSpacesInLine=function(line) {
+ let quoteBlocks = line.split("\"");
  if(quoteBlocks.length < 2) return line;
- var insideQuote;
- var i;
+ let insideQuote;
+ let i;
  for(i = 0; quoteBlocks[i] != null; i++) {
    insideQuote = i * 0.5 != Math.floor(i * 0.5);
    if(insideQuote) {
@@ -14644,7 +14643,7 @@ var _replaceSpacesInLine=function(line) {
 
 
 ////TextNet
-var decodeTextNet=function(code) {
+let decodeTextNet=function(code) {
  if(code == null) return;
  if(code === "") return new Net();
   console.log('\n\n*************////////// decodeTextNet //////////*************');
@@ -14652,24 +14651,24 @@ var decodeTextNet=function(code) {
 
  //code = "\n"+code;
   var i, j;
- var line, simpleLine;
- var id, id2;
- var name;
- var index, minIndex;
- var lines;
- var node, otherNode;
- var relation;
- var sep;
- var colorLinesRelations = []; //for relations
- var colorLinesGroups = [];
- var colorSegments = [];
- var regex;
- var iEnd;
- var propertyName;
- var propertyValue;
- var network = new Net();
- var paragraphs = new sL();
- var content;
+ let line, simpleLine;
+ let id, id2;
+ let name;
+ let index, minIndex;
+ let lines;
+ let node, otherNode;
+ let relation;
+ let sep;
+ let colorLinesRelations = []; //for relations
+ let colorLinesGroups = [];
+ let colorSegments = [];
+ let regex;
+ let iEnd;
+ let propertyName;
+ let propertyValue;
+ let network = new Net();
+ let paragraphs = new sL();
+ let content;
   network.nodesPropertiesNames = new sL();
  network.relationsPropertiesNames = new sL();
   lines = code.split(/\n/g);
@@ -14941,14 +14940,14 @@ var decodeTextNet=function(code) {
   network.colorSegments = colorSegments;
   return network;
 }
-var _simplifyForTextNet=function(name) {
+let _simplifyForTextNet=function(name) {
  name = name.toLowerCase();
  if(name.substr(name.length - 2) == 'es') {
    name = name.substr(0, name.length - 1);
  } else if(name.charAt(name.length - 1) == 's') name = name.substr(0, name.length - 1);
  return name.trim();
 }
-var _regexWordForTextNet=function(word, global) {
+let _regexWordForTextNet=function(word, global) {
  global = global == null ? true : global;
  try {
    return new RegExp("(\\b)(" + word + "|" + word + "s|" + word + "es)(\\b)", global ? "gi" : "i");
@@ -14956,10 +14955,10 @@ var _regexWordForTextNet=function(word, global) {
    return null;
  }
 }
-var encodeTextNet=function(network, nodeContentSeparator, nodesPropertyNames, relationsPropertyNames) {
+let encodeTextNet=function(network, nodeContentSeparator, nodesPropertyNames, relationsPropertyNames) {
  if(network == null) return;
   var code = "";
- var regex, lineRelation;
+ let regex, lineRelation;
   var codedRelationsContents;
   nodeContentSeparator = nodeContentSeparator || ', ';
  nodesPropertyNames = nodesPropertyNames || [];
@@ -14993,7 +14992,7 @@ var encodeTextNet=function(network, nodeContentSeparator, nodesPropertyNames, re
 ////
 
 
-var modelInfluence=function(network, node, impact=1, spread_strength=1){
+let modelInfluence=function(network, node, impact=1, spread_strength=1){
     if(node==null) return
     if(typeof(node)=="string") node = network.get(node)
 
@@ -15066,20 +15065,20 @@ var modelInfluence=function(network, node, impact=1, spread_strength=1){
     network.nodes.forEach(n=>console.log(n.name, n.impact))
 }
 
-var NetworkToTable=function(network, useIds, includeLabelsList, countMode){
+let NetworkToTable=function(network, useIds, includeLabelsList, countMode){
  if(network==null) return;
   useIds = useIds==null?true:useIds;
  countMode = countMode==null?0:countMode;
   var table = includeLabelsList?new T():new nT();
- var labels = useIds?network.nodes.getIds():network.nodes.getNames();
+ let labels = useIds?network.nodes.getIds():network.nodes.getNames();
  labels.name = "node names";
  if(includeLabelsList) table[0] = labels;
   var list;
- var nNodes = network.nodes.length;
- var nRelations = network.relations.length;
- var i;
- var relation;
- var indexesDictionary = {};
+ let nNodes = network.nodes.length;
+ let nRelations = network.relations.length;
+ let i;
+ let relation;
+ let indexesDictionary = {};
   var indexOffset = includeLabelsList?1:0;
   for(i=0; i<nNodes; i++){
    list = createListWithSameElement(nNodes, 0);
@@ -15097,17 +15096,17 @@ var NetworkToTable=function(network, useIds, includeLabelsList, countMode){
  }
   return table;
 }
-var TableToNetworkPairs = function(table, nl, threshold=0, allowMultipleRelations=false, minRelationsInNode=0, sl, tagsSeparator = ",") {
+let TableToNetworkPairs = function(table, nl, threshold=0, allowMultipleRelations=false, minRelationsInNode=0, sl, tagsSeparator = ",") {
  if(table == null || table[0] == null || table[1] == null) return;
   var nElements;
- var node0;
- var node1;
- var name0;
- var name1;
- var relation;
- var i, j;
- var list;
- var network = new Net();
+ let node0;
+ let node1;
+ let name0;
+ let name1;
+ let relation;
+ let i, j;
+ let list;
+ let network = new Net();
   //as matrix
   if(table.type == "nT" && table.length > 2  && table.length==table[0].length){
     nElements = table.length;
@@ -15171,7 +15170,7 @@ if(table[0].join("").includes(tagsSeparator)){
    //....    different methodology here
     }
   var provisionalRelations = new ndL();
- var id;
+ let id;
 
 
  for(i = 0; i < nElements; i++) {
@@ -15226,7 +15225,7 @@ if(table[0].join("").includes(tagsSeparator)){
     if(sl) relation.content = sl[i];
  }
 
- var maxWeight = 0
+ let maxWeight = 0
  network.nodes.forEach(n=>{
     n.indexes=n.indexes.getWithoutRepetitions()
     maxWeight = Math.max(maxWeight, n.weight)
@@ -15266,9 +15265,9 @@ if(table[0].join("").includes(tagsSeparator)){
   return network;
 }
 
-var matrixToNetwork=function(matrix){
- var net = new Net();
- var n1,n2,rel,id;
+let matrixToNetwork=function(matrix){
+ let net = new Net();
+ let n1,n2,rel,id;
   for(var i=1; i<matrix.length; i++){
      n1 = net.get(matrix[i].name);
      if(n1==null){
@@ -15291,7 +15290,7 @@ var matrixToNetwork=function(matrix){
  }
  return net;
 }
-var CSVToTable=function(csvString, firstRowIsHeader=true, separator, valueForNulls, listsToStringList, name) {
+let CSVToTable=function(csvString, firstRowIsHeader=true, separator, valueForNulls, listsToStringList, name) {
  if(csvString==null) return null;
  
  
@@ -15367,10 +15366,10 @@ var CSVToTable=function(csvString, firstRowIsHeader=true, separator, valueForNul
  if(separator == '\\t' || separator == 'tab')
    separator = '\t';
   var table = new T();
- var comaCharacter = separator;
+ let comaCharacter = separator;
   if(csvString == null || csvString === "" || csvString == " " || lines.length === 0) return null;
   var startIndex = 0;
- var headerContent;
+ let headerContent;
  if(firstRowIsHeader) {
    startIndex = 1;
     //currently applied only in automatic header detection case, but could be applied always
@@ -15384,9 +15383,9 @@ var CSVToTable=function(csvString, firstRowIsHeader=true, separator, valueForNul
    }
   }
   var element;
- var cellContent;
- var numberCandidate;
- var cellContents;
+ let cellContent;
+ let numberCandidate;
+ let cellContents;
  //var actualIndex;
    var k;
  i = 0;
@@ -15461,21 +15460,21 @@ var CSVToTable=function(csvString, firstRowIsHeader=true, separator, valueForNul
  }
    return table;
 }
-var _removeQuotes=function(string) {
+let _removeQuotes=function(string) {
  if(string.length === 0) return string;
  if((string.charAt(0) == "\"" || string.charAt(0) == "'") && (string.charAt(string.length - 1) == "\"" || string.charAt(string.length - 1) == "'")) string = string.substr(1, string.length - 2);
  return string;
 }
 
-var TableToCSV=function(table, separator=",", namesAsHeaders=true, replaceCommasBy,addTypesAsFirstLine) {
+let TableToCSV=function(table, separator=",", namesAsHeaders=true, replaceCommasBy,addTypesAsFirstLine) {
  if(table==null) return;
 
- var i;
- var j;
- var list;
- var type;
- var lines = createListWithSameElement(table[0].length, "");
- var addSeparator;
+ let i;
+ let j;
+ let list;
+ let type;
+ let lines = createListWithSameElement(table[0].length, "");
+ let addSeparator;
  for(i = 0; table[i] != null; i++) {
    list = table[i];
    type = list.type;
@@ -15510,15 +15509,17 @@ var TableToCSV=function(table, separator=",", namesAsHeaders=true, replaceCommas
      if(i != table.length - 1) headers += separator;
    }
    headers += '\n';
+   
  }
-  return (addTypesAsFirstLine?table.getTypes().join(separator)+"\n":"") + headers + lines.getConcatenated("\n");
+ let csv = (addTypesAsFirstLine?table.getTypes().join(separator)+"\n":"") + headers + lines.getConcatenated("\n")
+  return csv
 }
-var TableToJSONString=function(table,bKeepObject) {
+let TableToJSONString=function(table,bKeepObject) {
  if(table == null) return '';
- var array = table.slice(0);
- var names = table.getNames();
- var types = table.getTypes();
- var aNulls = [];
+ let array = table.slice(0);
+ let names = table.getNames();
+ let types = table.getTypes();
+ let aNulls = [];
  // preserve whether it is undefined, true, or false
  for(var i=0; i < table.length; i++){
    if(table[i].containsNulls === undefined)
@@ -15526,7 +15527,7 @@ var TableToJSONString=function(table,bKeepObject) {
    else
      aNulls.push(table[i].containsNulls);
  }
- var obj = {
+ let obj = {
    data:array,
    name:table.name,
    type:table.type,
@@ -15544,9 +15545,9 @@ var TableToJSONString=function(table,bKeepObject) {
    return JSON.stringify({"error":"cannot convert."});
  }
 }
-var JSONStringToTable=function(json) {
+let JSONStringToTable=function(json) {
  if(json == null || json.length == 0) return new T();
- var obj,i;
+ let obj,i;
  if(typeof json == 'object')
    obj = json;
  else
@@ -15555,7 +15556,7 @@ var JSONStringToTable=function(json) {
    } catch(err) {
      return null;
    }
- var table;
+ let table;
  if(obj.type == 'nT')
    table = nT.toL(obj.data);
  else
@@ -15613,17 +15614,17 @@ var JSONStringToTable=function(json) {
    }
  return table;
 }
-var NumberListToPolygon=function(numberlist) {
+let NumberListToPolygon=function(numberlist) {
  if(numberlist.length === 0) return null;
- var polygon = new Pol();
+ let polygon = new Pol();
  for(var i = 0; numberlist[i + 1] != null; i += 2) {
    polygon.push(new P(numberlist[i], numberlist[i + 1]));
  }
  return polygon;
 }
-var NumberListToStringList=function(numberlist) {
- var i;
- var sl = new sL();
+let NumberListToStringList=function(numberlist) {
+ let i;
+ let sl = new sL();
  for(i = 0; numberlist[i] != null; i++) {
    sl[i] = String(numberlist[i]);
  }
@@ -15631,14 +15632,14 @@ var NumberListToStringList=function(numberlist) {
  return sl;
 }
 
-var ObjectToTable=function(object, fields) {
+let ObjectToTable=function(object, fields) {
  if(object==null) return null;
  // Formats:
  // 1: normal list of objects
  // 2: Object with single property, containing normal list of obejcts
  // 3: Object as CSV (each property represents a column)
- var format;
- var p;
+ let format;
+ let p;
   // If it's an array, then it's format 1
  if(Array.isArray(object)) {
    format = 1;
@@ -15683,8 +15684,8 @@ var ObjectToTable=function(object, fields) {
    }
  }
    // Create table and columns
- var column, i, f, j;
- var result = new T();
+ let column, i, f, j;
+ let result = new T();
  for(i = 0; i < fields.length; i++) {
    var fieldName = fields[i];
    column = new L();
@@ -15755,23 +15756,23 @@ var ObjectToTable=function(object, fields) {
   // Return best possible
  return result;
 }
-var ObjectToList=function(object, fields) {
- var result = ObjectToTable(object, fields);
+let ObjectToList=function(object, fields) {
+ let result = ObjectToTable(object, fields);
   if(result.getLengths.getMax() == 1) return result.getRow(0);
 }
-var objectToString=function(object){
+let objectToString=function(object){
  try {
    return JSON.stringify(object);
  } catch (e) {
    return JSON.stringify({"error":"cannot convert."});
  }
 }
-var conversor=function(object, toType) {
+let conversor=function(object, toType) {
  if(object==null || toType==null) return;
   var i;
- var type = _typeOf(object);
- var pairType = type + "_" + toType;
- var newList;
+ let type = _typeOf(object);
+ let pairType = type + "_" + toType;
+ let newList;
   switch(pairType) {
    case 'Array_List':
      return ArrayToList(object);
@@ -15829,29 +15830,29 @@ var conversor=function(object, toType) {
  // }
   return null;
 }
-var ArrayToList=function(array){
+let ArrayToList=function(array){
  if (array == null) return;
  return L.toL(array).downcast();
 }
 
-var angleFromTwoPoints=function(point0, point1) {
+let angleFromTwoPoints=function(point0, point1) {
  return Math.atan2(point1.y - point0.y, point1.x - point0.x);
 }
-var dot=function(point0, point1) {
+let dot=function(point0, point1) {
  return point0.x * point1.x + point0.y * point1.y;
 }
-var twoPointsInterpolation=function(point0, point1, t) {
+let twoPointsInterpolation=function(point0, point1, t) {
  return new P((1 - t) * point0.x + t * point1.x, (1 - t) * point0.y + t * point1.y);
 }
-var pointMultiplication=function(point0, point1) {
+let pointMultiplication=function(point0, point1) {
  return new P( point0.x*point1.x - point0.y*point1.y, point0.y*point1.x + point0.x*point1.y);
 }
-var normalizeTableToMax=function(numbertable, factor) {
+let normalizeTableToMax=function(numbertable, factor) {
  if(numbertable==null) return;
  factor = factor == null ? 1 : factor;
   var newTable = new nT();
- var i;
- var antimax = factor / numbertable.getMax();
+ let i;
+ let antimax = factor / numbertable.getMax();
  for(i = 0; numbertable[i] != null; i++) {
    newTable[i] = numbertable[i].factor(antimax);
  }
@@ -15862,13 +15863,13 @@ var normalizeTableToMax=function(numbertable, factor) {
 /**
  * modes: max, min-max, sum, z-score
  **/
-var normalizeLists=function(numbertable, factor, mode) {
+let normalizeLists=function(numbertable, factor, mode) {
  if(numbertable==null || !numbertable.length || !numbertable[0].length) return;
  
  mode = mode == null ? 'min-max' : mode;
   var newTable = instanceSameType(numbertable);
   newTable.name = numbertable.name;
- var i;
+ let i;
  for(i = 0; numbertable[i] != null; i++) {
    if(numbertable[i].type != 'nL'){
      newTable[i] = numbertable[i].clone();
@@ -15883,7 +15884,7 @@ var normalizeLists=function(numbertable, factor, mode) {
         newTable[i] = normalizeToSum(numbertable[i], factor);
         break
     case "z-score":
-        newTable[i] = normalizeByZScore(numbertable[i], factor);
+        newTable[i] = normalizeByZScore(numbertable[i])//, factor);
         break
     case "min-max":
     default:
@@ -15895,12 +15896,12 @@ var normalizeLists=function(numbertable, factor, mode) {
  
  return newTable;
 }
-var normalizeListsToMax=function(numbertable, factorValue) {
+let normalizeListsToMax=function(numbertable, factorValue) {
  if(numbertable==null || !numbertable[0].length) return;
   var newTable = new nT();
- var numberlist;
- var l = numbertable.length;
- var i;
+ let numberlist;
+ let l = numbertable.length;
+ let i;
  for(i = 0; i<l; i++) {
    numberlist = numbertable[i];
    newTable[i] = normalizeToMax(numberlist, factorValue);
@@ -15908,12 +15909,12 @@ var normalizeListsToMax=function(numbertable, factorValue) {
  newTable.name = numbertable.name;
  return newTable;
 }
-var normalizeListsToSum=function(numbertable, factorValue) {
+let normalizeListsToSum=function(numbertable, factorValue) {
  if(numbertable==null || !numbertable[0].length) return;
   var newTable = new nT();
- var numberlist;
- var l = numbertable.length;
- var i;
+ let numberlist;
+ let l = numbertable.length;
+ let i;
  for(i = 0; i<l; i++) {
    numberlist = numbertable[i];
    newTable[i] = normalizeToSum(numberlist, factorValue);
@@ -15921,12 +15922,12 @@ var normalizeListsToSum=function(numbertable, factorValue) {
  newTable.name = numbertable.name;
  return newTable;
 }
-var normalizeListsToInterval=function(numbertable, interval, factorValue) {
+let normalizeListsToInterval=function(numbertable, interval, factorValue) {
  if(numbertable==null || !numbertable[0].length) return;
   var newTable = new nT();
- var numberlist;
- var l = numbertable.length;
- var i;
+ let numberlist;
+ let l = numbertable.length;
+ let i;
  for(i = 0; i<l; i++) {
    numberlist = numbertable[i];
    newTable[i] = normalizeToInterval(numberlist, interval, factorValue);
@@ -15936,7 +15937,7 @@ var normalizeListsToInterval=function(numbertable, interval, factorValue) {
 }
 
 
-var averageSmootherOnLists=function(numberTable, intensity, nIterations) {
+let averageSmootherOnLists=function(numberTable, intensity, nIterations) {
  if(numberTable == null || !numberTable[0].length) return;
   intensity = intensity || 0.5;
  nIterations = nIterations || 1;
@@ -15947,28 +15948,28 @@ var averageSmootherOnLists=function(numberTable, intensity, nIterations) {
  });
  return newNumberTable;
 }
-var kMeans=function(numberTable, k, returnIndexesMode, N, listSeeds){
+let kMeans=function(numberTable, k, returnIndexesMode, N, listSeeds){
  if(numberTable == null || numberTable[0]==null || k == null || k <= 0 || numberTable.getLengths().getInterval().getAmplitude()!==0) return null;
   returnIndexesMode = returnIndexesMode==null?0:returnIndexesMode;
  N = (N==null || (N<=0))?1000:N;
   var clusters = new nT();// = returnIndexesMode?new nL():new nT();
  clusters.name = "k-means clusters";
- var i, j, l;
- var jK;
- var row;
- var d;
- var dMin;
- var n;
- var means = new nT();
- var length = numberTable.length;
- var nRows = numberTable[0].length;
- var rows = numberTable.transpose();
- var initdMin = 99999999;
- var nRowsMean;
- var meanRowsIndexes;
- var newMean;
- var clustersPrev = clusters.clone();
- var numTrials,maxTrials=100;
+ let i, j, l;
+ let jK;
+ let row;
+ let d;
+ let dMin;
+ let n;
+ let means = new nT();
+ let length = numberTable.length;
+ let nRows = numberTable[0].length;
+ let rows = numberTable.transpose();
+ let initdMin = 99999999;
+ let nRowsMean;
+ let meanRowsIndexes;
+ let newMean;
+ let clustersPrev = clusters.clone();
+ let numTrials,maxTrials=100;
   if(k>=rows.length) return rows;
   var equalToPreviousMean = function(row, meansSoFar){
    var kSoFar = meansSoFar.length;
@@ -16055,8 +16056,8 @@ var kMeans=function(numberTable, k, returnIndexesMode, N, listSeeds){
  }
   //prepare results
   var meanNumber;
- var cluster;
- var sizeCluster;
+ let cluster;
+ let sizeCluster;
    if(returnIndexesMode==1 || returnIndexesMode==5){
    meanNumber = new nL();
    meanNumber.name = "mean index";
@@ -16110,14 +16111,14 @@ var kMeans=function(numberTable, k, returnIndexesMode, N, listSeeds){
  }
   return null;
 }
-var product=function(numberTable0, numberTable1){
+let product=function(numberTable0, numberTable1){
  if(numberTable0==null || numberTable1==null) return;
- var n = numberTable0.length;
- var m = numberTable0[0].length;
+ let n = numberTable0.length;
+ let m = numberTable0[0].length;
   if(n === 0 || m === 0 || n!=numberTable1[0].length || m!=numberTable1.length) return;
    var newTable = new nT();
- var i, j, k;
- var val;
+ let i, j, k;
+ let val;
   for(i=0; i<n; i++){
    newTable[i] = new nL();
    for(j=0; j<n; j++){
@@ -16130,17 +16131,17 @@ var product=function(numberTable0, numberTable1){
  }
   return newTable;
 }
-var getCovarianceMatrix=function(numberTable){//TODO:build more efficient method
+let getCovarianceMatrix=function(numberTable){//TODO:build more efficient method
  if(numberTable==null) return;
  return product(numberTable, numberTable.transpose()).factor(1/numberTable.length);
 }
 
-var generateNumberTable=function(mode, nColumns, nRows, factor){//this method should be placed at NumberTableGenerators.js
+let generateNumberTable=function(mode, nColumns, nRows, factor){//this method should be placed at NumberTableGenerators.js
  mode = mode==null?0:mode;
  nRows = nRows==null?nColumns:nRows;
  factor = factor==null?1:factor;
   var nT = new nT();
- var valueAtCell;
+ let valueAtCell;
   switch(mode){
    case 0:
      valueAtCell = function(i,j){
@@ -16172,21 +16173,21 @@ var generateNumberTable=function(mode, nColumns, nRows, factor){//this method sh
  }
   return nT;
 }
-var identity=function(object) {
+let identity=function(object) {
  return object;
 }
-var mergeObjects=function(target, source){
+let mergeObjects=function(target, source){
  // TODO: Improve this function to give more functionalities, as:
  //   - select what properties to merge
  //   - to choose if overwrite already existing properties on target object (today it does by default)
  if(target == null) return null;
  if(source == null) return target;
- var oNew = Object.assign(cloneObject(target),source);
+ let oNew = Object.assign(cloneObject(target),source);
  return isEqual(target,oNew) ? target : oNew;
 }
-var cloneObject=function(object){
+let cloneObject=function(object){
  if(object == null) return null;
- var string;
+ let string;
  if(object["clone"] && typeof(object.clone)=="function") return object.clone();
  try {
    string = JSON.stringify(object);
@@ -16195,11 +16196,11 @@ var cloneObject=function(object){
  }
  return JSON.parse(string);
 }
-var serliazeObject=function(object){
+let serliazeObject=function(object){
  if(object==null) return null
   var newObject;
- var l;
- var i;
+ let l;
+ let i;
   if(object["isTable"]) {
    newObject = object.toArray();
    l = object.length;
@@ -16211,19 +16212,19 @@ var serliazeObject=function(object){
   if(object["isList"]) return object.toArray();
   return object;
 }
-var getInterval=function(object){
+let getInterval=function(object){
  if(object==null) return;
   if(object.getInterval!=null) return object.getInterval();
 }
-var getFrame=function(object, expansion){
- var frame;
+let getFrame=function(object, expansion){
+ let frame;
   if(object.getFrame){
    frame = object.getFrame();
    if(expansion!=null) frame = frame.expand(expansion);
    return frame;
  }
 }
-var getInfo=function(object, bUseExistingObjectIfPresent) {
+let getInfo=function(object, bUseExistingObjectIfPresent) {
  if(object==null) return null;
   var infoObject;
  if(object.isTable){
@@ -16239,12 +16240,12 @@ var getInfo=function(object, bUseExistingObjectIfPresent) {
  return infoObject;
 }
 
-var getObjectStructure=function(object){
- var objSkeleton = replaceValuesByNull(object);
+let getObjectStructure=function(object){
+ let objSkeleton = replaceValuesByNull(object);
  return objectToString(objSkeleton);
 }
-var replaceValuesByNull=function(object){
- var oNew = {};
+let replaceValuesByNull=function(object){
+ let oNew = {};
  for (var i in object) {
    if (object.hasOwnProperty(i)) {
      if(typeof object[i] == "object" && object[i]!= null){
@@ -16257,7 +16258,7 @@ var replaceValuesByNull=function(object){
  }
  return oNew;
 }
-var getLength=function(object,bGetElementCount){
+let getLength=function(object,bGetElementCount){
  if(object==null || object["length"]==null) return;
  bGetElementCount = bGetElementCount == null ? false: bGetElementCount;
  if(bGetElementCount && object.length != null){
@@ -16271,17 +16272,17 @@ var getLength=function(object,bGetElementCount){
  }
   return object.length;
 }
-var includes=function(object,element_or_substring){
+let includes=function(object,element_or_substring){
  if(object==null) return;
  return object.includes(element_or_substring);
 }
 
 
-var getPropertyValue=function(object, property_name) {
+let getPropertyValue=function(object, property_name) {
  if(object == null) return;
   var propertiesChain = typeof(property_name)==='string'?property_name.split('.'):property_name;
- var objectProp = object[propertiesChain[0]];
- var propCount = 1;
+ let objectProp = object[propertiesChain[0]];
+ let propCount = 1;
   while (propertiesChain[propCount]!=null) {
    if(objectProp == null) return null;
    objectProp = objectProp[propertiesChain[propCount]];
@@ -16289,13 +16290,13 @@ var getPropertyValue=function(object, property_name) {
  }
  return objectProp;
 }
-var getPropertyValues=function(object, propertyName, valueIfNull) {
+let getPropertyValues=function(object, propertyName, valueIfNull) {
  if(object == null || object.length == null) return;
  if(object.isList) return object.getPropertyValues(propertyName, valueIfNull);
- var newList = new L();
+ let newList = new L();
  newList.name = propertyName;
- var val;
- var l = object.length;
+ let val;
+ let l = object.length;
  for(var i = 0; i<l; i++) {
    val = getPropertyValue(object[i],propertyName);
    newList[i] = (val == null ? valueIfNull : val);
@@ -16303,7 +16304,7 @@ var getPropertyValues=function(object, propertyName, valueIfNull) {
  return newList.downcast();
 }
 
-var getPropertyValuesInterval=function(array, propertyName) {
+let getPropertyValuesInterval=function(array, propertyName) {
  if(array == null) return
  let min = Number.MAX_VALUE
  let max = -Number.MAX_VALUE
@@ -16315,10 +16316,10 @@ var getPropertyValuesInterval=function(array, propertyName) {
  return new I(min, max)
 }
 
-var getMultiplePropertyValues=function() {
+let getMultiplePropertyValues=function() {
  if(arguments == null || arguments.length === 0 ||  arguments[0] == null) return null;
- var object = arguments[0];
- var aRet = [];
+ let object = arguments[0];
+ let aRet = [];
  for(var i=1; i < arguments.length; i++){
    var o = {
      name: "value"+(i-1),
@@ -16331,11 +16332,11 @@ var getMultiplePropertyValues=function() {
  aRet.isOutput = true;
  return aRet;
 }
-var getName=function(object) {
+let getName=function(object) {
  if(object==null) return;
  return object["name"];
 }
-var isPropertyValue=function(object, property_value) {
+let isPropertyValue=function(object, property_value) {
  if(object == null) return false;
  for (var property in object) {
    if(object[property] === property_value)
@@ -16343,13 +16344,13 @@ var isPropertyValue=function(object, property_value) {
  }
  return false;
 }
-var getPropertiesNames=function(object) {
+let getPropertiesNames=function(object) {
  if(object == null) return;
- var sLProps = sL.toL(Object.getOwnPropertyNames(object));
+ let sLProps = sL.toL(Object.getOwnPropertyNames(object));
  sLProps.removeElement('__ob__'); // explicitly remove this special property added by Vue
  return sLProps;
 }
-var getPropertiesNamesAndValues=function(object) {
+let getPropertiesNamesAndValues=function(object) {
  if(object == null) return;
   var table = new T();
   table[0] = getPropertiesNames(object);
@@ -16360,11 +16361,11 @@ var getPropertiesNamesAndValues=function(object) {
   table[1] = table[1].downcast();
   return table;
 }
-var setPropertyValue=function(object, property_name, property_value, transformative, bForNullKeepPrevious) {
+let setPropertyValue=function(object, property_name, property_value, transformative, bForNullKeepPrevious) {
  if(object == null || property_name == null) return;
- var newObject = transformative?object:cloneObject(object);
+ let newObject = transformative?object:cloneObject(object);
  if(bForNullKeepPrevious && property_value == null) return newObject;
- var propertiesChain = typeof(property_name)==='string'?property_name.split('.'):property_name;
+ let propertiesChain = typeof(property_name)==='string'?property_name.split('.'):property_name;
   var tempObj = newObject;
  for(var i=0; i<propertiesChain.length-1;  i++){
      tempObj = tempObj[propertiesChain[i]] = tempObj[propertiesChain[i]] || {};
@@ -16374,11 +16375,11 @@ var setPropertyValue=function(object, property_name, property_value, transformat
  return newObject;
 }
 
-var interpolateObjects=function(object0, object1, value, minDistance) {
- var type = _typeOf(object0);
- var i,dx2,sumdx2;
+let interpolateObjects=function(object0, object1, value, minDistance) {
+ let type = _typeOf(object0);
+ let i,dx2,sumdx2;
   value = value == null ? 0.5 : value;
- var antivalue = 1 - value;
+ let antivalue = 1 - value;
  if(type != _typeOf(object1)) return value < .5 ? object0 : object1;;
   switch(type) {
    case 'number':
@@ -16419,20 +16420,20 @@ var interpolateObjects=function(object0, object1, value, minDistance) {
  // jump to new value for any unknown type when value is past halfway
  return value < .5 ? object0 : object1;
 }
-var replaceObject=function(object, obectToReplace, objectToPlace) {
+let replaceObject=function(object, obectToReplace, objectToPlace) {
  return object == obectToReplace ? objectToPlace : object;
 }
-var toList=function(array) {
+let toList=function(array) {
  return L.toL(array).downcast();
 }
-var floor=function(object){
+let floor=function(object){
  if(typeof object == 'number') return Math.floor(object);
  if(object.floor) return object.floor();
  return null;
 }
-var addition=function() {
- var result;
- var i;
+let addition=function() {
+ let result;
+ let i;
  if(arguments.length < 2) {
    if(arguments.length == 1 && arguments[0] != null && arguments[0].isList) {
      result = arguments[0][0];
@@ -16523,9 +16524,9 @@ var addition=function() {
  }
  return result;
 }
-var multiplication=function() {
- var result;
- var i;
+let multiplication=function() {
+ let result;
+ let i;
  if(arguments.length < 2) {
    if(arguments.length == 1 && arguments[0].isList) {
      result = arguments[0][0];
@@ -16537,10 +16538,10 @@ var multiplication=function() {
    return null;
  }
   var a0 = arguments[0];
- var a1 = arguments[1];
- var a0Type = _typeOf(a0);
- var a1Type = _typeOf(a1);
- var pairType = a0Type + "_" + a1Type;
+ let a1 = arguments[1];
+ let a0Type = _typeOf(a0);
+ let a1Type = _typeOf(a1);
+ let pairType = a0Type + "_" + a1Type;
   //c.log('pairType:['+pairType+']');
   if(arguments.length == 2) {
    if(arguments[0] == null) return null;
@@ -16613,9 +16614,9 @@ var multiplication=function() {
  }
  return result;
 }
-var division=function() {
- var result;
- var i;
+let division=function() {
+ let result;
+ let i;
  if(arguments.length < 2) {
    if(arguments.length == 1 && arguments[0] && arguments[0].isList) {
      result = arguments[0][0];
@@ -16699,18 +16700,18 @@ var division=function() {
  }
  return result;
 }
-var applyFunctionOnInput=function(input, func, param1, param2, param3, param4, param5) {
+let applyFunctionOnInput=function(input, func, param1, param2, param3, param4, param5) {
  if(input==null || func==null) return;
  if(typeof(func)=="string") func = stringToFunction(func);
  return func.apply(this, [input, param1, param2, param3, param4, param5]);
 }
-var isEqual=function(obj1, obj2){
+let isEqual=function(obj1, obj2){
  return _recursiveEqual(obj1, obj2);
 }
-var _recursiveEqual=function(obj1, obj2){
+let _recursiveEqual=function(obj1, obj2){
  if(obj1==obj2) return true;
  // primitive types
- var type = _typeOf(obj1);
+ let type = _typeOf(obj1);
  if(type == 'string' || type == 'number' || type == 'boolean' || type == 'null'){
    return false;
  }
@@ -16730,12 +16731,12 @@ var _recursiveEqual=function(obj1, obj2){
  return true;
 }
 
-var arrayOfArraysToTable=function(array_arrays, firstValueIsColumnName, treatStringNumbersAsNumeric){
+let arrayOfArraysToTable=function(array_arrays, firstValueIsColumnName, treatStringNumbersAsNumeric){
 if(array_arrays == null) return null;
 firstValueIsColumnName = firstValueIsColumnName==null?true:firstValueIsColumnName;
 treatStringNumbersAsNumeric = treatStringNumbersAsNumeric == null ? true : treatStringNumbersAsNumeric;
-var table = new T();
-var j0 = firstValueIsColumnName?1:0;
+let table = new T();
+let j0 = firstValueIsColumnName?1:0;
   for(var i=0; i<array_arrays.length; i++){
       table[i] = new L();
       if(firstValueIsColumnName && array_arrays[i].length>0) {
@@ -16758,7 +16759,7 @@ var j0 = firstValueIsColumnName?1:0;
   
   return table.downcast();
 }
-var operate=function(operation, x, y, factor, mapFunction, name, numIterations){
+let operate=function(operation, x, y, factor, mapFunction, name, numIterations){
   if(numIterations>1){
    var accumulated = x["isList"]?new T():new L();
    accumulated.push(x);
@@ -16773,9 +16774,9 @@ var operate=function(operation, x, y, factor, mapFunction, name, numIterations){
   var f = mapFunction!=null?mapFunction:[_sum, _multiplication, _pow2, _pow3, Math.pow, Math.sqrt, Math.log, _logSum, Math.log2, _log2Sum, _log_y, Math.cos, _cosSum, Math.sin, _sinSum, Math.tan, _tanSum, Math.atan2, Math.floor, Math.round, Math.ceil, Math.abs, _modulo, _subtract, _divide][operation]; 
  factor = factor==null?1:factor;
   var type_x = x==null?"object":(x["isTable"]?"table":(x["isList"]?"list":"object"));
- var type_y = y==null?"object":(y["isTable"]?"table":(y["isList"]?"list":"object"));
+ let type_y = y==null?"object":(y["isTable"]?"table":(y["isList"]?"list":"object"));
   var combinedType = type_x+"_"+type_y;
- var i, nL, nT, l;
+ let nL, nT, l;
   if(_typeOf(f)=="string"){
    eval("f = function(x,y){ return "+f+"}");
  }
@@ -16831,47 +16832,47 @@ var operate=function(operation, x, y, factor, mapFunction, name, numIterations){
  }
  return;
 }
-var _sum=function(x,y){
+let _sum=function(x,y){
  return x+y;
 }
-var _multiplication=function(x,y){
+let _multiplication=function(x,y){
  return x*y;
 }
-var _pow2=function(x){
+let _pow2=function(x){
  return Math.pow(x, 2);
 }
-var _pow3=function(x){
+let _pow3=function(x){
  return Math.pow(x, 2);
 }
-var _logSum=function(x,y){
+let _logSum=function(x,y){
  return Math.log(x+y);
 }
-var _log2Sum=function(x,y){
+let _log2Sum=function(x,y){
  return Math.log2(x+y);
 }
-var _log_y=function(x,y){
+let _log_y=function(x,y){
  return Math.log(x)/Math.log(y);
 }
-var _cosSum=function(x,y){
+let _cosSum=function(x,y){
  return Math.cos(x+y);
 }
-var _sinSum=function(x,y){
+let _sinSum=function(x,y){
  return Math.sin(x+y);
 }
-var _tanSum=function(x,y){
+let _tanSum=function(x,y){
  return Math.tan(x+y);
 }
-var _modulo=function(x,y){
+let _modulo=function(x,y){
  return x%y;
 }
-var _subtract=function(x,y){
+let _subtract=function(x,y){
  return x-y;
 }
-var _divide=function(x,y){
+let _divide=function(x,y){
  return x/y;
 }
-var numberToString=function(value, nDecimals ) {
- var string = value.toFixed(nDecimals)
+let numberToString=function(value, nDecimals ) {
+ let string = value.toFixed(nDecimals)
  if(nDecimals == 0)
    return string;
  while(string.charAt(string.length - 1) == '0') {
@@ -16881,33 +16882,33 @@ var numberToString=function(value, nDecimals ) {
  return string;
 }
 
-var getRandomWithSeed=function(seed) {
+let getRandomWithSeed=function(seed) {
  seed = seed==null?1:seed;
   seed = (seed * 9301 + 49297) % 233280;
  return seed / (233280.0);
 }
 
-var numberFromBinaryPositions=function(binaryPositions) {
- var i;
- var n = 0;
+let numberFromBinaryPositions=function(binaryPositions) {
+ let i;
+ let n = 0;
  for(i = 0; binaryPositions[i] != null; i++) {
    n += Math.pow(2, binaryPositions[i]);
  }
  return n;
 }
 
-var numberFromBinaryValues=function(binaryValues) {
- var n = 0;
- var l = binaryValues.length;
+let numberFromBinaryValues=function(binaryValues) {
+ let n = 0;
+ let l = binaryValues.length;
  for(var i = 0; i < l; i++) {
    n += binaryValues[i] == 1 ? Math.pow(2, (l - (i + 1))) : 0;
  }
  return n;
 }
-var powersOfTwoDecomposition=function(number, length) {
+let powersOfTwoDecomposition=function(number, length) {
   var powers = new nL();
   var constructingNumber = 0;
- var biggestPower;
+ let biggestPower;
   while(constructingNumber < number) {
    biggestPower = Math.floor(Math.log(number) / Math.LN2);
    powers[biggestPower] = 1;
@@ -16918,32 +16919,33 @@ var powersOfTwoDecomposition=function(number, length) {
    powers[i] = powers[i]?1:0;
  }
  while(powers.length<length){
-   powers.unshift(0);
+   //powers.unshift(0);
+   powers.push(0)
  }
   return powers;
 }
 
-var toBinary=function(number, length, bLeastSignificantFirst=true){
- var nL = powersOfTwoDecomposition(number, length);
+let toBinary=function(number, length, bLeastSignificantFirst=true){
+ let nL = powersOfTwoDecomposition(number, length);
  if(!bLeastSignificantFirst)
    nL = nL.getReversed();
  return nL;
 }
 
-var binaryToNumber=function(booleanListOrNumberList, bLeastSignificantFirst=true){
+let binaryToNumber=function(booleanListOrNumberList, bLeastSignificantFirst=true){
  if(booleanListOrNumberList==null) return
- var nL = bLeastSignificantFirst ? booleanListOrNumberList.getReversed() : booleanListOrNumberList;
- var n = 0;
- var l = nL.length;
+ let nL = bLeastSignificantFirst ? booleanListOrNumberList.getReversed() : booleanListOrNumberList;
+ let n = 0;
+ let l = nL.length;
   for(var i=0; i<l; i++){
    n += Number(nL[i])==0 ? 0 : Math.pow(2, (l - (i + 1)));
  }
   return n;
 }
 
-var positionsFromBinaryValues=function(binaryValues) {
- var i;
- var positions = new nL();
+let positionsFromBinaryValues=function(binaryValues) {
+ let i;
+ let positions = new nL();
  for(i = 0; binaryValues[i] != null; i++) {
    if(binaryValues[i] == 1) positions.push(i);
  }
@@ -16955,7 +16957,7 @@ var positionsFromBinaryValues=function(binaryValues) {
 //Copyright (c) 2017-2020, W. "Mac" McMeans
 //All rights reserved.
 //https://github.com/macmcmeans/aleaPRNG
-var _Alea=function() {
+let _Alea=function() {
  return(function(args) {
    // Johannes Baagøe <baagoe@baagoe.com>, 2010
    var s0 = 0;
@@ -17003,8 +17005,8 @@ var _Alea=function() {
    return random;
   }(Array.prototype.slice.call(arguments)));
 }
-var _Mash=function() {
- var n = 0xefc8249d;
+let _Mash=function() {
+ let n = 0xefc8249d;
   var mash = function(data) {
    data = data.toString();
    for(var i = 0; i < data.length; i++) {
@@ -17022,7 +17024,7 @@ var _Mash=function() {
   mash.version = 'Mash 0.9';
  return mash;
 }
-var random=function(){
+let random=function(){
  return new _Alea();
 }
 
@@ -17034,7 +17036,7 @@ var random=function(){
 
 
 
-var randomSeed=function(seed){
+let randomSeed=function(seed){
  NumberOperators_stackRandom.push(NumberOperators_random);
  if(NumberOperators_stackRandom.length > 100){
    NumberOperators_stackRandom.shift(); // drop the oldest
@@ -17042,13 +17044,13 @@ var randomSeed=function(seed){
  NumberOperators_random = new _Alea("my", seed, "seeds");
  NumberOperators_lastNormal = NaN;
 }
-var randomSeedPop=function(){
+let randomSeedPop=function(){
  if(NumberOperators_stackRandom.length > 0){
    NumberOperators_random = NumberOperators_stackRandom.pop();
  }
 }
-var decimalPlaces=function(value) {
- var match = String(value).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
+let decimalPlaces=function(value) {
+ let match = String(value).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
  if (!match) { return 0; }
  return Math.max(
       0,
@@ -17058,7 +17060,7 @@ var decimalPlaces=function(value) {
       - (match[2] ? +match[2] : 0));
 }
 
-var logistic=function(value,maxValue,midpoint,k) {
+let logistic=function(value,maxValue,midpoint,k) {
  if(value==null || isNaN(value)) return null;
  maxValue = maxValue == null ? 1 : maxValue;
  midpoint = midpoint == null ? 0 : midpoint;
@@ -17066,14 +17068,14 @@ var logistic=function(value,maxValue,midpoint,k) {
  return maxValue / (1 + Math.exp(-k*(value-midpoint)));
 }
 
-var formatShort=function(value,prec) {
+let formatShort=function(value,prec) {
  if(value == null) return;
  if(value == 0 || value == Infinity) return String(value);
  if(isNaN(value)) return value;
  prec = (prec == null || prec < 1) ? 2 : prec;
  if(String(value).length <= prec) return String(value);
- var nice = parseFloat((value).toPrecision(prec));
- var order = Math.floor(Math.log10(nice));
+ let nice = parseFloat((value).toPrecision(prec));
+ let order = Math.floor(Math.log10(nice));
   var suffix = '';
  if(order >= 15){
    nice = parseFloat((nice / Math.pow(10, order)).toPrecision(prec));
@@ -17105,9 +17107,9 @@ var formatShort=function(value,prec) {
 }
 
 
-var numberToPosition=function(n){
- var j = n % 10;
- var k = n % 100;
+let numberToPosition=function(n){
+ let j = n % 10;
+ let k = n % 100;
  if(j == 1 && k != 11)
    return n + 'st';
  if(j == 2 && k != 12)
@@ -17118,14 +17120,14 @@ var numberToPosition=function(n){
 }
 
 
-var getSoftenControlPoints=function(point0, point1, point2, controlVectorSize) {
+let getSoftenControlPoints=function(point0, point1, point2, controlVectorSize) {
  controlVectorSize = controlVectorSize || 10;
- var angle = angleFromTwoPoints(point0, point2);
- var controlPoint0 = new P(point1.x - controlVectorSize * Math.cos(angle), point1.y - controlVectorSize * Math.sin(angle));
- var controlPoint1 = new P(point1.x + controlVectorSize * Math.cos(angle), point1.y + controlVectorSize * Math.sin(angle));
+ let angle = angleFromTwoPoints(point0, point2);
+ let controlPoint0 = new P(point1.x - controlVectorSize * Math.cos(angle), point1.y - controlVectorSize * Math.sin(angle));
+ let controlPoint1 = new P(point1.x + controlVectorSize * Math.cos(angle), point1.y + controlVectorSize * Math.sin(angle));
  return [controlPoint0, controlPoint1];
 }
-var bezierCurvePoints=function(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t) {
+let bezierCurvePoints=function(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t) {
     let s = 1 - t
     let ax = s * x0 + t * c0x
     let ay = s * y0 + t * c0y
@@ -17140,24 +17142,24 @@ var bezierCurvePoints=function(x0, y0, c0x, c0y, c1x, c1y, x1, y1, t) {
     return new P(t * fx + s * ex, t * fy + s * ey)
 }
 
-var triangleContainsPoint=function(pT0, pT1, pT2, p) {
- var a = (pT0.x - p.x) * (pT1.y - p.y) - (pT1.x - p.x) * (pT0.y - p.y);
- var b = (pT1.x - p.x) * (pT2.y - p.y) - (pT2.x - p.x) * (pT1.y - p.y);
- var c = (pT2.x - p.x) * (pT0.y - p.y) - (pT0.x - p.x) * (pT2.y - p.y);
+let triangleContainsPoint=function(pT0, pT1, pT2, p) {
+ let a = (pT0.x - p.x) * (pT1.y - p.y) - (pT1.x - p.x) * (pT0.y - p.y);
+ let b = (pT1.x - p.x) * (pT2.y - p.y) - (pT2.x - p.x) * (pT1.y - p.y);
+ let c = (pT2.x - p.x) * (pT0.y - p.y) - (pT0.x - p.x) * (pT2.y - p.y);
  return(a > 0 && b > 0 && c > 0) || (a >= 0 && b >= 0 && c >= 0);
 }
 
-var triangleArea=function(triangle) {
+let triangleArea=function(triangle) {
  return Math.abs(triangle.a.x * (triangle.b.y - triangle.c.y) + triangle.b.x * (triangle.c.y - triangle.a.y) + triangle.c.x * (triangle.a.y - triangle.b.y)) / 2;
 }
-var lineFromTwoPoints=function(point0, point1) {
+let lineFromTwoPoints=function(point0, point1) {
  if(point0.x == point1.x) return new P(Infinity, point0.x);
- var m = (point1.y - point0.y) / (point1.x - point0.x);
+ let m = (point1.y - point0.y) / (point1.x - point0.x);
  return new P(m, point0.y - m * point0.x);
 }
-var distancePointToLine=function(point, line) {
- var m2;
- var b2;
+let distancePointToLine=function(point, line) {
+ let m2;
+ let b2;
  if(line.x === 0) {
    m2 = Infinity;
    b2 = point.x;
@@ -17165,14 +17167,14 @@ var distancePointToLine=function(point, line) {
    m2 = -1 / line.x;
    b2 = point.y - m2 * point.x;
  }
- var interPoint = intersectionLines(line, new P(m2, b2));
+ let interPoint = intersectionLines(line, new P(m2, b2));
  return Math.sqrt(Math.pow(point.x - interPoint.x, 2) + Math.pow(point.y - interPoint.y, 2));
 }
-var distancePointToSegment=function(point, point0Segment, point1Segment) {
- var m = point0Segment.x == point1Segment.x ? Infinity : (point1Segment.y - point0Segment.y) / (point1Segment.x - point0Segment.x);
- var line = m == Infinity ? new P(Infinity, point0Segment.x) : new P(m, point0Segment.y - m * point0Segment.x);
- var m2;
- var b2;
+let distancePointToSegment=function(point, point0Segment, point1Segment) {
+ let m = point0Segment.x == point1Segment.x ? Infinity : (point1Segment.y - point0Segment.y) / (point1Segment.x - point0Segment.x);
+ let line = m == Infinity ? new P(Infinity, point0Segment.x) : new P(m, point0Segment.y - m * point0Segment.x);
+ let m2;
+ let b2;
  if(line.x === 0) {
    m2 = Infinity;
    b2 = point.x;
@@ -17180,11 +17182,11 @@ var distancePointToSegment=function(point, point0Segment, point1Segment) {
    m2 = -1 / line.x;
    b2 = point.y - m2 * point.x;
  }
- var interPoint = intersectionLines(line, new P(m2, b2));
+ let interPoint = intersectionLines(line, new P(m2, b2));
  if(interPoint.x >= Math.min(point0Segment.x, point1Segment.x) && interPoint.x <= Math.max(point0Segment.x, point1Segment.x)) return point.distanceToPoint(interPoint);
  return Math.min(point.distanceToPoint(point0Segment), point.distanceToPoint(point1Segment));
 }
-var intersectionLines=function(line0, line1) {
+let intersectionLines=function(line0, line1) {
  if(line0.x == line1.x) {
    if(line0.y == line1.y) {
      if(line0.x == Infinity) {
@@ -17204,16 +17206,16 @@ var intersectionLines=function(line0, line1) {
  return new P(xx, line0.x * xx + line0.y);
 }
 
-var intersectionLineRectangle=function(point0, point1, rect, bLineInfinite){
+let intersectionLineRectangle=function(point0, point1, rect, bLineInfinite){
  bLineInfinite = bLineInfinite == null ? false : bLineInfinite;
- var lineTest = lineFromTwoPoints(point0,point1);
+ let lineTest = lineFromTwoPoints(point0,point1);
  // test each side of rectangle
- var lineTop = lineFromTwoPoints(rect.getTopLeft(),rect.getTopRight());
- var lineRight = lineFromTwoPoints(rect.getTopRight(),rect.getBottomRight());
- var lineBottom = lineFromTwoPoints(rect.getBottomLeft(),rect.getBottomRight());
- var lineLeft = lineFromTwoPoints(rect.getTopLeft(),rect.getBottomLeft());
- var pt;
- var polyResults = new Pol();
+ let lineTop = lineFromTwoPoints(rect.getTopLeft(),rect.getTopRight());
+ let lineRight = lineFromTwoPoints(rect.getTopRight(),rect.getBottomRight());
+ let lineBottom = lineFromTwoPoints(rect.getBottomLeft(),rect.getBottomRight());
+ let lineLeft = lineFromTwoPoints(rect.getTopLeft(),rect.getBottomLeft());
+ let pt;
+ let polyResults = new Pol();
  pt = intersectionLines(lineTest,lineTop);
  if(pt != null && rect.pointIsOnBorder(pt)) polyResults.push(pt);
  pt = intersectionLines(lineTest,lineRight);
@@ -17242,25 +17244,25 @@ var intersectionLineRectangle=function(point0, point1, rect, bLineInfinite){
 
 
 
-var numberTableToPolygon=function(numberTable) {
+let numberTableToPolygon=function(numberTable) {
  if(numberTable == null || numberTable.length < 2) return null;
   var i;
- var n = Math.min(numberTable[0].length, numberTable[1].length);
- var polygon = new Pol();
+ let n = Math.min(numberTable[0].length, numberTable[1].length);
+ let polygon = new Pol();
   for(i = 0; i < n; i++) {
    polygon[i] = new P(numberTable[0][i], numberTable[1][i]);
  }
   return polygon;
 }
-var numberTableToColorList=function(nT, bRgb) {
+let numberTableToColorList=function(nT, bRgb) {
  if(nT == null) return;
  bRgb = bRgb == null ? true : bRgb;
  if(nT.type != 'T' && nT.type != 'nT')
    throw new Error('Input must be a table');
  if(nT.length < 3)
    throw new Error('T must have at least 3 lists');
- var cL = new cL();
- var r,g,b;
+ let cL = new cL();
+ let r,g,b;
  for(var i = 0;i < nT[0].length;i++){
    if(bRgb){
      r = Math.max(0,Math.min(255,Math.round(nT[0][i])));
@@ -17280,16 +17282,16 @@ var numberTableToColorList=function(nT, bRgb) {
  return cL;
 }
 
-var numberTableToNetwork=function(numberTable, method, tolerance) {
+let numberTableToNetwork=function(numberTable, method, tolerance) {
  tolerance = tolerance == null ? 0 : tolerance;
   var network = new Net();
   var list0;
- var list1;
+ let list1;
   var i;
- var j;
+ let j;
   var node0;
- var node1;
- var relation;
+ let node1;
+ let relation;
    switch(method) {
    case 0: // standard deviation
       var sd;
@@ -17328,12 +17330,12 @@ var numberTableToNetwork=function(numberTable, method, tolerance) {
   return network;
 }
 
-var buildDendrogramFromPolygon=function(polygon) {
- var tree = new Tr();
- var node;
- var tW;
- var parent;
- var leaves = new ndL();
+let buildDendrogramFromPolygon=function(polygon) {
+ let tree = new Tr();
+ let node;
+ let tW;
+ let parent;
+ let leaves = new ndL();
   var node0, node1, nodes = new Pol();
   polygon.forEach(function(point, i) {
    node = new Nd('point_' + i, 'point_' + i);
@@ -17382,11 +17384,11 @@ var buildDendrogramFromPolygon=function(polygon) {
   tree.leaves = leaves;
   return tree;
 }
-var _findClosestNodes=function(nodes) {
- var i, j;
- var d2;
- var d2Min = 9999999999;
- var pair;
+let _findClosestNodes=function(nodes) {
+ let i, j;
+ let d2;
+ let d2Min = 9999999999;
+ let pair;
   for(i = 0; nodes[i + 1] != null; i++) {
    for(j = i + 1; nodes[j] != null; j++) {
      d2 = Math.pow(nodes[i].barycenter.x - nodes[j].barycenter.x, 2) + Math.pow(nodes[i].barycenter.y - nodes[j].barycenter.y, 2);
@@ -17399,7 +17401,7 @@ var _findClosestNodes=function(nodes) {
   pair.distance = d2Min;
   return pair;
 }
-var sortOnXY=function(polygon) {
+let sortOnXY=function(polygon) {
  return polygon.sort(function(p0, p1) {
    if(p0.x < p1.x) return -1;
    if(p0.x == p1.x && p0.y < p1.y) return -1;
@@ -17407,24 +17409,24 @@ var sortOnXY=function(polygon) {
  });
 }
 
-var expandFromBarycenter=function(polygon, factor) {
- var newPolygon = new Pol();
- var barycenter = polygon.getBarycenter();
+let expandFromBarycenter=function(polygon, factor) {
+ let newPolygon = new Pol();
+ let barycenter = polygon.getBarycenter();
   for(var i = 0; polygon[i] != null; i++) {
    newPolygon[i] = polygon[i].expandFromPoint(barycenter, factor);
  }
   return newPolygon;
 }
 
-var simplifyPolygon=function(polygon, margin) {
+let simplifyPolygon=function(polygon, margin) {
  margin = margin == null || margin === 0 || margin === undefined ? 1 : margin;
- var newPolygon = polygon.clone();
- var p0;
- var p1;
- var p2;
- var line;
- var i;
- var nPoints = polygon.length;
+ let newPolygon = polygon.clone();
+ let p0;
+ let p1;
+ let p2;
+ let line;
+ let i;
+ let nPoints = polygon.length;
  for(i = 0; i < nPoints; i++) {
    p0 = newPolygon[i];
    p1 = newPolygon[(i + 1) % nPoints];
@@ -17439,8 +17441,8 @@ var simplifyPolygon=function(polygon, margin) {
  }
  return newPolygon;
 }
-var bezierPolygonContainsPoint=function(polygon, point, border, graphics) {
- var frame = polygon.getFrame();
+let bezierPolygonContainsPoint=function(polygon, point, border, graphics) {
+ let frame = polygon.getFrame();
  graphics.clearContext();
  graphics.context.fillStyle = 'black';
  graphics.context.fillRect(0, 0, frame.width, frame.height);
@@ -17453,14 +17455,14 @@ var bezierPolygonContainsPoint=function(polygon, point, border, graphics) {
  graphics.drawBezierPolygon(polygon, -frame.x, -frame.y);
  graphics.context.fill();
  if(border != null) graphics.context.stroke();
- var data = graphics.context.getImageData(point.x - frame.x, point.y - frame.y, 1, 1).data;
+ let data = graphics.context.getImageData(point.x - frame.x, point.y - frame.y, 1, 1).data;
  graphics.clearContext();
  return data[0] > 0;
 }
 
-var placePointsInsidePolygon=function(polygon, nPoints, mode) {
- var points = new Pol();
- var frame = polygon.getFrame();
+let placePointsInsidePolygon=function(polygon, nPoints, mode) {
+ let points = new Pol();
+ let frame = polygon.getFrame();
  mode = mode || 0;
  switch(mode) {
    case 0: //random simple
@@ -17472,9 +17474,9 @@ var placePointsInsidePolygon=function(polygon, nPoints, mode) {
      return points;      
  }
 }
-var placePointsInsideBezierPolygon=function(polygon, nPoints, mode, border) {
- var points = new Pol();
- var frame = polygon.getFrame();
+let placePointsInsideBezierPolygon=function(polygon, nPoints, mode, border) {
+ let points = new Pol();
+ let frame = polygon.getFrame();
  mode = mode || 0;
  switch(mode) {
    case 0: //random simple
@@ -17491,14 +17493,14 @@ var placePointsInsideBezierPolygon=function(polygon, nPoints, mode, border) {
      return points;      
  }
 }
-var geoCoordinateToDecimal=function(value) {
+let geoCoordinateToDecimal=function(value) {
  return Math.floor(value) + (value - Math.floor(value)) * 1.66667;
 }
-var geoDistance=function(point0, point1) {
- var a = Math.pow(Math.sin((point1.y - point0.y) * 0.5 * gradToRad), 2) + Math.cos(point0.y * gradToRad) * Math.cos(point1.y * gradToRad) * Math.pow(Math.sin((point1.x - point0.x) * 0.5 * gradToRad), 2);
+let geoDistance=function(point0, point1) {
+ let a = Math.pow(Math.sin((point1.y - point0.y) * 0.5 * gradToRad), 2) + Math.cos(point0.y * gradToRad) * Math.cos(point1.y * gradToRad) * Math.pow(Math.sin((point1.x - point0.x) * 0.5 * gradToRad), 2);
  return GeoOperators_EARTH_DIAMETER * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
-var polygonLength=function(polygon) {
+let polygonLength=function(polygon) {
  if(polygon.length < 2) return 0;
   var length = geoDistance(polygon[0], polygon[1]);
  for(var i = 2; polygon[i] != null; i++) {
@@ -17507,10 +17509,10 @@ var polygonLength=function(polygon) {
  return length;
 }
 
-var minRect=function(){
+let minRect=function(){
  if(arguments==null || arguments.length<1) return null;
   var i;
- var frame = arguments[0].clone();
+ let frame = arguments[0].clone();
   frame.width = frame.getRight();
  frame.height = frame.getBottom();
  for(i = 1; arguments[i] != null; i++) {
@@ -17524,7 +17526,7 @@ var minRect=function(){
   return frame;
 }
 
-var packingRectangles = function(rectangles, frame, margin=2) {
+let packingRectangles = function(rectangles, frame, margin=2) {
     let _rectIntersectRectangles = function(rectangles, px, py, width, height, margin) {
       var rect;
       for(var i = 0; rectangles[i] != null; i++) {
@@ -17577,7 +17579,7 @@ var packingRectangles = function(rectangles, frame, margin=2) {
     return newRectangles
 }
 
-var packingCircles = function(weights, frame, margin) {
+let packingCircles = function(weights, frame, margin) {
   if(weights == null ||  weights.length === 0) return null;
     var _pointInCircles = function(circles, px, py, r, margin) {
       var circle;
@@ -17645,7 +17647,7 @@ var packingCircles = function(weights, frame, margin) {
 //3: continental quadrigram (Africa, Asia, Australasia, Europe, North America, South America)
 //4: europe quadrigram
 //5:vertical strips
-var fillWithRectangles=function(weights, packingMode, rectangle, param) {
+let fillWithRectangles=function(weights, packingMode, rectangle, param) {
  //TODO: return recL instead of L
  if(rectangle == null) rectangle = new Rec(0, 0, 1, 1);
  packingMode = packingMode ? packingMode : 0;
@@ -17743,40 +17745,40 @@ var fillWithRectangles=function(weights, packingMode, rectangle, param) {
  return null;
 }
 
-var squarify=function(frame, weights, isNormalizedWeights, isSortedWeights) { //, funcionEvaluacionnWeights:Function=null):Array{
+let squarify=function(frame, weights, isNormalizedWeights, isSortedWeights) { //, funcionEvaluacionnWeights:Function=null):Array{
  if(weights == null) return;
  if(weights.length === 0) return new recL();
  if(weights.length === 1) return new recL(frame);
   isNormalizedWeights = isNormalizedWeights ? isNormalizedWeights : false;
  isSortedWeights = isSortedWeights ? isSortedWeights : false;
- var newWeightList;
+ let newWeightList;
   if(isNormalizedWeights) {
    newWeightList = weights; // new nL(arregloPesos);
  } else {
    newWeightList = normalizeToSum(weights);
  }
  
- var newPositions;
+ let newPositions;
  if(!isSortedWeights) {
    newPositions = weights.positions==null?newWeightList.getSortIndexes():weights.positions; // sortListByNumberList();// newWeightList.sortNumericIndexedDescending();
    //newWeightList = sortListByNumberList(newWeightList, newWeightList);
    newWeightList = newWeightList.sortedWeights==null?newWeightList.getSorted(false):newWeightList.sortedWeights;
  }
   var area = frame.width * frame.height;
- var rectangleList = new recL();
- var freeRectangle = frame.clone();
- var subWeightList;
- var subRectangleList = new L(); //RectangleList();//
- var prevSubRectangleList;
- var proportion;
- var worstProportion;
- var index = 0;
- var subArea;
- var freeSubRectangle = new Rec();
- var nWeights = weights.length;
- var lastRectangle;
- var newRectangleList;
- var i, j;
+ let rectangleList = new recL();
+ let freeRectangle = frame.clone();
+ let subWeightList;
+ let subRectangleList = new L(); //RectangleList();//
+ let prevSubRectangleList;
+ let proportion;
+ let worstProportion;
+ let index = 0;
+ let subArea;
+ let freeSubRectangle = new Rec();
+ let nWeights = weights.length;
+ let lastRectangle;
+ let newRectangleList;
+ let i, j;
   if(nWeights > 2) {
    var sum;
    for(i = index; i < nWeights; i++) {
@@ -17861,15 +17863,15 @@ var squarify=function(frame, weights, isNormalizedWeights, isSortedWeights) { //
   return rectangleList;
 }
 
-var partitionRectangle=function(rectangle, normalizedWeightList, sum) {
- var area = rectangle.width * rectangle.height;
- var rectangleList = new L(); //RectangleList();
- var freeRectangle = new Rec(rectangle.x, rectangle.y, rectangle.width, rectangle.height); //rectangle.clone();
- var areai;
- var i;
- var rect;
- var highestRatio = 1;
- var l = normalizedWeightList.length;
+let partitionRectangle=function(rectangle, normalizedWeightList, sum) {
+ let area = rectangle.width * rectangle.height;
+ let rectangleList = new L(); //RectangleList();
+ let freeRectangle = new Rec(rectangle.x, rectangle.y, rectangle.width, rectangle.height); //rectangle.clone();
+ let areai;
+ let i;
+ let rect;
+ let highestRatio = 1;
+ let l = normalizedWeightList.length;
  for(i = 0; i < l; i++) {
    areai = normalizedWeightList[i] * area / sum;
    if(rectangle.width > rectangle.height) {
@@ -17889,10 +17891,10 @@ var partitionRectangle=function(rectangle, normalizedWeightList, sum) {
   rectangleList.highestRatio = highestRatio;
   return rectangleList;
 }
-var _getHighestRatio=function(rectangleList) {
- var highestRatio = 1;
- var rectangle;
- var i;
+let _getHighestRatio=function(rectangleList) {
+ let highestRatio = 1;
+ let rectangle;
+ let i;
  for(i = 0; i < rectangleList.length; i++) {
    rectangle = rectangleList[i];
    highestRatio = Math.max(highestRatio, rectangle.getRatio());
@@ -17900,9 +17902,9 @@ var _getHighestRatio=function(rectangleList) {
  return highestRatio;
 }
 
-var simplifyPolygons=function(polygonList, margin, removeEmptyPolygons) {
- var newPolygonList = new polL();
- var newPolygon;
+let simplifyPolygons=function(polygonList, margin, removeEmptyPolygons) {
+ let newPolygonList = new polL();
+ let newPolygon;
  for(var i = 0; polygonList[i] != null; i++) {
    newPolygon = simplifyPolygon(polygonList[i], margin);
    if(newPolygon.length > 0 || !removeEmptyPolygons) {
@@ -17912,8 +17914,8 @@ var simplifyPolygons=function(polygonList, margin, removeEmptyPolygons) {
  return newPolygonList;
 }
 
-var createPolygon=function(nPoints, mode, frame) {
- var polygon = new Pol();
+let createPolygon=function(nPoints, mode, frame) {
+ let polygon = new Pol();
   switch(mode) {
    case 0: //random
      for(var i = 0; i < nPoints; i++) {
@@ -17926,21 +17928,21 @@ var createPolygon=function(nPoints, mode, frame) {
   return polygon;
 }
 
-var twoNumberListsToPolygon=function(nl0, nl1) { //TODO:change name to NumberTableToPolygon
- var n = Math.min(nl0.length, nl1.length);
- var polygon = new Pol();
+let twoNumberListsToPolygon=function(nl0, nl1) { //TODO:change name to NumberTableToPolygon
+ let n = Math.min(nl0.length, nl1.length);
+ let polygon = new Pol();
  for(var i = 0; i < n; i++) {
    polygon[i] = new P(nl0[i], nl1[i]);
  }
  return polygon;
 }
 
-var colorListFromColorScale=function(colorScale, nColors) {
+let colorListFromColorScale=function(colorScale, nColors) {
  return colorScale.getColorList.apply(colorScale, [nColors]);
 }
-var colorListFromColorScaleFunction=function(colorScaleFunction, nColors) {
- var colorList = new cL();
- var i;
+let colorListFromColorScaleFunction=function(colorScaleFunction, nColors) {
+ let colorList = new cL();
+ let i;
  for(i = 0; i < nColors; i++) {
    colorList[i] = colorScaleFunction(i / (nColors - 1));
  }
@@ -17948,13 +17950,13 @@ var colorListFromColorScaleFunction=function(colorScaleFunction, nColors) {
 }
 
 //mixColors
-var colorsLinearCombination=function(colorList, weights) {
+let colorsLinearCombination=function(colorList, weights) {
  if(colorList==null || colorList.length==0) return;
  if(colorList.length==1) return colorList[0];
   if(weights==null) weights = createListWithSameElement(colorList.length,1);
   weights = normalizeToSum(weights);
   var rgb = colorStringToRGB(colorList[0], weights[0]);
- var rgbN;
+ let rgbN;
   for(var i=1; i<colorList.length; i++){
    rgbN = colorStringToRGB(colorList[i], weights[i]);
    rgb[0]+=rgbN[0];
@@ -17964,45 +17966,45 @@ var colorsLinearCombination=function(colorList, weights) {
   return 'rgb('+Math.floor(rgb[0])+','+Math.floor(rgb[1])+','+Math.floor(rgb[2])+')';
 }
 
-var polygon3DToColorList=function(polygon3D) {
- var nPoints = polygon3D.length;
- var colorList = new cL();
- var i;
+let polygon3DToColorList=function(polygon3D) {
+ let nPoints = polygon3D.length;
+ let colorList = new cL();
+ let i;
  for(i = 0; i < nPoints; i++) {
    colorList.push(point3DToColor(polygon3D[i]));
  }
  return colorList;
 }
-var colorListToPolygon3D=function(colorList) {
- var nColors = colorList.length;
- var polygon3D = new Pol3D();
- var i;
+let colorListToPolygon3D=function(colorList) {
+ let nColors = colorList.length;
+ let polygon3D = new Pol3D();
+ let i;
  for(i = 0; i < nColors; i++) {
    polygon3D.push(colorToPoint3D(colorList[i]));
  }
  return polygon3D;
 }
 
-var randomColor=function(alpha) {
+let randomColor=function(alpha) {
  alpha = alpha == null ? 1 : alpha;
  return 'rgba(' + Math.floor(256 * Math.random()) + ',' + Math.floor(256 * Math.random()) + ',' + Math.floor(256 * Math.random()) + ',' + alpha + ')';
 }
-var getFlowTable=function(numberTable, normalized, include0s) {
+let getFlowTable=function(numberTable, normalized, include0s) {
  if(numberTable == null) return;
   normalized = normalized || false;
- var nElements = numberTable.length;
- var nRows = numberTable[0].length;
- var nl;
- var minList = new nL();
- var maxList = new nL();
- var sums = new nL();
- var minInRow;
- var maxInRow;
- var sumInRow;
- var MAX = -9999999;
- var MIN = 9999999;
- var MAXSUMS = -9999999;
- var i, j;
+ let nElements = numberTable.length;
+ let nRows = numberTable[0].length;
+ let nl;
+ let minList = new nL();
+ let maxList = new nL();
+ let sums = new nL();
+ let minInRow;
+ let maxInRow;
+ let sumInRow;
+ let MAX = -9999999;
+ let MIN = 9999999;
+ let MAXSUMS = -9999999;
+ let i, j;
  for(i = 0; i < nRows; i++) {
    minInRow = 9999999; //TODO: what's the max Number?
    maxInRow = -9999999;
@@ -18022,10 +18024,10 @@ var getFlowTable=function(numberTable, normalized, include0s) {
    MAXSUMS = Math.max(MAXSUMS, sumInRow);
  }
   var dMINMAX = MAXSUMS - MIN;
- var flowTable = new nT();
- var flowNumberList;
- var minToNormalize;
- var maxToNormalize;
+ let flowTable = new nT();
+ let flowNumberList;
+ let minToNormalize;
+ let maxToNormalize;
   var include0Add = include0s ? 1 : 0;
    if(normalized && include0s) {
    flowTable = new nT(numberTable.length + 1);
@@ -18069,13 +18071,13 @@ var getFlowTable=function(numberTable, normalized, include0s) {
  }
   return flowTable;
 }
-var getFlowTableIntervals=function(numberTable, normalized, sorted, stacked) {
+let getFlowTableIntervals=function(numberTable, normalized, sorted, stacked) {
  if(numberTable == null) return null;
   var table = getFlowTable(numberTable, normalized, true);
   var intervalTable = new T();
- var i, j;
+ let i, j;
   var nElements = table.length;
- var nRows = table[0].length;
+ let nRows = table[0].length;
   var intervalList;
   var maxCols = new nL();
   var nl;
@@ -18122,24 +18124,24 @@ var getFlowTableIntervals=function(numberTable, normalized, sorted, stacked) {
  }
   return intervalTable;
 }
-var scaleIntervals=function(intervalList, value) {
+let scaleIntervals=function(intervalList, value) {
 if(intervalList==null) return;
   value = value==null?1:value;
   var newIntervalList = new L();
- var l = intervalList.length;
- var i;
+ let l = intervalList.length;
+ let i;
   newIntervalList.name = intervalList.name;
   for(i = 0; i<l; i++) {
    newIntervalList[i] = intervalList[i].getScaled(value);
  }
   return newIntervalList;
 }
-var nlsToIntervalList=function(nl0, nl1, bAmplitude) {
+let nlsToIntervalList=function(nl0, nl1, bAmplitude) {
  if(nl0==null || nl1==null) return;
  bAmplitude = bAmplitude ==  null ? false : bAmplitude;
   var l = Math.min(nl0.length, nl1.length);
- var i;
- var intervalList = new iL();
+ let i;
+ let intervalList = new iL();
   if(bAmplitude){
    nl1 = addition(nl0,nl1);
  }
@@ -18149,10 +18151,10 @@ var nlsToIntervalList=function(nl0, nl1, bAmplitude) {
   return intervalList;
 }
 
-var fillTextRectangle=function(text, x, y, width, height, lineHeight, returnHeight, ellipsis, graphics, bHorizontalCenter, bVerticalCenter) {
+let fillTextRectangle=function(text, x, y, width, height, lineHeight, returnHeight, ellipsis, graphics, bHorizontalCenter, bVerticalCenter) {
  bHorizontalCenter = bHorizontalCenter == null ? false : bHorizontalCenter;
  bVerticalCenter = bVerticalCenter == null ? false : bVerticalCenter;
- var textLines = textWordWrapReturnLines(text, width, height, lineHeight, ellipsis, graphics);
+ let textLines = textWordWrapReturnLines(text, width, height, lineHeight, ellipsis, graphics);
  if(bVerticalCenter){
    // the 16 and 600 defaults come from textWordWrapReturnLines
    var lh = lineHeight == null ? 16 : lineHeight;
@@ -18160,17 +18162,17 @@ var fillTextRectangle=function(text, x, y, width, height, lineHeight, returnHeig
    var hText = lh*textLines.length;
    y += (h - hText)/2;
  }
- var alignPrev = graphics.context.textAlign; // preserve because we want to set it back
+ let alignPrev = graphics.context.textAlign; // preserve because we want to set it back
  if(bHorizontalCenter){
    graphics.context.textAlign = 'center';
    var w = width == null ? 100 : width;
    x += w/2;
  }
- var ret = fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight, graphics);
+ let ret = fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight, graphics);
  graphics.context.textAlign = alignPrev;
  return ret;
 }
-var fillTextRectangleWithTextLines=function(textLines, x, y, height, lineHeight, returnHeight, graphics) {
+let fillTextRectangleWithTextLines=function(textLines, x, y, height, lineHeight, returnHeight, graphics) {
  height = height === 0 || height == null ? 99999 : height;
   for(var i = 0; textLines[i] != null; i++) {
    graphics.context.fillText(textLines[i], x, y + i * lineHeight);
@@ -18179,24 +18181,24 @@ var fillTextRectangleWithTextLines=function(textLines, x, y, height, lineHeight,
  if(returnHeight) return textLines.length * lineHeight;
  return textLines.length;
 }
-var textWordWrapReturnLines=function(text, fitWidth, fitHeight, lineHeight, ellipsis, graphics) {
+let textWordWrapReturnLines=function(text, fitWidth, fitHeight, lineHeight, ellipsis, graphics) {
  fitWidth = fitWidth || 100;
  fitHeight = fitHeight || 600;
  lineHeight = lineHeight || 16;
   var nLinesLimit = lineHeight === 0 ? -1 : Math.floor(fitHeight / lineHeight);
- var lines = new sL();
+ let lines = new sL();
   if(fitWidth <= 0) {
    lines.push(text);
    return lines;
  }
   var sentences = text.split(/\\n|\n/);
- var i;
- var currentLine = 0;
- var words;
- var idx;
- var str;
- var w;
- var sentence;
+ let i;
+ let currentLine = 0;
+ let words;
+ let idx;
+ let str;
+ let w;
+ let sentence;
   for(i = 0; i < sentences.length; i++) {
    if(sentences[i] === '') {
      lines.push('');
@@ -18246,15 +18248,15 @@ var textWordWrapReturnLines=function(text, fitWidth, fitHeight, lineHeight, elli
   lines.width = lines.length == 1 ? w : fitWidth;
   return lines;
 }
-var getMaxTextWidth=function(texts, k) {
- var max = k.getTextW(texts[0]);
+let getMaxTextWidth=function(texts, k) {
+ let max = k.getTextW(texts[0]);
  for(var i = 1; texts[i] != null; i++) {
    max = Math.max(max, k.getTextW(texts[i]));
  }
  return max;
 }
 
-var stringToObject=function(string) {
+let stringToObject=function(string) {
  try {
    return JSON.parse(string);
  } catch(err) {
@@ -18262,9 +18264,9 @@ var stringToObject=function(string) {
  }
  if(string == null) return null;
  // often we have a list of objects on separate lines without enclosing [] or commas between
- var aObjs = string.split(/\r?\n/);
- var s='[';
- var sAdded, bAddedItem = false;
+ let aObjs = string.split(/\r?\n/);
+ let s='[';
+ let sAdded, bAddedItem = false;
  for(var i = 0; i<aObjs.length; i++){
    if(aObjs[i].trim().length == 0) continue;
    if(aObjs[i] == '{'){
@@ -18289,13 +18291,13 @@ var stringToObject=function(string) {
    return null;
  }
 }
-var stringToHash=function(str,m,k) {
+let stringToHash=function(str,m,k) {
  // Fowler/Noll/Vo hashing
  // from https://github.com/jasondavies/bloomfilter.js/blob/master/bloomfilter.js
  if(str == null) return null;
  m = m == null ? 4294967295 : m;
  k = k == null ? 1 : k;
- var x,i,c,d,n,a = 2166136261;
+ let x,i,c,d,n,a = 2166136261;
  for(i = 0, n = str.length; i < n; ++i){
    c = str.charCodeAt(i);
    d = c & 0xff00;
@@ -18304,8 +18306,8 @@ var stringToHash=function(str,m,k) {
  }
  a = _fnv_mix(a);
  x = a % m;
- var b = k == 1 ? 0 : _fnv_mix(_fnv_multiply(a));
- var nL = new nL();
+ let b = k == 1 ? 0 : _fnv_mix(_fnv_multiply(a));
+ let nL = new nL();
  for(i = 0;i < k;i++){
    nL.push(x < 0 ? (x + m) : x);
    x = (x + b) % m;
@@ -18314,11 +18316,11 @@ var stringToHash=function(str,m,k) {
    return nL[0];
  return nL;
 }
-var _fnv_multiply=function(a){
+let _fnv_multiply=function(a){
  // a * 16777619 mod 2**32, part of Fowler/Noll/Vo hashing.
  return a + (a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24);
 }
-var _fnv_mix=function(a){
+let _fnv_mix=function(a){
  // part of Fowler/Noll/Vo hashing.
  // See https://web.archive.org/web/20131019013225/http://home.comcast.net/~bretm/hash/6.html
  a += a << 13;
@@ -18329,22 +18331,22 @@ var _fnv_mix=function(a){
  return a & 0xffffffff;
 }
 
-var decodeIdentedTree=function(indexedTreeText, superiorNodeName, identationCharacter) {
+let decodeIdentedTree=function(indexedTreeText, superiorNodeName, identationCharacter) {
  superiorNodeName = superiorNodeName == null ? "" : superiorNodeName;
  identationCharacter = identationCharacter == null ? "\t" : identationCharacter;
   var tree = new Tr();
   var lines = splitByEnter(indexedTreeText);
- var nLines = lines.length;
+ let nLines = lines.length;
   if(nLines === 0 ||  (nLines == 1 && (lines[0] == null || lines[0] === ""))) return null;
   var i;
- var j;
+ let j;
   var line;
- var lineLength;
- var name;
- var level;
+ let lineLength;
+ let name;
+ let level;
   var node;
- var parent;
- var superiorNode;
+ let parent;
+ let superiorNode;
   if(superiorNodeName !== "" && superiorNodeName != null) {
    superiorNode = new Nd(superiorNodeName, superiorNodeName);
    tree.addNodeToTree(superiorNode, null);
@@ -18381,7 +18383,7 @@ var decodeIdentedTree=function(indexedTreeText, superiorNodeName, identationChar
   tree.assignDescentWeightsToNodes();
   return tree;
 }
-var TableToTree=function(table, fatherName, colorsOnLeaves, colorAssignmentMode, colorDeepest, nLWeights, colors, iTableMode)  {
+let TableToTree=function(table, fatherName, colorsOnLeaves, colorAssignmentMode, colorDeepest, nLWeights, colors, iTableMode)  {
  if(table == null) return;
   if(table.length===0){
    throw new Error("T has no Lists");
@@ -18399,15 +18401,15 @@ var TableToTree=function(table, fatherName, colorsOnLeaves, colorAssignmentMode,
   if(nLWeights != null && nLWeights.getMin() < 0)
    nLWeights = normalizeToInterval(nLWeights,new I(0,1));
   var tree = new Tr();
- var node, parent;
- var id;
+ let node, parent;
+ let id;
   var father = new Nd(fatherName, fatherName);
  tree.addNodeToTree(father, null);
   var nLists = table.length;
  //var nElements = table[0].length;
- var i, j;
- var list, element, iListToColorFrom;
- var leavesColorsDictionary;
+ let i, j;
+ let list, element, iListToColorFrom;
+ let leavesColorsDictionary;
   if(colorsOnLeaves){
    if(colorAssignmentMode == 0)
      iListToColorFrom = nLists-1;
@@ -18519,16 +18521,16 @@ var TableToTree=function(table, fatherName, colorsOnLeaves, colorAssignmentMode,
   _assignIndexesToNode(tree.nodes[0]);
   return tree;
 }
-var _getId=function(table, i, j) {
- var iCol = 1;
- var id = "_"+String(table[0][j]);
+let _getId=function(table, i, j) {
+ let iCol = 1;
+ let id = "_"+String(table[0][j]);
  while(iCol <= i) {
    id += "_" + String(table[iCol][j]);
    iCol++;
  }
  return id;
 }
-var TreeToTable=function(tree, includes_superior_node,valuesDifferentation) {
+let TreeToTable=function(tree, includes_superior_node,valuesDifferentation) {
    if(tree==null) return;
    includes_superior_node = includes_superior_node==null?true:includes_superior_node;
    valuesDifferentation = valuesDifferentation==null?false:valuesDifferentation;
@@ -18558,13 +18560,13 @@ var TreeToTable=function(tree, includes_superior_node,valuesDifferentation) {
    }
     return table;
 }
-var treeToObject=function(tree,bAll) {
+let treeToObject=function(tree,bAll) {
  if(tree == null || tree.type != 'Tr') return null;
- var oOutput = {};
- var aCurrentParentObjects = [oOutput];
- var curLevel = 0, o;
- var aBareProperties = ['name','id','level','weight','color'];
- var nodes = tree.traverse(null,null,function(nd){
+ let oOutput = {};
+ let aCurrentParentObjects = [oOutput];
+ let curLevel = 0, o;
+ let aBareProperties = ['name','id','level','weight','color'];
+ let nodes = tree.traverse(null,null,function(nd){
    if(nd.level == 0)
      o = oOutput;
    else{
@@ -18586,9 +18588,9 @@ var treeToObject=function(tree,bAll) {
  });
  return oOutput;
 }
-var objectToTree=function(obj) {
+let objectToTree=function(obj) {
  if(obj == null) return null;
- var tree = new Tr();
+ let tree = new Tr();
   var fnAddObjectToTree = function(tr,parentNode,o){
    var name = o.name != null ? o.name : '';
    var id = o.id != null ? o.id : '_' + name;
@@ -18626,7 +18628,7 @@ var objectToTree=function(obj) {
 mode 0: selects n relations
 mode 1: selects relations with weight>n
 **/
-var filterNetworkByRelationsWeight=function(net, mode = 0, n, nodeProperties, relationProperties){
+let filterNetworkByRelationsWeight=function(net, mode = 0, n, nodeProperties, relationProperties){
   let newnet = new _.Net()
 
   let filteredRelations
@@ -18659,8 +18661,8 @@ var filterNetworkByRelationsWeight=function(net, mode = 0, n, nodeProperties, re
 
 }
 
-var filterNodesByMinDegree=function(network, minDegree) {
- var i;
+let filterNodesByMinDegree=function(network, minDegree) {
+ let i;
  for(i = 0; network.nodes[i] != null; i++) {
    if(network.nodes[i].nodes.length < minDegree) {
      network.removeNode(network.nodes[i]);
@@ -18669,14 +18671,14 @@ var filterNodesByMinDegree=function(network, minDegree) {
  }
  return null;
 }
-var degreeBetweenNodes=function(network, node0, node1) {
+let degreeBetweenNodes=function(network, node0, node1) {
  if(network == null || node0 == null || node1 == null) return null;
   if(node0 == node1) return 0;
- var nodes = node0.nodes;
- var d = 1;
- var newNodes;
- var i;
- var nNodes;
+ let nodes = node0.nodes;
+ let d = 1;
+ let newNodes;
+ let i;
+ let nNodes;
   //while(nodes.indexOf(node1)==-1){//TODO: check if get is faster
  while(nodes.get(node1.id) == null) {
    newNodes = nodes.clone();
@@ -18691,11 +18693,11 @@ var degreeBetweenNodes=function(network, node0, node1) {
  }
   return d;
 }
-var getNodesBetweenTwoNodes=function(network, node0, node1){
- var nodes = new ndL();
- var nNodes = network.nodes.length;
- var i;
- var node;
+let getNodesBetweenTwoNodes=function(network, node0, node1){
+ let nodes = new ndL();
+ let nNodes = network.nodes.length;
+ let i;
+ let node;
  //network.nodes.forEach(function(node){
  for(i=0; i<nNodes; i++){
    node = network.nodes[i];
@@ -18703,9 +18705,9 @@ var getNodesBetweenTwoNodes=function(network, node0, node1){
  }
  return nodes;
 }
-var getSubNetwork=function(net, nodes, nodePropertyNames, relationPropertyNames){
- var newNet = new Net();
- var node, node1, relation;
+let getSubNetwork=function(net, nodes, nodePropertyNames, relationPropertyNames){
+ let newNet = new Net();
+ let node, node1, relation;
   for (var i = 0; i < nodes.length; i++) {
    node = new Nd(nodes[i].id, nodes[i].name);
    newNet.addNode(node);
@@ -18732,12 +18734,12 @@ var getSubNetwork=function(net, nodes, nodePropertyNames, relationPropertyNames)
  }
   return newNet;
 }
-var shortestPath=function(network, node0, node1, includeExtremes) {
+let shortestPath=function(network, node0, node1, includeExtremes) {
  if(network == null || node0 == null || node1 == null) return null;
   var tree = spanningTree(network, node0, node1);
- var path = new ndL();
+ let path = new ndL();
  if(includeExtremes) path.addNode(node1);
- var node = tree.nodes.get(node1.id);
+ let node = tree.nodes.get(node1.id);
   if(node == null) return null;
   while(node.parent.id != node0.id) {
    path.addNode(node.parent.node);
@@ -18747,10 +18749,10 @@ var shortestPath=function(network, node0, node1, includeExtremes) {
   if(includeExtremes) path.addNode(node0);
  return path.getReversed();
 }
-var shortestPaths=function(network, node0, node1, shortPath, spTree) {
+let shortestPaths=function(network, node0, node1, shortPath, spTree) {
  if(network == null || node0 == null || node1 == null) return null;
   var i;
- var allPaths = new T();
+ let allPaths = new T();
   if(node0.nodes.get(node1.id)!=null){
    allPaths.push(new ndL(node0, node1));
    return allPaths;
@@ -18758,11 +18760,11 @@ var shortestPaths=function(network, node0, node1, shortPath, spTree) {
   if(spTree==null) spTree = spanningTree(network, node0, node1);
   var n = spTree.nLevels;
  
- var level1 = new ndL(node1);
- var extended_from_1 = adjacentNodeList(network, level1, false);
- var level0 = intersection(extended_from_1, spTree.getLevel(n-2));//spanningTree.getLevel(n-2);
+ let level1 = new ndL(node1);
+ let extended_from_1 = adjacentNodeList(network, level1, false);
+ let level0 = intersection(extended_from_1, spTree.getLevel(n-2));//spanningTree.getLevel(n-2);
   var relationsTable = new T();
- var relationsBetween;
+ let relationsBetween;
   relationsTable.push(getRelationsBetweenNodeLists(network, level0, level1, false));
   while(n>2){
    n--;
@@ -18791,8 +18793,8 @@ var shortestPaths=function(network, node0, node1, shortPath, spTree) {
     return newPaths;
  };
   var toAdd;
- var nPaths;
- var path;
+ let nPaths;
+ let path;
   while(allPaths[0].length<spTree.nLevels){
    
    newPaths = new T();
@@ -18806,12 +18808,12 @@ var shortestPaths=function(network, node0, node1, shortPath, spTree) {
  }
   return allPaths;
 }
-var getRelationsBetweenNodeLists=function(network, nodes0, nodes1, directed=true){
+let getRelationsBetweenNodeLists=function(network, nodes0, nodes1, directed=true){
  if(nodes0==null || nodes1==null) return null
   var relations = new relL();
- var nRelations = network.relations.length;
- var relation;
- var i;
+ let nRelations = network.relations.length;
+ let relation;
+ let i;
   for(i=0; i<nRelations; i++){
    relation = network.relations[i];
    if(
@@ -18823,15 +18825,15 @@ var getRelationsBetweenNodeLists=function(network, nodes0, nodes1, directed=true
  }
   return relations;
 }
-var _extendPaths=function(allPaths, nodeDestiny, maxLength) {
+let _extendPaths=function(allPaths, nodeDestiny, maxLength) {
   if(allPaths[0].length >= maxLength) return allPaths;
   var i, j;
- var next;
- var node;
+ let next;
+ let node;
   var newPaths = new T();
- var path, newPath;
- var nPaths = allPaths.length;
- var nNext;
+ let path, newPath;
+ let nPaths = allPaths.length;
+ let nNext;
   for(i = 0; i<nPaths; i++) {
    path = allPaths[i];
    node = path[path.length - 1];
@@ -18848,7 +18850,7 @@ var _extendPaths=function(allPaths, nodeDestiny, maxLength) {
   allPaths = newPaths;
   return _extendPaths(allPaths, nodeDestiny, maxLength);
 }
-var loops=function(network, minSize=3) {
+let loops=function(network, minSize=3) {
  if(network == null) return null
 
  let _sameLoop = function(loop0, loop1) {
@@ -18884,12 +18886,12 @@ var loops=function(network, minSize=3) {
   return allLoops;
 }
 
-var _getLoopsOnNode=function(central) {
+let _getLoopsOnNode=function(central) {
  if(central.to.length === 0 || central.from.length === 0) return [];
   var columns = new T();
- var nl = new ndL();
- var n, i, j;
- var node;
+ let nl = new ndL();
+ let n, i, j;
+ let node;
   nl.addNode(central);
  columns.push(nl);
   _loopsColumns(central.to, 1, columns, 1);
@@ -18908,8 +18910,8 @@ var _getLoopsOnNode=function(central) {
  }
   /////////////////////
  //build loops
- var loops = new T();
- var loop;
+ let loops = new T();
+ let loop;
  for(i = 1; columns[i] != null; i++) {
    for(j = 0; columns[i][j] != null; j++) {
      node = columns[i][j];
@@ -18926,18 +18928,18 @@ var _getLoopsOnNode=function(central) {
  });
   return loops;
 }
-var _pathsToCentral=function(columns, iColumn, path, paths) {
+let _pathsToCentral=function(columns, iColumn, path, paths) {
  if(path.finished) return;
   if(iColumn === 0) {
    path.finished = true;
    return;
  }
   var i;
- var node = path[0];
- var prevNode;
- var prevPath;
- var newPath;
- var first = true;
+ let node = path[0];
+ let prevNode;
+ let prevPath;
+ let newPath;
+ let first = true;
   var nodesToCheck = columns[iColumn - 1].clone();
  nodesToCheck.addNodes(columns[iColumn]);
   var lPrevColumn = columns[iColumn - 1].length;
@@ -18961,10 +18963,10 @@ var _pathsToCentral=function(columns, iColumn, path, paths) {
    }
  }
 }
-var _loopsColumns=function(nodes, iColumn, columns) {
+let _loopsColumns=function(nodes, iColumn, columns) {
  if(columns[iColumn] == null) columns[iColumn] = new ndL();
- var node;
- var newNodeList = new ndL();
+ let node;
+ let newNodeList = new ndL();
  for(var i = 0; nodes[i] != null; i++) {
    node = nodes[i];
    if(!node.onColumn) {
@@ -18982,23 +18984,23 @@ var _loopsColumns=function(nodes, iColumn, columns) {
  }
  if(newNodeList.length > 0) _loopsColumns(newNodeList, iColumn + 1, columns);
 }
-var spanningTree=function(network, node0, nodeLimit, mode) { //TODO: this method is horribly inneficient // add: level limt
+let spanningTree=function(network, node0, nodeLimit, mode) { //TODO: this method is horribly inneficient // add: level limt
  if(network==null) return;
  if(mode>0) return _spanningTree2(node0, mode, nodeLimit);
   node0 = node0==null?network.nodes[0]:node0;
  mode = mode==null?0:mode;
   var tree = new Tr();
- var parent = new Nd(node0.id, node0.name);
+ let parent = new Nd(node0.id, node0.name);
  parent.node = node0;
  tree.addNodeToTree(parent);
   var nodes;
  nodes = node0.nodes;
- var newNodes;
- var newNode;
- var nodeInPrevNodes;
- var i;
- var id;
- var l = nodes.length;
+ let newNodes;
+ let newNode;
+ let nodeInPrevNodes;
+ let i;
+ let id;
+ let l = nodes.length;
   var limitReached = false;
   for(i = 0; i<l; i++) {
    newNode = new Nd(nodes[i].id, nodes[i].name);
@@ -19052,7 +19054,7 @@ var spanningTree=function(network, node0, nodeLimit, mode) { //TODO: this method
  }
  return tree;
 }
-var _spanningTree2=function(node, mode, nodeLimit) {
+let _spanningTree2=function(node, mode, nodeLimit) {
    mode = mode==null?0:mode;
    
    var tree = new Tr();
@@ -19093,7 +19095,7 @@ var _spanningTree2=function(node, mode, nodeLimit) {
    return tree;
 }
 
-var influenceLevels = function(network, node_or_nodes, direction_to=true){
+let influenceLevels = function(network, node_or_nodes, direction_to=true){
     let levelsTableMain = new T()
     let levelsTableSecondary = new T()
     let levelsTable
@@ -19179,11 +19181,11 @@ var influenceLevels = function(network, node_or_nodes, direction_to=true){
     }
   }
 
-var adjacentNodeList=function(network, nodes, returnConcat, directional){
+let adjacentNodeList=function(network, nodes, returnConcat, directional){
  if(network==null || nodes==null) return null;
   var newNodeList = returnConcat?nodes.clone():new ndL();
- var i, j;
- var node0, node1;
+ let i, j;
+ let node0, node1;
   if(directional){
    for(i=0; i<nodes.length; i++){
      for(j=0; j<nodes[i].to.length; j++){
@@ -19203,17 +19205,17 @@ var adjacentNodeList=function(network, nodes, returnConcat, directional){
  }
   return newNodeList;
 }
-var degreesPartition=function(network, node) {
+let degreesPartition=function(network, node) {
  //TODO:optionally add a ndL of not connected Nodes
- var list0 = new ndL(node);
- var nodes = node.nodes;
- var nextLevel = nodes;
- var nextNodes;
- var externalLayer;
- var i;
- var j;
- var nodesTable = new T(list0);
- var added = nextLevel.length > 0;
+ let list0 = new ndL(node);
+ let nodes = node.nodes;
+ let nextLevel = nodes;
+ let nextNodes;
+ let externalLayer;
+ let i;
+ let j;
+ let nodesTable = new T(list0);
+ let added = nextLevel.length > 0;
   if(added) nodesTable.push(nextLevel);
   var listAccumulated = nextLevel.clone();
  listAccumulated.push(node);
@@ -19237,7 +19239,7 @@ var degreesPartition=function(network, node) {
  }
   return nodesTable;
 }
-var getNodes=function(object){
+let getNodes=function(object){
  if(object==null) return null;
  
  if(object["nodes"]!=null) return object["nodes"];
@@ -19245,17 +19247,17 @@ var getNodes=function(object){
   return null;
 }
 
-var buildDendrogram=function(network) {
+let buildDendrogram=function(network) {
  if(network == null) return null;
   var tree = new Tr();
- var nodes = new ndL();
+ let nodes = new ndL();
   var closest;
- var node0;
- var node1;
- var newNode;
- var id;
- var i;
- var nNodes = network.nodes.length;
+ let node0;
+ let node1;
+ let newNode;
+ let id;
+ let i;
+ let nNodes = network.nodes.length;
   var pRelationPair = 2 * network.relations.length / (nNodes * (nNodes - 1));
   for(i = 0; i<nNodes; i++) {
    newNode = new Nd("[" + network.nodes[i].id + "]", "[" + network.nodes[i].id + "]");
@@ -19296,9 +19298,8 @@ var buildDendrogram=function(network) {
  }
   return tree;
 }
-var _getClosestPair=function(nodes, returnIndexes, pRelationPair) {
- var indexes;
- var nodes;
+let _getClosestPair=function(nodes, returnIndexes, pRelationPair) {
+ let indexes
   if(nodes.length == 2) {
    var index = nodes[0].nodes.indexOf(nodes[1]);
    //var index = nodes[0].nodes.indexOfElement(nodes[1]);
@@ -19312,10 +19313,10 @@ var _getClosestPair=function(nodes, returnIndexes, pRelationPair) {
    return nodes;
  }
   var i;
- var j;
+ let j;
   var nodes0;
   var strength;
- var maxStrength = -1;
+ let maxStrength = -1;
   for(i = 0; i<nodes.length-1; i++) {
    nodes0 = nodes[i].nodes;
    for(j = i + 1; j<nodes.length; j++) {
@@ -19332,10 +19333,10 @@ var _getClosestPair=function(nodes, returnIndexes, pRelationPair) {
  nodes.strength = maxStrength;
  return nodes;
 }
-var _strengthBetweenSets=function(nodes0, nodes1, pRelationPair) {
- var strength = 0;
- var i, j;
- var node0;
+let _strengthBetweenSets=function(nodes0, nodes1, pRelationPair) {
+ let strength = 0;
+ let i, j;
+ let node0;
   for(i = 0; i<nodes0.length; i++) {
    node0 = nodes0[i];
    for(j = 0; j<node0.nodes.length; j++) {
@@ -19346,12 +19347,12 @@ var _strengthBetweenSets=function(nodes0, nodes1, pRelationPair) {
  }
   return strength / (nodes0.length * nodes1.length * pRelationPair);
 }
-var buildNetworkClusters=function(network, mode, dendrogramTree, minWeight, addColorToNodes, returnMode) {
+let buildNetworkClusters=function(network, mode, dendrogramTree, minWeight, addColorToNodes, returnMode) {
  if(network == null) return;
   var clusters;
- var colors;
- var i, j;
- var nClusters, nNodes;
+ let colors;
+ let i, j;
+ let nClusters, nNodes;
   if(mode==null ||mode===0){
    clusters = _buildNetworkClustersLvn(network);
  } else {
@@ -19388,7 +19389,7 @@ var buildNetworkClusters=function(network, mode, dendrogramTree, minWeight, addC
  }
   return clusters;
 }
-var _iterativeBuildClusters=function(node, clusters, minWeight) {
+let _iterativeBuildClusters=function(node, clusters, minWeight) {
  if(node.nodes.length == 1) {
    clusters.push(new ndL(node.node));
    return;
@@ -19404,15 +19405,15 @@ var _iterativeBuildClusters=function(node, clusters, minWeight) {
    _iterativeBuildClusters(node.nodes[1], clusters, minWeight);
  }
 }
-var _buildNetworkClustersLvn=function(network) {
+let _buildNetworkClustersLvn=function(network) {
  if(network==null) return network;
   var node_data = [];
- var i;
+ let i;
  for(i=0; i < network.nodes.length; i++){
    // force nodes to be stringlike since they get used as properties in result
    node_data.push('n'+network.nodes[i].id);
  }
- var edge_data = [];
+ let edge_data = [];
  for(i=0; i < network.relations.length; i++){
    var obj = {source: 'n'+network.relations[i].node0.id,
               target: 'n'+network.relations[i].node1.id,
@@ -19420,9 +19421,9 @@ var _buildNetworkClustersLvn=function(network) {
    edge_data.push(obj);
  }
   // Object with ids of nodes as properties and community number assigned as value.
- var community = _jLvn().nodes(node_data).edges(edge_data);
- var result  = community();
- var clusters = new T();
+ let community = _jLvn().nodes(node_data).edges(edge_data);
+ let result  = community();
+ let clusters = new T();
   if(result)
    for(i=0; i < network.nodes.length; i++){
      var j = result['n'+network.nodes[i].id];
@@ -19438,11 +19439,11 @@ var _buildNetworkClustersLvn=function(network) {
  }
  return clusters;
 }
-var getNodesPageRanks=function(network, mode, useRelationsWeight){
+let getNodesPageRanks=function(network, mode, useRelationsWeight){
  return addPageRankToNodes(network, mode, useRelationsWeight);
 }
 
-var addPageRankToNodes = function(network, from=2, useRelationsWeight){
+let addPageRankToNodes = function(network, from=2, useRelationsWeight){
       //TODO:deploy useRelationsWeight
       //from = from == null ? true : from;
 
@@ -19517,14 +19518,14 @@ var addPageRankToNodes = function(network, from=2, useRelationsWeight){
       return network.nodes.getPropertyValues(propName);
     }
 
-var fusionNetworks=function(networks, hubsDistanceFactor, hubsForceWeight, nodesProperties) {
+let fusionNetworks=function(networks, hubsDistanceFactor, hubsForceWeight, nodesProperties) {
  hubsDistanceFactor = hubsDistanceFactor == null ? 1 : hubsDistanceFactor;
  hubsForceWeight = hubsForceWeight == null ? 1 : hubsForceWeight;
   var fusionNet = new Net();
- var newNode;
- var newRelation;
- var i, j;
- var mapsCluster = new T();
+ let newNode;
+ let newRelation;
+ let i, j;
+ let mapsCluster = new T();
   var colors = createDefaultCategoricalColorList(networks.length).getInterpolated('black', 0.17).getInterpolated('white', 0.55);
   networks.forEach(function(net, i) {
    mapsCluster[i] = new ndL();
@@ -19589,15 +19590,15 @@ var fusionNetworks=function(networks, hubsDistanceFactor, hubsForceWeight, nodes
   fusionNet.mapsCluster = mapsCluster;
   return fusionNet;
 }
-var _jLvn=function() {
+let _jLvn=function() {
  //Constants
- var __PASS_MAX = -1;
- var __MIN    = 0.0000001;
+ let __PASS_MAX = -1;
+ let __MIN    = 0.0000001;
   //Local vars
- var original_graph_nodes;
- var original_graph_edges;
- var original_graph = {};
- var partition_init;
+ let original_graph_nodes;
+ let original_graph_edges;
+ let original_graph = {};
+ let partition_init;
   //Helpers
  function make_set(array){
    var set = {};
@@ -19900,7 +19901,7 @@ var _jLvn=function() {
  };
   return core;
 }
-var getNodesCentralities=function(network, mode, bNormalized, bReversed) {
+let getNodesCentralities=function(network, mode, bNormalized, bReversed) {
  if(network==null) return;
   var weights = new nL();
   mode = mode==null?0:mode;
@@ -19911,7 +19912,7 @@ var getNodesCentralities=function(network, mode, bNormalized, bReversed) {
  }
   return weights;
 }
-var addCentralitiesToNodes=function(network, mode, bNormalized, bReversed) {
+let addCentralitiesToNodes=function(network, mode, bNormalized, bReversed) {
  if(network==null) return;
  mode = mode==null?0:mode;
  if(mode===0) addEigenvectorCentralityToNodes(network, bNormalized, bReversed);
@@ -19921,7 +19922,7 @@ var addCentralitiesToNodes=function(network, mode, bNormalized, bReversed) {
  return network;
 }
 
-var _getAdjacencyMap = function(network,bDirected,bReversed,bStochastic){
+let _getAdjacencyMap = function(network,bDirected,bReversed,bStochastic){
 // derived from Graph.js inside http://www.clips.ua.ac.be/pages/pattern
   if(network==null) return null;
   bDirected = bDirected == null ? false : bDirected;
@@ -19952,7 +19953,7 @@ var _getAdjacencyMap = function(network,bDirected,bReversed,bStochastic){
   return map;
 }
 
-var addEigenvectorCentralityToNodes=function(network, bNormalized, bReversed) {
+let addEigenvectorCentralityToNodes=function(network, bNormalized, bReversed) {
  // derived from Graph.js inside http://www.clips.ua.ac.be/pages/pattern
  /* Eigenvector centrality for nodes in the graph (cfr. Google's PageRank).
   * Eigenvector centrality is a measure of the importance of a node in a directed network. 
@@ -19967,9 +19968,9 @@ var addEigenvectorCentralityToNodes=function(network, bNormalized, bReversed) {
  if(network == null) return network;
  if(bNormalized === undefined) bNormalized = true;
  if(bReversed   === undefined) bReversed   = true;
- var nIterations = 100;
- var fTolerance  = 0.0001;
- var rating = {};
+ let nIterations = 100;
+ let fTolerance  = 0.0001;
+ let rating = {};
  function normalize(vector) {
    var v = []; for(var k in vector) v.push(vector[k]);
    var total = 0; for (var i=0; i < v.length; i++) total += v[i];
@@ -19978,15 +19979,15 @@ var addEigenvectorCentralityToNodes=function(network, bNormalized, bReversed) {
      vector[node] *= w;
    }
  }
- var G = _getAdjacencyMap(network,null,bReversed);
+ let G = _getAdjacencyMap(network,null,bReversed);
  randomSeed(1); // use consistent random function so we get consistent results
- var v = {}; for(var i=0;i<network.nodes.length;i++) v[network.nodes[i].id] = random(); normalize(v);
+ let v = {}; for(var i=0;i<network.nodes.length;i++) v[network.nodes[i].id] = random(); normalize(v);
  randomSeedPop();
  // Eigenvector calculation using the power iteration method: y = Ax.
  // It has no guarantee of convergence.
  for(var i=0; i < nIterations; i++) {
    var v0 = v;
-   var v={}; for (var k in v0) v[k]=0;
+    v={}; for (var k in v0) v[k]=0;
    for (var n1 in v) {
      for (var n2 in G[n1]) {
        v[n1] += 0.01 + v0[n2] * G[n1][n2] * (rating[n]? rating[n] : 1);
@@ -20014,7 +20015,7 @@ var addEigenvectorCentralityToNodes=function(network, bNormalized, bReversed) {
  }
  return network;
 }
-var addBetweennessCentralityToNodes=function(network, bNormalized, bDirected) {
+let addBetweennessCentralityToNodes=function(network, bNormalized, bDirected) {
  // derived from Graph.js inside http://www.clips.ua.ac.be/pages/pattern
  /* Betweenness centrality for nodes in the graph.
   * Betweenness centrality is a measure of the number of shortests paths that pass through a node.
@@ -20053,8 +20054,8 @@ var addBetweennessCentralityToNodes=function(network, bNormalized, bDirected) {
      };
  };
   var W = _getAdjacencyMap(network,null,true);
- var b = {}; for(var i=0;i<network.nodes.length;i++) b[network.nodes[i].id] = 0.0;
- var dist,pred,v;
+ let b = {}; for(var i=0;i<network.nodes.length;i++) b[network.nodes[i].id] = 0.0;
+ let dist,pred,v;
  for(i=0;i<network.nodes.length;i++) {
    var id = network.nodes[i].id;
    var Q = new Heap(); // Use Q as a heap with [distance, node id] lists.
@@ -20113,7 +20114,7 @@ var addBetweennessCentralityToNodes=function(network, bNormalized, bDirected) {
  return network;
 }
 
-var addReachToNodes=function(network, countDifferentPaths=false){
+let addReachToNodes=function(network, countDifferentPaths=false){
     let _addReachNodesToNode = function(node){
         if(node.reach) return node.reach
         node.reach=new L()
@@ -20133,19 +20134,19 @@ var addReachToNodes=function(network, countDifferentPaths=false){
 
 
 
-var getLeaves=function(object){//@todo: move to TreeOperators
+let getLeaves=function(object){//@todo: move to TreeOperators
  if(object==null) return;
  if(object.getLeaves!=null) return object.getLeaves();
  return null;
 }
 
-var createNetworkFromListAndFunction=function(list, weightFunction, names, threshold, weightMode, symmetric) {
+let createNetworkFromListAndFunction=function(list, weightFunction, names, threshold, weightMode, symmetric) {
  if(list==null || weightFunction==null) return;
   var i, j;
- var w;
- var node, node1;
- var network = new Net();
- var n = list.length;
+ let w;
+ let node, node1;
+ let network = new Net();
+ let n = list.length;
   threshold = threshold==null?0.3:threshold;
   for(i=0; i<n; i++){
    node = new Nd("n_"+i, names == null ? "n_"+i : names[i]);
@@ -20183,7 +20184,7 @@ var createNetworkFromListAndFunction=function(list, weightFunction, names, thres
  }
   return network;
 }
-var createRandomNetwork=function(nNodes, pRelationOrNumberOfRelations, mode, randomRelationsWeights, seed) {
+let createRandomNetwork=function(nNodes, pRelationOrNumberOfRelations, mode, randomRelationsWeights, seed) {
  if(nNodes == null || pRelationOrNumberOfRelations == null) return null;
   var funcRandom;
   if(seed!=null){
@@ -20196,8 +20197,8 @@ var createRandomNetwork=function(nNodes, pRelationOrNumberOfRelations, mode, ran
  }
   mode = mode == null ? 0 : mode;
   var i, j;
- var network = new Net();
- var node;
+ let network = new Net();
+ let node;
   for(i = 0; i < nNodes; i++) {
    network.addNode(new Nd("n" + i, "n" + i));
  }
@@ -20251,7 +20252,7 @@ var createRandomNetwork=function(nNodes, pRelationOrNumberOfRelations, mode, ran
  }
 }
 
-var textsToNet = function(texts, names, colorsList, threshold = 0.8, stopWords=1){
+let textsToNet = function(texts, names, colorsList, threshold = 0.8, stopWords=1){
     //getWordsInTextsOccurrencesTable(texts, weightsMode, stopWords=1, includeLinks, wordsLimitPerString=500, totalWordsLimit=1000, sortByTotalWeight, minSizeWords=3, addTotalList, minSupportFraction=0, wordDelimiter)
     let wordsTable = transpose(getWordsInTextsOccurrencesTable(texts, 0, stopWords), true)
     let net = buildCorrelationsNetwork(wordsTable, true, names||texts, colorsList, threshold)
@@ -20261,7 +20262,7 @@ var textsToNet = function(texts, names, colorsList, threshold = 0.8, stopWords=1
 /**
  * universal parser, identifies format and builds net
  **/
-var parseNet = function(netData, threshold=0.2){
+let parseNet = function(netData, threshold=0.2){
     let net = new _.Net()
 
     if(Array.isArray(netData) && netData.length==2){
@@ -20328,7 +20329,7 @@ var parseNet = function(netData, threshold=0.2){
 }
 
 
-var textToNet = function(text, separator="\n\n", nNodes, thresholdCorrelation, groupsSeparator, stopWords, includeBiGrams, addContextToRelations=false){
+let textToNet = function(text, separator="\n\n", nNodes, thresholdCorrelation, groupsSeparator, stopWords, includeBiGrams, addContextToRelations=false){
     if(text==null) return
 
     let groupBlocks
@@ -20466,7 +20467,7 @@ var textToNet = function(text, separator="\n\n", nNodes, thresholdCorrelation, g
     return net
 }
 
-var textToTree = function(text, divisors, parentName="text"){
+let textToTree = function(text, divisors, parentName="text"){
     let tree = new _.Tr()
     // let parent = new _.Nd(parentName, parentName)
     // parent.text = text
@@ -20538,12 +20539,12 @@ var textToTree = function(text, divisors, parentName="text"){
 }
 
 
-var imageToTableOfRGBA=function(img, brgbaStringsInCells) {
+let imageToTableOfRGBA=function(img, brgbaStringsInCells) {
  if(img == null || img.width <= 0) return null;
  brgbaStringsInCells = brgbaStringsInCells == null ? false : brgbaStringsInCells;
- var data = _getPixelData(img);
+ let data = _getPixelData(img);
  if(data == null) return null;
- var tab;
+ let tab;
  if(brgbaStringsInCells){
    tab = new T();
    for(var col=0; col < img.width; col++){
@@ -20555,7 +20556,7 @@ var imageToTableOfRGBA=function(img, brgbaStringsInCells) {
  else
   tab = createUniformTable(img.width,img.height,[]);
  // var i = (y * width + x) * 4;
- var x,y,r,g,b,a;
+ let x,y,r,g,b,a;
  for(var i=0;i<data.length;i+=4){
    x = (i / 4) % img.width;
    y = Math.floor((i / 4) / img.width);
@@ -20566,33 +20567,33 @@ var imageToTableOfRGBA=function(img, brgbaStringsInCells) {
  }
  return tab;
 }
-var invertImageColors=function(img) {
+let invertImageColors=function(img) {
  if(img == null || img.width <= 0) return null;
- var data = _getPixelData(img);
+ let data = _getPixelData(img);
  if(data == null) return null;
  for(var i=0;i<data.length;i+=4){
    data[i]   = 255 - data[i];
    data[i+1] = 255 - data[i+1];
    data[i+2] = 255 - data[i+2];
  }
- var inverted = new ImageData(data, img.width, img.height);
+ let inverted = new ImageData(data, img.width, img.height);
  return _makeImageFromData(inverted);
 }
-var grayscaleImage=function(img) {
+let grayscaleImage=function(img) {
  if(img == null || img.width <= 0) return null;
- var data = _getPixelData(img);
+ let data = _getPixelData(img);
  if(data == null) return null;
  for(var i=0;i<data.length;i+=4){
    // CIE luminance for the RGB
    var v = 0.2126*data[i] + 0.7152*data[i+1] + 0.0722*data[i+2];
    data[i] = data[i+1] = data[i+2] = v;
  }
- var grayed = new ImageData(data, img.width, img.height);
+ let grayed = new ImageData(data, img.width, img.height);
  return _makeImageFromData(grayed);
 }
 
 
-var cropImage=function(img, x, y, w, h) {
+let cropImage=function(img, x, y, w, h) {
  if(img == null || img.width <= 0 ) return null;
   if(img.isList){
    // operate on each one in the list
@@ -20607,22 +20608,22 @@ var cropImage=function(img, x, y, w, h) {
  y = y == null ? 0 : y;
  w = w == null ? img.width : w;
  h = h == null ? img.height : h;
- var canvas = document.createElement('canvas');
- var context = canvas.getContext('2d');
+ let canvas = document.createElement('canvas');
+ let context = canvas.getContext('2d');
  canvas.width = img.width;
  canvas.height = img.height;
  context.drawImage(img, 0, 0 );
   var odata = context.getImageData(x, y, w, h);
  return _makeImageFromData(odata);
 }
-var resizeImage=function(img, width, height, method, colorBackground) {
+let resizeImage=function(img, width, height, method, colorBackground) {
  if(img == null || img.width <= 0) return null;
  width = width == null || Math.round(width) <= 0 ? 200 : Math.round(width);
  height = height == null || Math.round(height) <= 0 ? Math.round(width/img.width*img.height) : Math.round(height);
  method = method == null || (method!=0 && method!=1) ? 0 : method;
  colorBackground = colorBackground == null ? 'topleft' : colorBackground;
   // make temporary graphics object
- var gt = new MetaCanvas({
+ let gt = new MetaCanvas({
    container: null,
    dimensions: {width: width, height: height},
    noLoop: true,
@@ -20652,24 +20653,24 @@ var resizeImage=function(img, width, height, method, colorBackground) {
   return imgRet;
 }
 
-var getDataURL=function(img, bHTMLResult) {
+let getDataURL=function(img, bHTMLResult) {
  if(img == null || img.width <= 0) return null;
  // make temporary graphics object
- var gt = new MetaCanvas({
+ let gt = new MetaCanvas({
    container: null,
    dimensions: {width: img.width, height: img.height},
    noLoop: true,
    noStart: true
  });
  gt.drawImage(img, 0, 0);
- var im2 = gt.captureCanvas();
+ let im2 = gt.captureCanvas();
  if(bHTMLResult)
    return '<img src="' + im2.src + '">';
  return im2.src;
 }
-var _getPixelData=function(img) {
+let _getPixelData=function(img) {
  if(img == null || img.width <= 0) return null;
- var data;
+ let data;
  try {
    var canvas = document.createElement('canvas');
    var context = canvas.getContext('2d');
@@ -20683,7 +20684,7 @@ var _getPixelData=function(img) {
  }
  return data;
 }
-var _makeImageFromData=function(imgData) {
+let _makeImageFromData=function(imgData) {
  if(imgData == null || imgData.width == null || imgData.width <= 0 || imgData.height <=0) return null;
  try {
    var canvas = document.createElement('canvas');
@@ -20699,7 +20700,7 @@ var _makeImageFromData=function(imgData) {
  }
  return img2;
 }
-var expandSimpleHtml=function(abreviatedHTML, idForLinks) {
+let expandSimpleHtml=function(abreviatedHTML, idForLinks) {
  if(abreviatedHTML == null || abreviatedHTML === "") return "";
   var bit;
   if(abreviatedHTML.split("<").length != abreviatedHTML.split(">").length) return abreviatedHTML;
@@ -20766,9 +20767,9 @@ var expandSimpleHtml=function(abreviatedHTML, idForLinks) {
    if(bit != null) newText = newText.replace("<tv" + bit + ">", "<textformat leading=\"" + bit + "\">");
  }
    bit = "";
- var href;
- var text;
- var target;
+ let href;
+ let text;
+ let target;
    while(bit != null) {
    bit = getFirstTextBetweenStrings(newText, "<e", ">");
    if(bit != null) {
@@ -20797,7 +20798,7 @@ var expandSimpleHtml=function(abreviatedHTML, idForLinks) {
  // c.log("////////////////////////////////////");
   return newText;
 }
-var clickLink=function(param, idForLinks) {
+let clickLink=function(param, idForLinks) {
  for(var i=0; i<FastHtml_clickLinkFunctionsToCall.length; i++){
    FastHtml_clickLinkFunctionsToCall[i].call(FastHtml_clickLinkTargetsToCall[i], param, idForLinks);
  }
@@ -20805,66 +20806,66 @@ var clickLink=function(param, idForLinks) {
 }
 
 //---------------types dict-----------------
-var _typeDict = {
+let _typeDict = {
 L,iL,cL,P,P3D,Pol,Pol3D,Rec,T,nT,polL,Nd,sL,ndL,relL,recL,Rel,Net,Tr,dI,dL,nL,I,pol3DL,cScale,MetaCanvas,Engine3D,Forces,
 };
 
 
 //---------------ClassUtils (only _typeOf, noOperation…)-----------------
-var TwoPi=6.28318530718;function ifDef(value, fallback) {  if (value !== undefined && value !== null) {    return value;  } else {    return fallback;  }};function typeOf(e){if(null==e)return null;var t=typeof e;return"object"!==t?t:null!=e.type?e.type:"[object Array]"==Object.prototype.toString.call(e)?"Array":null!=e.getDate?"date":"Object"}var _typeOf=function(e){if(null==e)return null;var t=typeof e;return"object"!==t?t:null!=e.type?e.type:"[object Array]"==Object.prototype.toString.call(e)?"Array":null!=e.getDate?"date":"Object"},noOperation=function(){};function resizeThrottler(e,t){var n;return function(r){n||(n=setTimeout(function(){n=null,e(r)},t))}}function instantiate(e,t){switch(e){case"number":case"string":return window[e](t);case"date":if(!t||0===t.length)return new Date;if(1==t.length){if(t[0].match(/d*.-d*.-d*Dd*.:d*.:d*/)){var n=t[0].split(" ");return n[0]=n[0].split("-"),n[1]?n[1]=n[1].split(":"):n[1]=new Array(0,0,0),new Date(Date.UTC(n[0][0],Number(n[0][1])-1,n[0][2],n[1][0],n[1][1],n[1][2]))}return"NaN"!=Number(t[0])?new Date(Number(t[0])):new Date(t[0])}return new Date(Date.UTC.apply(null,t));case"boolean":return window[e]("false"!=t&&"0"!=t);case"L":case"T":case"sL":case"nL":case"nT":case"ndL":case"relL":case"Pol":case"Pol3D":case"polL":case"dL":case"cL":case"iL":return _typeDict[e].apply(new _typeDict[e],t);case null:case void 0:case"undefined":return null}var r,a,i;return i=window[e],(a=function(){}).prototype=i.prototype,r=new a,i.apply(r,t),r}function instanceSameType(e,t){return instantiate(typeOf(e),t)}
+let TwoPi=6.28318530718;function ifDef(value, fallback) {  if (value !== undefined && value !== null) {    return value;  } else {    return fallback;  }};function typeOf(e){if(null==e)return null;var t=typeof e;return"object"!==t?t:null!=e.type?e.type:"[object Array]"==Object.prototype.toString.call(e)?"Array":null!=e.getDate?"date":"Object"}var _typeOf=function(e){if(null==e)return null;var t=typeof e;return"object"!==t?t:null!=e.type?e.type:"[object Array]"==Object.prototype.toString.call(e)?"Array":null!=e.getDate?"date":"Object"},noOperation=function(){};function resizeThrottler(e,t){var n;return function(r){n||(n=setTimeout(function(){n=null,e(r)},t))}}function instantiate(e,t){switch(e){case"number":case"string":return window[e](t);case"date":if(!t||0===t.length)return new Date;if(1==t.length){if(t[0].match(/d*.-d*.-d*Dd*.:d*.:d*/)){var n=t[0].split(" ");return n[0]=n[0].split("-"),n[1]?n[1]=n[1].split(":"):n[1]=new Array(0,0,0),new Date(Date.UTC(n[0][0],Number(n[0][1])-1,n[0][2],n[1][0],n[1][1],n[1][2]))}return"NaN"!=Number(t[0])?new Date(Number(t[0])):new Date(t[0])}return new Date(Date.UTC.apply(null,t));case"boolean":return window[e]("false"!=t&&"0"!=t);case"L":case"T":case"sL":case"nL":case"nT":case"ndL":case"relL":case"Pol":case"Pol3D":case"polL":case"dL":case"cL":case"iL":return _typeDict[e].apply(new _typeDict[e],t);case null:case void 0:case"undefined":return null}var r,a,i;return i=window[e],(a=function(){}).prototype=i.prototype,r=new a,i.apply(r,t),r}function instanceSameType(e,t){return instantiate(typeOf(e),t)}
 
 //---------------variables-----------------
 
-var plasma = createColorScaleFromColors(cL.toL(['rgb(13,8,135)','rgb(125,3,168)','rgb(203,70,121)','rgb(248,148,65)','rgb(240,249,33)']),[0.25,0.5,0.75]);
-var viridis = createColorScaleFromColors(cL.toL(['rgb(68,1,84)','rgb(59,81,139)','rgb(33,144,141)','rgb(92,200,99)','rgb(253,231,37)']),[0.25,0.5,0.75]);
-var _HARDCODED_CATEGORICAL_COLORS = ["#d62728", "#1f77b4", "#2ca02c", "#ff7f00", "#9467bd", "#bcbd22", "#8c564b", "#17becf", "#dd4411", "#206010", "#e377c2", "#3330ff", "#dd8811", "#ff220e", "#1f66a3", "#8c453a", "#2ba01c", "#dfc500", "#945600", "#ff008b", "#e37700", "#7f7f7f"];
-var DateOperators_millisecondsToHours = 1 / (1000 * 60 * 60);
-var DateOperators_millisecondsToDays = 1 / (1000 * 60 * 60 * 24);
-var DateOperators_millisecondsToWeeks = 1 / (1000 * 60 * 60 * 24 * 7);
-var DateOperators_millisecondsToYears = 0.00000000003169;
-var DateOperators_MONTH_NAMES = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
-var DateOperators_MONTH_NAMES_SHORT = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-var DateOperators_MONTH_NDAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-var DateOperators_WEEK_NAMES = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-var StringOperators_ENTER = String.fromCharCode(13);
-var StringOperators_ENTER2 = String.fromCharCode(10);
-var StringOperators_ENTER3 = String.fromCharCode(8232);
-var StringOperators_SPACE = String.fromCharCode(32);
-var StringOperators_SPACE2 = String.fromCharCode(160);
-var StringOperators_TAB = " ";
-var StringOperators_TAB2 = String.fromCharCode(9);
-var StringOperators_LINK_REGEX = /(^|\s+)(https*\:\/\/\S+[^\.\s+])/;
-var StringOperators_MAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-var StringOperators_STOP_WORDS = "t,s,mt,rt,re,m,http,amp,a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your".split(",");
-var StringOperators_WORDLISTS = {};
-var NetworkEncodings_nodeNameSeparators = ['|', ':', ' is ', ' are ', '.', ','];
-var NumberOperators_stackRandom = [];
+let plasma = createColorScaleFromColors(cL.toL(['rgb(13,8,135)','rgb(125,3,168)','rgb(203,70,121)','rgb(248,148,65)','rgb(240,249,33)']),[0.25,0.5,0.75]);
+let viridis = createColorScaleFromColors(cL.toL(['rgb(68,1,84)','rgb(59,81,139)','rgb(33,144,141)','rgb(92,200,99)','rgb(253,231,37)']),[0.25,0.5,0.75]);
+let _HARDCODED_CATEGORICAL_COLORS = ["#d62728", "#1f77b4", "#2ca02c", "#ff7f00", "#9467bd", "#bcbd22", "#8c564b", "#17becf", "#dd4411", "#206010", "#e377c2", "#3330ff", "#dd8811", "#ff220e", "#1f66a3", "#8c453a", "#2ba01c", "#dfc500", "#945600", "#ff008b", "#e37700", "#7f7f7f"];
+let DateOperators_millisecondsToHours = 1 / (1000 * 60 * 60);
+let DateOperators_millisecondsToDays = 1 / (1000 * 60 * 60 * 24);
+let DateOperators_millisecondsToWeeks = 1 / (1000 * 60 * 60 * 24 * 7);
+let DateOperators_millisecondsToYears = 0.00000000003169;
+let DateOperators_MONTH_NAMES = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+let DateOperators_MONTH_NAMES_SHORT = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+let DateOperators_MONTH_NDAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+let DateOperators_WEEK_NAMES = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+let StringOperators_ENTER = String.fromCharCode(13);
+let StringOperators_ENTER2 = String.fromCharCode(10);
+let StringOperators_ENTER3 = String.fromCharCode(8232);
+let StringOperators_SPACE = String.fromCharCode(32);
+let StringOperators_SPACE2 = String.fromCharCode(160);
+let StringOperators_TAB = " ";
+let StringOperators_TAB2 = String.fromCharCode(9);
+let StringOperators_LINK_REGEX = /(^|\s+)(https*\:\/\/\S+[^\.\s+])/;
+let StringOperators_MAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+let StringOperators_STOP_WORDS = "t,s,mt,rt,re,m,http,amp,a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your".split(",");
+let StringOperators_WORDLISTS = {};
+let NetworkEncodings_nodeNameSeparators = ['|', ':', ' is ', ' are ', '.', ','];
+let NumberOperators_stackRandom = [];
 //var NumberOperators_random = 1
-var NumberOperators_lastNormal = NaN;
-var NumberOperators_random = Math.random
-var NumberOperators_lastNormal = NaN;
-var NumberOperators_lastNormal = 1
-var NumberOperators_SG_MAGICCONST = 1 + Math.log(4.5);
-var NumberOperators_LOG4 = Math.log(4.0);
-var TableEncodings_ENTER = String.fromCharCode(13);
-var TableEncodings_ENTER2 = String.fromCharCode(10);
-var TableEncodings_ENTER3 = String.fromCharCode(8232);
-var TableEncodings_SPACE = String.fromCharCode(32);
-var TableEncodings_SPACE2 = String.fromCharCode(160);
-var TableEncodings_TAB = "  ";
-var TableEncodings_TAB2 = String.fromCharCode(9);
-var GeoOperators_EARTH_RADIUS = 6371009;
-var GeoOperators_EARTH_DIAMETER = GeoOperators_EARTH_RADIUS * 2;
-var DrawTexts_POINT_TO_PIXEL = 1.3333;
-var DrawTexts_PIXEL_TO_POINT = 0.75;
-var FastHtml_clickLinkFunctionsToCall = [];
-var FastHtml_clickLinkTargetsToCall = [];
-var FastHtml_target = null;
-var FastHtml_linkFunction = null;
+//let NumberOperators_lastNormal = NaN;
+let NumberOperators_random = Math.random
+//let NumberOperators_lastNormal = NaN;
+let NumberOperators_lastNormal = 1
+let NumberOperators_SG_MAGICCONST = 1 + Math.log(4.5);
+let NumberOperators_LOG4 = Math.log(4.0);
+let TableEncodings_ENTER = String.fromCharCode(13);
+let TableEncodings_ENTER2 = String.fromCharCode(10);
+let TableEncodings_ENTER3 = String.fromCharCode(8232);
+let TableEncodings_SPACE = String.fromCharCode(32);
+let TableEncodings_SPACE2 = String.fromCharCode(160);
+let TableEncodings_TAB = "  ";
+let TableEncodings_TAB2 = String.fromCharCode(9);
+let GeoOperators_EARTH_RADIUS = 6371009;
+let GeoOperators_EARTH_DIAMETER = GeoOperators_EARTH_RADIUS * 2;
+let DrawTexts_POINT_TO_PIXEL = 1.3333;
+let DrawTexts_PIXEL_TO_POINT = 0.75;
+let FastHtml_clickLinkFunctionsToCall = [];
+let FastHtml_clickLinkTargetsToCall = [];
+let FastHtml_target = null;
+let FastHtml_linkFunction = null;
 
 
 
-var _parseData = function(data, parse, params){
+let _parseData = function(data, parse, params){
   switch(parse){
     case "csv":
       return toT(data, params)
@@ -20907,7 +20908,7 @@ exports.loadDatas = function(urls, callbackEach, callBackAll, parse, parseParams
   callNext()
 }
 
-exports.loadImage = function(url, callback){
+let loadImage = function(url, callback){
   if(url==null) return;
 
   var img = document.createElement('img');
@@ -20918,21 +20919,51 @@ exports.loadImage = function(url, callback){
       }
       callback.call(this, resultObject);
   };
+  img.onerror=function() {
+      let resultObject = {
+          path:url,
+          result:null
+      }
+      callback.call(this, resultObject);
+  };
   img.src = url
+}
+
+let loadImages = function(urls, callbackEach, callBackAll){
+  var nUrl = 0
+  var url = urls[nUrl]
+  var resultsL = new L()
+  var images = new iL()
+  //var _parseD = _parseData
+  var callNext = function(){
+    loadImage(url, ob=>{
+        //callbackEach(ob)
+        resultsL.push(ob)
+        images.push(ob.result)
+        callbackEach?.(ob, {paths:urls.slice(0,images.length), results:images})
+        if(nUrl<urls.length-1){
+          url = urls[++nUrl]
+          callNext()
+        } else {
+          callBackAll?.({paths:urls, results:images})
+        }
+    })
+  }
+  callNext()
 }
 
 
 
 
-var downloadData = function(data, filename) {
+let downloadData = function(data, filename) {
     var element = document.createElement('a');
-    element.setAttribute('href','data:text/plain;charset=utf-8, ' + encodeURIComponent(data))
+    element.setAttribute('href','data:text/plain;charset=utf-8,' + encodeURIComponent(data))
     element.setAttribute('download', filename)
     document.body.appendChild(element)
     element.click()
 }
 
-var downloadTable = function(table, filename) {
+let downloadTable = function(table, filename) {
     let csv = TableToCSV(table, ",", true)
     downloadData(csv, filename)
 }
@@ -21915,6 +21946,9 @@ exports.expandSimpleHtml=expandSimpleHtml
 exports.clickLink=clickLink
 exports.downloadData=downloadData
 exports.downloadTable=downloadTable
+exports.loadImage=loadImage
+exports.loadImages=loadImages
+
 
 exports.StringOperators_STOP_WORDS = StringOperators_STOP_WORDS
 }));
