@@ -327,4 +327,20 @@ export default class Layouts{
 		})
 
 	}
+
+	center = function(){
+		let barx = 0
+		let bary = 0
+
+		this.view.net.nodes.forEach(n=>{
+			barx+=(n.x+this.drawMethods.x0)
+			bary+=(n.y+this.drawMethods.y0)
+		})
+
+		barx/=this.view.net.nodes.length
+		bary/=this.view.net.nodes.length
+
+		this.drawMethods.x0 -= barx - this.k.cX
+		this.drawMethods.y0 -= bary - this.k.cY
+	}
 }

@@ -1,11 +1,12 @@
 import '../../pulse.js'
 import Draw from './Draw.js'
 import Layouts from './Layouts.js'
+// import Element from '../../Elements/Element.js'
+// import Tooltip from '../../Elements/Tooltip.js'
 
 export default class NetView{
 
 	constructor(k, callBackSendData, config) {//extends View
-		console.log("[·•] NV constructor")
 		//super(...args) //when extending View
 
 		this.k = k
@@ -101,8 +102,6 @@ export default class NetView{
 	}
 
 	receiveData(dataObj){
-		console.log("[·] Net | dataObj", dataObj)
-
 		switch(dataObj.type){
 			case "network":
 			case "data":
@@ -133,7 +132,7 @@ export default class NetView{
 				this.setNewDrawNodeFunction(dataObj.value)
 				break
 			case "layout":
-				if(!dataObj.value.includes("free")) this.layout_value = dataObj.value
+				if(!dataObj.value.includes("free") || dataObj.value=="center") this.layout_value = dataObj.value
 				switch(dataObj.value){
 					case "clusters":
 						this.layouts.placeNodesInClusters()
@@ -174,23 +173,31 @@ export default class NetView{
 					case "fit in window":
 						this.layouts.fitInWindow()
 						break
+					case "center":
+						this.layouts.center()
+						break
 				}
 		}
 	}
 
 	setNetwork(net){
-		console.log("[•] setNetwork")
 		if(net["type"]!="Net" && net["type"]!="Tr") net = _.parseNet(net)
+
+		let firstNet = net && this.net==null
 
 		if(this.net != net && net){
 			var previous = this.net;
 			var previousSelected = this.selectedNode
 
-			var previousLayoutValue = this.layout_value
+			var previousLayoutValue = this.layout_value && this.layout_value!="center"
 			this.layoutClusters = false
 
 			this.net = net
+
+			this.__callBackSendData = this.callBackSendData
+			this.callBackSendData = ()=>{}
 			this.nodeUnSelected()
+			this.callBackSendData = this.__callBackSendData
 
 			let nodesHaveCoordinates = true
 			let allCoordinatesZero = true
@@ -264,22 +271,6 @@ export default class NetView{
 				
 			}
 
-			// if(!previous){
-			// 	let bar_x = 0
-			// 	let bar_y = 0
-			// 	net.nodes.forEach(nd=>{
-			// 		bar_x+=nd.x/net.nodes.length
-			// 		bar_y+=nd.y/net.nodes.length
-			// 	})
-			// 	net.nodes.forEach(nd=>{
-			// 		nd.x-=bar_x
-			// 		nd.y-=bar_y
-			// 		nd.xF = nd.x
-			// 		nd.yF = nd.y
-			// 	})
-			// 	console.log("[•] 1st network, bar_x, bar_y", bar_x, bar_y)
-			// }
-
 
 			if(previousSelected){
 				let selectedInNewNet = net.get(previousSelected.id)
@@ -292,6 +283,12 @@ export default class NetView{
 				//this.layout.setLayout(previousLayoutValue)
 				this.receiveData({type:"layout", value:previousLayoutValue})
 			}
+		}
+
+		if(firstNet){
+			this.callBackSendData({type:'report', value:'first'})
+		} else {
+			this.callBackSendData({type:'report', value:'new'})
 		}
 	}
 

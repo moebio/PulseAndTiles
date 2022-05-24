@@ -38,7 +38,7 @@
 		,
 		{
 			"type":"layout",
-			"description":"sets a layout, options are: clusters, clusters category (uses category property of nodes), cloud, xy (uses properties x and y of nodes), x (uses property x of nodes), y (uses property y of nodes), free (free nodes from fixed x and/or y positions), free x (frees nodes from x position), free y (frees nodes from y position). See documentation.txt",
+			"description":"sets a layout, options are: clusters, clusters category (uses category property of nodes), cloud, xy (uses properties x and y of nodes), x (uses property x of nodes), y (uses property y of nodes), free (free nodes from fixed x and/or y positions), free x (frees nodes from x position), free y (frees nodes from y position), fit in window. See documentation.txt",
 			"value_type":"",
 			"kind":"command",
 			"optional":"true"
@@ -86,6 +86,12 @@
 			"type":"selected pair",
 			"description":"selected pair of node, sends every time a pair of nodes is selected, the value contains an Object with values node0 and node1",
 			"value_type":"Object",
+			"kind":"command"
+		},
+		{
+			"type":"report",
+			"description":"reports miscellaneous events, currently the rendering of first network (value:first) or consecutive networks (value:new)",
+			"value_type":"string",
 			"kind":"command"
 		}
 	]

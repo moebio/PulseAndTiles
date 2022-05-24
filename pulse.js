@@ -20886,15 +20886,18 @@ exports.loadData = function(url, callback, parse, parseParams){
 };
 
 exports.loadDatas = function(urls, callbackEach, callBackAll, parse, parseParams){
-  var nUrl = 0
-  var url = urls[nUrl]
-  var resultsL = new L()
-  var _parseD = _parseData
-  var callNext = function(){
+  let nUrl = 0
+  let url = urls[nUrl]
+  let resultsL = new L()
+  let _parseD = _parseData
+  let singleParse = typeof parse == "string"?parse:null
+  let arraysParses = Array.isArray(parse)?parse:null
+  let callNext = function(){
     fetch(url)
       .then(res => res.text())
       .then(data => {
-        let resultObject = {result:_parseD(data, parse, parseParams), path:url, nFile:nUrl}
+        let singleParseForLoad = arraysParses?arraysParses[nUrl]:singleParse
+        let resultObject = {result:_parseD(data, singleParseForLoad, parseParams), path:url, nFile:nUrl}
         resultsL.push(resultObject);
         callbackEach?.(resultObject, resultsL)
         if(nUrl<urls.length-1){
