@@ -89,6 +89,12 @@
 			"kind":"command"
 		},
 		{
+			"type":"unselected pair",
+			"description":"sends every time a pair is unselected",
+			"value_type":"",
+			"kind":"command"
+		},
+		{
 			"type":"report",
 			"description":"reports miscellaneous events, currently the rendering of first network (value:first) or consecutive networks (value:new)",
 			"value_type":"string",

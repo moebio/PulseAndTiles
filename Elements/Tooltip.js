@@ -1,4 +1,6 @@
-class Tooltip extends Element{
+import Element from './Element.js'
+
+export default class Tooltip extends Element{
 
 	/////////////////////////////////////////constructor
 	constructor(k, callBackSendData, config={font_size:16, marginW:10, marginH:6, fixedWidth:200}){

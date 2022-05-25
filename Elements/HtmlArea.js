@@ -1,4 +1,6 @@
-class HtmlArea extends Element{
+import Element from './Element.js'
+
+export default class HtmlArea extends Element{
 
 	/////////////////////////////////////////constructor
 	constructor(callBackSendData, config){

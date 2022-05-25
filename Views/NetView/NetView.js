@@ -1,8 +1,8 @@
 import '../../pulse.js'
 import Draw from './Draw.js'
 import Layouts from './Layouts.js'
-// import Element from '../../Elements/Element.js'
-// import Tooltip from '../../Elements/Tooltip.js'
+//import Element from '../../Elements/Element.js'
+import Tooltip from '../../Elements/Tooltip.js'
 
 export default class NetView{
 
@@ -359,7 +359,9 @@ export default class NetView{
 			this.forces.dEqRepulsors = this.config.physics.dEqRepulsors
 		}
 
-		if( (this.config.relations.tooltip || this.config.nodes.tooltip) && this.tooltip==null) this.tooltip = new Tooltip(this.k)
+		if( (this.config.relations.tooltip || this.config.nodes.tooltip) && this.tooltip==null){
+			this.tooltip = new Tooltip(this.k)
+		}
 
 		//unselect and select to trigger changes such as layout
 		if(this.selectedNode){
@@ -458,6 +460,7 @@ export default class NetView{
 		this._FORCES_ACTIVE = true
 		this.forces.friction = this.config.physics.friction
 		this._resetThickFactor()
+		this.callBackSendData({type:'unselected pair', value:""})
 	}
 
 	calculateLoops = function(){
