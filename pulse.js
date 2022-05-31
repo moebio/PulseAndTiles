@@ -19095,6 +19095,29 @@ let _spanningTree2=function(node, mode, nodeLimit) {
    return tree;
 }
 
+let spreads = function(node, size, proportionKept = 0.5, receivedPropertyName="sizeReceived", initialGivesAll = true, _originalSize){
+    let isInitial = _originalSize==null
+
+    _originalSize = _originalSize||size
+
+    let toKeep = isInitial?0:size*proportionKept
+    let toGive = isInitial?size:size*(1-proportionKept)
+    node[receivedPropertyName] = (node[receivedPropertyName]||0) + toKeep
+
+    //console.log(node.name + " is given " + size + " / " + _originalSize + " / total:" + node[receivedPropertyName])
+
+    //spreads only if remaining is >1%
+    let continueSpread = node.to.length>0 && size/_originalSize>0.01
+    if(continueSpread){
+        let toGivePerReceiver = toGive/node.to.length
+        node.to.forEach(receiver=>{
+            spreads(receiver, toGivePerReceiver, proportionKept, receivedPropertyName, initialGivesAll, _originalSize)
+        })
+    } else {
+        node[receivedPropertyName] += toGive
+    }
+}
+
 let influenceLevels = function(network, node_or_nodes, direction_to=true){
     let levelsTableMain = new T()
     let levelsTableSecondary = new T()
@@ -21910,6 +21933,7 @@ exports._getLoopsOnNode=_getLoopsOnNode
 exports._pathsToCentral=_pathsToCentral
 exports._loopsColumns=_loopsColumns
 exports.spanningTree=spanningTree
+exports.spreads=spreads
 exports.influenceLevels=influenceLevels
 exports._spanningTree2=_spanningTree2
 exports.adjacentNodeList=adjacentNodeList
