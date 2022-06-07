@@ -38,6 +38,8 @@ export default class Draw{
 
 		let cursor_level
 		if(view.selectedNode && view.config.layout.selection_mode=="spanning_tree") cursor_level = this._drawSpanningCircles()
+		if(view.selectedNode && view.config.layout.selection_mode=="impact_from") this._drawFromToVerticalLines(false)
+		if(view.selectedNode && view.config.layout.selection_mode=="impact_to") this._drawFromToVerticalLines(true)
 
 		if(view.layoutClusters) this._drawClustersCircles()
 		if(view.fixedX && view.config.layout.draw_grid && !view.selectedNode) this._drawGrid(view.fixedX, "x", view.fixedY)
@@ -55,7 +57,7 @@ export default class Draw{
 		view.closestNode = null
 		view.drawTooltip = false
 
-		//bakckground
+		//bakckground (normally does nothing, except when container overrides this function)
 		this.drawBackground()
 
 		///////////projection and draw
@@ -183,7 +185,7 @@ export default class Draw{
 		if(view.overNode!=prevNodeOver && view.overNode) view.nodeOver(view.overNode)
 		if(view.overRelation!=prevRelationOver && view.overRelation) view.relationOver(view.overRelation)
 
-		//top
+		//top (normally does nothing, except when container overrides this function)
 		this.drawTop()
 
 		//tooltip
@@ -227,7 +229,9 @@ export default class Draw{
 				k.fsText(nd.name, nd._px, nd._py, 3)
 				return
 			case 'box':
-				k.setText(nd.color??view.config.nodes.text_color, nd._ts, null, 'center', 'middle')
+
+				k.setText(nd.color??view.config.nodes.text_color, nd._ts, null, 'center', 'middle') //doesn't do anything
+				
 				if(view.config.nodes.useColorsTable && nd.colorsTable && nd.colorsTable[0].length>0){
 					let x = nd._px-nd._w*0.5
 					let w
@@ -501,6 +505,9 @@ export default class Draw{
 		return p
 	}
 
+
+	/////////////////////////////layout special drawings
+
 	_drawSpanningCircles(){
 
 		for(let i=1; i<this.view.layouts.N_LEVELS_TREE; i++){
@@ -511,9 +518,31 @@ export default class Draw{
 		return Math.floor(r_cursor/this.view.config.layout.r_spanning_circles)
 	}
 
+	_drawFromToVerticalLines(to){
+		let x0 = this.view.selectedNode._px
+
+		let direction = to?1:-1
+		
+
+		this.k.stroke("black", 0.3)
+		
+
+		let x = x0 - direction*0.5*this.view.config.layout.dx_impact_columns*this.zoom
+		this.k.context.setLineDash([6, 2])
+		this.k.line(x, 20, x, this.k.H - 20)
+
+		this.k.context.setLineDash([4, 6])
+		for(let i=0; i<this.view.layouts.N_LEVELS_INFLUENCE; i++){
+			x = x0 + direction*(i+0.5)*this.view.config.layout.dx_impact_columns*this.zoom
+			this.k.line(x, 20, x, this.k.H - 20)
+		}
+
+		this.k.context.setLineDash([]);
+	}
+
 	_drawClustersCircles(){
 		if(!this.view.net.lastClusters) this.view.layouts.placeNodesInClusters()
-			let prev_iCircle = this.iCircle
+		let prev_iCircle = this.iCircle
 		this.iCircle=-1
 		let x, y, r
 		let inCluster

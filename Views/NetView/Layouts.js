@@ -47,8 +47,8 @@ export default class Layouts{
 	}
 
 	placeNodesInImpact(selectedNode){
-		var dx = 180
-		var dy = 50
+		var dx = this.view.config.layout.dx_impact_columns
+		var dy = this.view.config.layout.dy_impact_columns
 		var level
 
 		this.view.net.relations.forEach(r=>r._thickFactor = 0)
@@ -57,6 +57,8 @@ export default class Layouts{
 		let influenceObject = _.influenceLevels(this.view.net, selectedNode, direction_to)
 
 		let levelsTableMain = influenceObject.levelsTableMain
+		this.N_LEVELS_INFLUENCE = levelsTableMain.length
+
 		let levelsTableSecondary = influenceObject.levelsTableSecondary
 		let notImpacted = influenceObject.notImpacted
 		let influenceRelations = influenceObject.influenceRelations
@@ -69,18 +71,21 @@ export default class Layouts{
 		
 		selectedNode.xF = this.drawMethods.invfX(direction_to?this.k.W*0.2:this.k.W*0.8)
 		selectedNode.yF =  this.drawMethods.invfY(this.k.cY)
-
-		let i, j
+		
+		let i, j, x
 		let direction = direction_to?1:-1
-		for(i=0; i<levelsTableMain.length; i++){
+		for(i=0; i<this.N_LEVELS_INFLUENCE; i++){
+			x = selectedNode.xF + dx*i*direction
 			for(j=0; j<levelsTableMain[i].length; j++){
-				levelsTableMain[i][j].xF = selectedNode.xF + dx*i*direction
+				levelsTableMain[i][j].xF = x
+
 				levelsTableMain[i][j].yF = selectedNode.yF + dy*(j-(levelsTableMain[i].length-1)*0.5)
 			}
 		}
 		
 		for(i=0; i<levelsTableSecondary.length; i++){
 			for(j=0; j<levelsTableSecondary[i].length; j++){
+				if(selectedNode==levelsTableSecondary[i][j]) continue
 				levelsTableSecondary[i][j].xF = selectedNode.xF - (dx*i + dx*0.5)*direction
 				levelsTableSecondary[i][j].yF = selectedNode.yF + dy*(j-(levelsTableSecondary[i].length-1)*0.5)
 			}

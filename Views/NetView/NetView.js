@@ -34,6 +34,7 @@ export default class NetView{
 		this.layout_value
   
 		this.N_LEVELS_TREE
+		this.N_LEVELS_INFLUENCE
   
 		this.net
   }
@@ -88,6 +89,8 @@ export default class NetView{
 		layout:{
 			selection_mode:'spanning_tree',//impact_from,impact_to,spanning_tree, (center)
 			r_spanning_circles:120,
+			dx_impact_columns:180,
+			dy_impact_columns:50,
 			margin_for_visibility:170,
 			savesNodesPositionsOnBrowser:false,
 			draw_loops:0,

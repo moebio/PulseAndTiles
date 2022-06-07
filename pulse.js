@@ -4550,7 +4550,7 @@ nL.prototype.cleanNonFinites=function(interval){
    var nans = new nL();
     var newList = new nL();
    newList.name = this.name;
-    for(i = 0; i < this.length; i++) {
+    for(let i = 0; i < this.length; i++) {
        if( !isFinite(this[i]) ){
          if(this[i]==Infinity){
            posInfinities.push(i);
@@ -4587,7 +4587,7 @@ nL.prototype.cleanNonFinites=function(interval){
 nL.prototype.getNormalized=function(factor) {
  if(this==null) return;
   factor = factor == null ? 1 : factor;
-  if(this.length === 0) return null;
+  if(this.length === 0) return new nL();;
  
  let i;
  let interval = this.getInterval();
@@ -4933,6 +4933,8 @@ MetaCanvas.prototype._init=function (autoStart) {
  this.mP = new P(0, 0); // cursor point // YY why have this and mX and mY
  this.nF = 0; // number of current frame since first cycle
  
+ this.N_FRAMES_MOUSE_UP_FAST = 9
+
  this.MOUSE_DOWN = false; //true on the frame of mousedown event
  this.MOUSE_UP = false; //true on the frame of mouseup event
  this.MOUSE_UP_FAST = false; //true on the frame of mouseup event
@@ -5181,8 +5183,8 @@ MetaCanvas.prototype._onResize=function (e) {
 MetaCanvas.prototype._containerDimensions=function () {
  if (this.container) {
    return {
-     width: window.innerWidth,//,this.container.clientWidth,
-     height: window.innerHeight//this.container.clientHeight
+     width: this.container.clientWidth,
+     height: this.container.clientHeight
    };
  } else {
    return {
@@ -5306,7 +5308,7 @@ MetaCanvas.prototype._onCycle=function () {
   this.setCursor('default');
   this.MOUSE_DOWN = this.NF_DOWN == this.nF;
  this.MOUSE_UP = this.NF_UP == this.nF;
- this.MOUSE_UP_FAST = !this.MOUSE_UP_FAST && this.MOUSE_UP && (this.nF - this.NF_DOWN) < 9;
+ this.MOUSE_UP_FAST = !this.MOUSE_UP_FAST && this.MOUSE_UP && (this.nF - this.NF_DOWN) < this.N_FRAMES_MOUSE_UP_FAST;
   this.DX_MOUSE = this.mX - this.PREV_mX;
  this.DY_MOUSE = this.mY - this.PREV_mY;
  this.MOUSE_MOVED = this.DX_MOUSE !== 0 || this.DY_MOUSE !== 0;
