@@ -6021,7 +6021,10 @@ MetaCanvas.prototype.getPixelColor=function (x, y) {
 MetaCanvas.prototype.getPixelColorRGBA=function (x, y) {
  return Array.prototype.slice.call(this.context.getImageData(x, y, 1, 1).data);
 }
-MetaCanvas.prototype.captureCanvas=function (x0, y0, w, h) {
+MetaCanvas.prototype.captureCanvas=function (x0=0, y0=0, w, h) {
+    if(w==null) w = this.W
+    if(h==null) h = this.H
+
  let im = new Image();
   if (x0 == null) {
    im.src = this.canvas.toDataURL();
@@ -20725,8 +20728,11 @@ let _makeImageFromData=function(imgData) {
  }
  return img2;
 }
-let expandSimpleHtml=function(abreviatedHTML, idForLinks) {
+
+//known before as Fasthtml
+let expandSimpleHtml=function(abreviatedHTML, idForLinks, entersAsBreaks) {
  if(abreviatedHTML == null || abreviatedHTML === "") return "";
+ if(entersAsBreaks) abreviatedHTML = abreviatedHTML.replaceAll("\n", "<br>")
   var bit;
   if(abreviatedHTML.split("<").length != abreviatedHTML.split(">").length) return abreviatedHTML;
   var newText = abreviatedHTML;
@@ -20808,7 +20814,7 @@ let expandSimpleHtml=function(abreviatedHTML, idForLinks) {
      if(href.substr(0, 7) == "http://" ||  href.substr(0, 8) == "https://") {
        newText = newText.replace("<e" + bit + ">", "<u><a href='" + href + "' target='" + target + "'>" + text + "</a></u>");
      } else {
-       newText = newText.replace("<e" + bit + ">", "<u><a href='javascript:clickLink(\"" + href + "\",\"" + idForLinks + "\")' FastHtml.onclick='event.preventDefault(); clickLink(\"" + href + "\",\"" + idForLinks + "\"); return false; '>" + text + "</a></u>");
+       newText = newText.replace("<e" + bit + ">", "<u><a href='javascript:document.clickLink(\"" + href + "\",\"" + idForLinks + "\")' FastHtml.onclick='event.preventDefault(); clickLink(\"" + href + "\",\"" + idForLinks + "\"); return false; '>" + text + "</a></u>");
      }
    }
  }
@@ -20821,6 +20827,7 @@ let expandSimpleHtml=function(abreviatedHTML, idForLinks) {
   // c.log("/////////FastHtml convertion////////");
  // c.log(newText);
  // c.log("////////////////////////////////////");
+
   return newText;
 }
 let clickLink=function(param, idForLinks) {
