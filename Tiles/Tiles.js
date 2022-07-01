@@ -28,6 +28,7 @@ loadTile = function(path, loadedCallBack, dataCallBack, name, detectMouse){
     loaded:false,
     appended:true,
     setDimensions:function(x,y,w=100,h=100,zIndex=1){
+      console.log("*** >>> setDimensions ", name, x,y,w,h)
       if(x==null){
         x = 0
         y = 0

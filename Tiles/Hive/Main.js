@@ -12,6 +12,9 @@ export default class Hive{
       },
       interaction:{
         nodes_zoom:'static'
+      },
+      layout:{
+        selection_mode:"none"
       }
     }
 

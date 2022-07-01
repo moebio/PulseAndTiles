@@ -12,6 +12,7 @@ export default class Tooltip extends Element{
 	}
 
 	setData(text){
+		if(text==null) return
 		this.text = text
 		this.k.setText('white', this.config.font_size)
 		if(this.config.fixedWidth){

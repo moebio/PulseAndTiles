@@ -5414,7 +5414,7 @@ MetaCanvas.prototype.cycleOnMouseMovement=function (time) {
      this.canvas.addEventListener('mousewheel', this.cycleOnMouseMovementListener, { passive: false }); //TEST as per Dani's request
       this.canvas.addEventListener('mousedown', this.cycleOnMouseMovementListener, false);
      this.canvas.addEventListener('keydown', this.cycleOnMouseMovementListener, false);
-     document.addEventListener("keydown", boundMouseOrKeyboard, false);
+     //document.addEventListener("keydown", this.boundMouseOrKeyboard, false);
      this.canvas.addEventListener('keyup', this.cycleOnMouseMovementListener, false);
      document.addEventListener('keyup', this.cycleOnMouseMovementListener, false);
       if (this.IS_TOUCH) {

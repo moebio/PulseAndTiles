@@ -1,8 +1,12 @@
 //api documentation: https://github.com/dataarts/dat.gui/blob/master/API.md#Controller+listen
 
 
+
 buildGuiFromObject = function(object, callBack){
 	let gui = new dat.GUI({autoPlace:false})
+
+
+	gui.object = object
 
 	const meta_sufixes = ["_VALUES","_MIN","_MAX","_STEP","_LABEL","_TYPE","_IS_COLOR","_IS_BUTTON"]
 	const valid_types = ["number", "string", "boolean", "array"]
@@ -132,6 +136,14 @@ buildGuiFromObject = function(object, callBack){
 
 			if(control!=null) control.onChange(ch => _changeFunction(ch, control))
 		}
+	}
+
+	gui.setValues = function(values){
+		let newObject = JSON.parse(JSON.stringify(this.object))
+		for(let featureNameInValues in values){
+			newObject[featureNameInValues] = values[featureNameInValues]
+		}
+		this.setObject(newObject)
 	}
 
 	gui.setDimensions = function(x,y,w=300,h){

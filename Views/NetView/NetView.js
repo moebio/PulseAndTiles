@@ -49,6 +49,7 @@ export default class NetView{
 			box_padding:2,
 			fixed_width:100,
 			color_mode:'image', //'box',//text, box, categories
+			download_images_automatically:true,
 			font:"Arial",
 			size_property:"weight",
 			draggable:true,
@@ -235,9 +236,12 @@ export default class NetView{
 				}
 
 				//images
-				if(nd.urlImage && !nd._loadingImage){
+				console.log("||| 1 this.config.nodes.download_images_automatically, nd.urlImage", this.config.nodes.download_images_automatically, nd.urlImage)
+				if(this.config.nodes.download_images_automatically && nd.urlImage && !nd._loadingImage){
 					nd._loadingImage=true
 					_.loadImage(nd.urlImage, o=>{
+						if(!o.result) return
+							console.log("||| 2 this.config.nodes.download_images_automatically, nd.urlImage", this.config.nodes.download_images_automatically, nd.urlImage)
 						nd.image=o.result
 						nd._w_base = 0.8*this.config.nodes.fixed_width
 						nd._h_base = (nd.image.height/nd.image.width)*nd._w_base
@@ -423,6 +427,10 @@ export default class NetView{
 
 	relationOver(overRelation){
 		this.callBackSendData({type:'over relation', value:overRelation})
+	}
+
+	relationOut(){
+		this.callBackSendData({type:'out relation', value:""})
 	}
 
 	relationSelected(selectedRelation){

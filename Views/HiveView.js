@@ -243,7 +243,6 @@ export default class HiveView extends NetView{
   }
 
   _loadImageForNode(nd){
-    
     if(!nd.urlImage || nd.imgLoadStarted) return
       nd.imgLoadStarted=true
       //console.log("[HV] _loadImageForNode nd.urlImage:", nd.urlImage)

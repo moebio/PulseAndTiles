@@ -183,6 +183,7 @@ export default class Draw{
 		
 		if(view.overNode!=prevNodeOver && !view.overNode) view.nodeOut()
 		if(view.overNode!=prevNodeOver && view.overNode) view.nodeOver(view.overNode)
+		if(view.overRelation!=prevRelationOver && !view.overRelation) view.relationOut()
 		if(view.overRelation!=prevRelationOver && view.overRelation) view.relationOver(view.overRelation)
 
 		//top (normally does nothing, except when container overrides this function)

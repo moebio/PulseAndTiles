@@ -1,4 +1,6 @@
-class Menu extends Element{
+import Element from './Element.js'
+
+export default class Menu extends Element{
 
 	/////////////////////////////////////////constructor
 	constructor(k, callBackSendData, config){
