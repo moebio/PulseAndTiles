@@ -9,7 +9,7 @@
 	"receives":[
 		{
 			"type":"network",
-			"description":"network to be visualized",
+			"description":"Network to be visualized. It receives a Net instance, or a JSON network. An Object with structure {nodes:500, reltions:2000} will generate a random network with given number of nodes and relations (optionally relations could be a number in [0,1] for the probablity of two nodes to be connected)",
 			"value_type":"Net",
 			"kind":"data",
 			"optional":"false"
@@ -33,6 +33,14 @@
 			"description":"forces the un-selection of a node (if any is selected, if not the command is unoquous), doesn´t require to send value.",
 			"value_type":"string",
 			"kind":"layout",
+			"optional":"true"
+		}
+		,
+		{
+			"type":"position",
+			"description":"moves the space to a certain position and certain zoom, to use it send an object with all or some of the following numeric properties: x, y, zoom",
+			"value_type":"Object",
+			"kind":"command",
 			"optional":"true"
 		}
 		,

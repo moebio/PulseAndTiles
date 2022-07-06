@@ -135,6 +135,11 @@ export default class NetView{
 			case "new_drawNode":
 				this.setNewDrawNodeFunction(dataObj.value)
 				break
+			case "position":
+				if(dataObj.value.x) this.drawMethods.x0 = dataObj.value.x
+				if(dataObj.value.y) this.drawMethods.y0 = dataObj.value.y
+				if(dataObj.value.zoom) this.drawMethods.zoom = dataObj.value.zoom
+				break
 			case "layout":
 				if(!dataObj.value.includes("free") || dataObj.value=="center") this.layout_value = dataObj.value
 				switch(dataObj.value){
@@ -185,6 +190,12 @@ export default class NetView{
 	}
 
 	setNetwork(net){
+		//random network
+		if(net.nodes && typeof(net.nodes)=="number" && net.relations && typeof(net.relations)=="number"){
+			net = _.createRandomNetwork(net.nodes, net.relations)
+		}
+
+		//network to be parsed
 		if(net["type"]!="Net" && net["type"]!="Tr") net = _.parseNet(net)
 
 		let firstNet = net && this.net==null

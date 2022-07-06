@@ -21,6 +21,26 @@ weight
 
 
 
+///////////////////send and receive
+
+NetView can receive different objects that allows to:
+
+	set the network to be visualized. It's possible to send different networks through one session, if a network shares some of the nodes of the previous, these stay in same position, so it appears as if the network was modified.
+
+	set the configuration of the Visualization, including physics model behavior, nodes and relations appereances (see below for more information on the configuration object)
+
+	change aspects of the layout (such as clustering, see below for all the options)
+
+	control the network in session time, doings things such as selecting nodes or simulating a rollover.
+
+
+NetView will send information, such as nodes and relations being selected or hovered.
+
+
+For a comprehensive documentation of all the Objects received and sent by NetView, check communication.json
+
+
+
 
 ///////////////////configuration object
 
@@ -47,21 +67,21 @@ relations:
 	curvature:0 							//inactive if 0
 	arrow_size:0 							//inactive if 0
 	color:null
-	size_property:"weight"
+	size_property:"weight"					//name of node property to be used as size 
 	tooltip:false
 	tooltip_property:'name'
 	max_thick:2
 
 physics:
-	friction:0.9
-	k:0.01
-	dEqSprings:130
-	dEqRepulsors:220
+	friction:0.9							//friction of the system 0 < friction < 1
+	k:0.01 									//strength factor fo the system
+	dEqSprings:130							//equilibrium distance between connected nodes
+	dEqRepulsors:220 						//equilibrium distance between non connected nodes
 
 view:
-	background:'white'
-	zoom_min:0.1
-	zoom_max:15
+	background:'white' 						//background color
+	zoom_min:0.1 							//maximum zoom in
+	zoom_max:15 							//maximum zoom out
 	
 interaction:
 	nodes_zoom:'close'						//other options: static,close
@@ -80,8 +100,6 @@ layout:
 
 
 
-
-
 ///////////////////layouts
 
 
@@ -89,7 +107,7 @@ clusters
 
 clusters category (uses category property of nodes)
 
-cloud
+cloud (single disc arrangement)
 
 xy (uses properties x and y of nodes)
 
