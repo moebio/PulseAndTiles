@@ -587,7 +587,7 @@ forceToNode = forceToNode == null ? false : forceToNode;
  list.removeNode = ndL.prototype.removeNode;
  list.removeNodes = ndL.prototype.removeNodes;
  list.removeNodeAtIndex = ndL.prototype.removeNodeAtIndex;
- list.getNodeByName = ndL.prototype.getNodeByName;
+ list.getByName = ndL.prototype.getByName;
  list.get = ndL.prototype.get;
  list.getNodesByIds = ndL.prototype.getNodesByIds;
  
@@ -3374,7 +3374,7 @@ ndL.prototype.normalizeWeights=function() {
    this[i].weight /= max;
  }
 }
-ndL.prototype.getNodeByName=function(name) {
+ndL.prototype.getByName=function(name) {
  let i;
  let l = this.length;
  for(i = 0; i < l; i++) {
@@ -3640,8 +3640,8 @@ Net.prototype.getNodesIds=function() {
 Net.prototype.addNode=function(node) {
  this.nodes.addNode(node);
 }
-Net.prototype.getNodeByName=function(name) {
- return this.nodes.getNodeByName(name);
+Net.prototype.getByName=function(name) {
+ return this.nodes.getByName(name);
 }
 Net.prototype.get=function(id) {
  return this.nodes.get(id);
@@ -5667,31 +5667,26 @@ MetaCanvas.prototype._eqTriangle=function (x, y, angle, r) {
  this.context.lineTo(r * Math.cos(angle + 4.1888) + x, r * Math.sin(angle + 4.1888) + y);
  this.context.lineTo(r * Math.cos(angle) + x, r * Math.sin(angle) + y);
 }
-MetaCanvas.prototype.fRectM=function (x, y, width, height, margin) {
- margin = margin == null ? 0 : margin;
+MetaCanvas.prototype.fRectM=function (x, y, width, height, margin=0) {
  this.context.fillRect(x, y, width, height);
  return this.mY > y - margin && this.mY < y + height + margin && this.mX > x - margin && this.mX < x + width + margin;
 }
-MetaCanvas.prototype.sRectM=function (x, y, width, height, margin) {
- margin = margin == null ? 0 : margin;
+MetaCanvas.prototype.sRectM=function (x, y, width, height, margin=0) {
  this.context.strokeRect(x, y, width, height);
  return this.mY > y - margin && this.mY < y + height + margin && this.mX > x - margin && this.mX < x + width + margin;
 }
-MetaCanvas.prototype.fsRectM=function (x, y, width, height, margin) {
- margin = margin == null ? 0 : margin;
+MetaCanvas.prototype.fsRectM=function (x, y, width, height, margin=0) {
  this.context.fillRect(x, y, width, height);
  this.context.strokeRect(x, y, width, height);
  return this.mY > y - margin && this.mY < y + height + margin && this.mX > x - margin && this.mX < x + width + margin;
 }
-MetaCanvas.prototype.fCircleM=function (x, y, r, margin) { //check if you can avoid repeat
- margin = margin == null ? 0 : margin;
+MetaCanvas.prototype.fCircleM=function (x, y, r, margin=0) { //check if you can avoid repeat
  this.context.beginPath();
  this.context.arc(x, y, r, 0, TwoPi);
  this.context.fill();
  return Math.pow(x - this.mX, 2) + Math.pow(y - this.mY, 2) < Math.pow(r + margin, 2);
 }
-MetaCanvas.prototype.sCircleM=function (x, y, r, margin) {
- margin = margin == null ? 0 : margin;
+MetaCanvas.prototype.sCircleM=function (x, y, r, margin=0) {
  this.context.beginPath();
  this.context.arc(x, y, r, 0, TwoPi);
  this.context.stroke();
@@ -5749,6 +5744,7 @@ MetaCanvas.prototype.drawImage=function (image) {
      break;
   }
 }
+
 
 MetaCanvas.prototype.fitImage=function (image, rectangle, mode) {
  if (image == null || rectangle == null) return;
@@ -6382,12 +6378,14 @@ MetaCanvas.prototype.mapCanvas=function(recCoordinates){
    return y*recCoordinates.height/this.H + recCoordinates.y;
  };
 }
-Forces.prototype.forcesForNetwork=function(network, initRadius, initCenter, eqDistancesMode, addShortRepulsorsOnRelated) {
+Forces.prototype.forcesForNetwork=function(network, initRadius, initCenter, eqDistancesMode, addShortRepulsorsOnRelated, attractionToCenter) {
  initRadius = initRadius || 0;
  initCenter = initCenter || new P(0, 0);
  eqDistancesMode = eqDistancesMode == null ? 0 : eqDistancesMode;
  addShortRepulsorsOnRelated = addShortRepulsorsOnRelated == null ? false : addShortRepulsorsOnRelated;
-   this.forcesList = new L();
+    this.attractionToCenter = attractionToCenter
+
+    this.forcesList = new L();
  this.equilibriumDistances = new nL();
  this.forcesTypeList = new L();
 
@@ -6586,20 +6584,21 @@ Forces.prototype.applyForces=function() {
    }
  }
 
- Forces.prototype.calculateAndApplyForces=function(n) {
+ Forces.prototype.calculateAndApplyForces=function() {
      this.calculate()
+     if(this.attractionToCenter) this.attractionToPoint(new P(500,400), 0.000004)
      this.applyForces()
  }
 
  Forces.prototype.iterate=function(n) {
    for(var i=0; i<n; i++){
-     this.calculate();
-     this.applyForces();
+     this.calculate()
+     if(this.attractionToCenter) this.attractionToPoint(new P(500,400), 0.000004)
+     this.applyForces()
    }
  }
 
-Forces.prototype.attractionToPoint=function(point, strength, limit) {
- strength = strength == null ? 1 : strength;
+Forces.prototype.attractionToPoint=function(point, strength=1, limit) {
  let node;
  let force;
  let dx;
@@ -6609,16 +6608,18 @@ Forces.prototype.attractionToPoint=function(point, strength, limit) {
    node = this.nodes[i];
    dx = point.x - node.x;
    dy = point.y - node.y;
-   d2 = Math.pow(dx, 2) + Math.pow(dy, 2);
+   d2 = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))
    if(limit != null) {
-     force = Math.min(strength / d2, limit);
+     force = Math.min(strength*d2, limit);
    } else {
-     force = strength / d2;
+     force = strength*d2;
    }
+   //force = strength
    node.ax += force * dx;
    node.ay += force * dy;
  }
 }
+
 Forces.prototype.avoidOverlapping=function(delta=0) {
   var i;
  let node0;

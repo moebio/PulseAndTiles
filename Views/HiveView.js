@@ -76,12 +76,14 @@ export default class HiveView extends NetView{
       this.k.stroke('black',0.5)
       this.k.fill(hasImage?'black':nd.color)//Back)
       this.k.context.save()
-      //console.log(nd.cell.length)
+
       if(nd.cell?.length>=3){
         this.k.fsPolygon(nd.cell)
       } else {
-        this.k.fRect(0,0,this.k.W,this.k.H)
+        return
       }
+
+
       this.k.context.clip()
 
       if(hasImage){
@@ -246,7 +248,7 @@ export default class HiveView extends NetView{
     if(!nd.urlImage || nd.imgLoadStarted) return
       nd.imgLoadStarted=true
       //console.log("[HV] _loadImageForNode nd.urlImage:", nd.urlImage)
-      _.loadImage(nd.urlImage, o=>{nd.image=o.result; console.log("   image loaded:", nd.name, nd.image.width)})
+      _.loadImage(nd.urlImage, o=>{nd.image=o.result})
   }
 }
 

@@ -74,7 +74,8 @@ export default class NetView{
 			friction:0.9,
 			k:0.01,
 			dEqSprings:130,
-			dEqRepulsors:220
+			dEqRepulsors:220,
+			attractionToCenter:false
 		},
 		view:{
 			background:'white',
@@ -183,9 +184,19 @@ export default class NetView{
 						this.layouts.fitInWindow()
 						break
 					case "center":
-						this.layouts.center()
+						if(this.selectedNode){
+							this.nodeSelected(this.selectedNode)
+						} else {
+							this.layouts.center()
+						}
+						
 						break
 				}
+				break
+			case "mouse_out_tile":
+				this.k.mX = 99999
+				this.k.mY = 99999
+				this.nodeOut()
 		}
 	}
 
@@ -230,7 +241,7 @@ export default class NetView{
 
 			if(allCoordinatesZero) nodesHaveCoordinates=false
 
-			this.forces.forcesForNetwork(net, nodesHaveCoordinates?0:200, new _.P(500,400))
+			this.forces.forcesForNetwork(net, nodesHaveCoordinates?0:200, new _.P(500,400), null, null, this.config.physics.attractionToCenter)
 			this.k.context.font = "12px "+this.config.nodes.font
 			this.net.nodes.forEach(nd=>{
 				if(this.config.nodes.fixed_width>0){
@@ -247,16 +258,24 @@ export default class NetView{
 				}
 
 				//images
-				console.log("||| 1 this.config.nodes.download_images_automatically, nd.urlImage", this.config.nodes.download_images_automatically, nd.urlImage)
+				//console.log("||| 1 this.config.nodes.download_images_automatically, nd.urlImage", this.config.nodes.download_images_automatically, nd.urlImage)
 				if(this.config.nodes.download_images_automatically && nd.urlImage && !nd._loadingImage){
-					nd._loadingImage=true
-					_.loadImage(nd.urlImage, o=>{
-						if(!o.result) return
-							console.log("||| 2 this.config.nodes.download_images_automatically, nd.urlImage", this.config.nodes.download_images_automatically, nd.urlImage)
-						nd.image=o.result
+					
+					//in case the node had already a loaded image
+					
+					if(nd.image && nd.image.width){
 						nd._w_base = 0.8*this.config.nodes.fixed_width
 						nd._h_base = (nd.image.height/nd.image.width)*nd._w_base
-					})
+					}
+					
+					// nd._loadingImage=true
+					// _.loadImage(nd.urlImage, o=>{
+					// 	if(!o.result) return
+					// 		console.log("||| 2 this.config.nodes.download_images_automatically, nd.urlImage", this.config.nodes.download_images_automatically, nd.urlImage)
+					// 	nd.image=o.result
+					// 	nd._w_base = 0.8*this.config.nodes.fixed_width
+					// 	nd._h_base = (nd.image.height/nd.image.width)*nd._w_base
+					// })
 				}
 			})
 
@@ -364,6 +383,7 @@ export default class NetView{
 		this.forces.friction = this.config.physics.friction
 		this.forces.dEqSprings = this.config.physics.dEqSprings
 		this.forces.dEqRepulsors = this.config.physics.dEqRepulsors
+		this.forces.attractionToCenter = this.config.physics.attractionToCenter
 		
 		this.NODES_DYNAMIC_ZOOM = this.config.interaction.nodes_zoom=='dynamic' || this.config.interaction.nodes_zoom=='close'
 		this.NODES_CLOSE_ZOOM = this.config.interaction.nodes_zoom=='close'
@@ -397,9 +417,14 @@ export default class NetView{
 	//actions that send data
 
 	nodeSelected(selectedNode){
+		console.log("selectedNode::", selectedNode)
+
 		if(typeof(selectedNode)=="string" ){
 			selectedNode=this.net.get(selectedNode)
 		}
+
+		console.log("selectedNode::", selectedNode)
+
 		this._FORCES_ACTIVE = false
 		if(this.pairSelected){
 			this.pairSelected = null

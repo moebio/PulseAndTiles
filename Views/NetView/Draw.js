@@ -20,6 +20,8 @@ export default class Draw{
 		let view = this.view
 		if(this.k==null || view.net==null) return
 
+		
+
 
 		this.k.fill(view.config.view.background)
 		//this.k._fRect(0,0,this.k.W,this.k.H)
@@ -29,6 +31,7 @@ export default class Draw{
 			if(view.forces.friction>0.2){
 				view.forces.friction*=0.995
 				view.forces.calculateAndApplyForces()
+				//view.forces.attractionToPoint(new _.P())
 			}
 		}
 
@@ -216,7 +219,21 @@ export default class Draw{
 		let k = this.k
 
 		let mode = view.config.nodes.color_mode
-		if(mode=="image" && !nd.image) mode="box"
+
+		if(mode=="image" && !nd.image){
+			mode="box"
+
+			//starts loading image if it has not yet
+			if(nd.urlImage && !nd._loadingImage && view.config.nodes.download_images_automatically){
+				nd._loadingImage=true
+				_.loadImage(nd.urlImage, o=>{
+					if(!o.result) return
+					nd.image=o.result
+					nd._w_base = 0.8*view.config.nodes.fixed_width
+					nd._h_base = (nd.image.height/nd.image.width)*nd._w_base
+				})
+			}
+		}
 
 		switch(mode){
 			case 'image':

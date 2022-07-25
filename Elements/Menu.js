@@ -10,6 +10,8 @@ export default class Menu extends Element{
 		this.selectedIndexes
 		this.indexOver
 
+		this.prevOverSome = false
+
 		this.mode = 0
 		this.setTextColor('black')
 
@@ -101,6 +103,8 @@ export default class Menu extends Element{
 
 		let xText = this.x+(this.mode==0?10:dy*1.2)
 
+		let overSome = false
+
 		for(let i=0; i<this.labels.length; i++){
 			color = this.active[i]?this.colors[i]:this.colorsUnSelected[i]
 			this.k.fill(color)
@@ -118,9 +122,12 @@ export default class Menu extends Element{
 			this.k.fText(this.labels[i], xText, y0+dy*0.5)
 			y0+=dy
 			if(over) {
+				overSome = true
 				this.k.setCursor('pointer')
 				this.indexOver = i
+				
 			}
+
 			if(over && this.k.MOUSE_UP){
 				if(this.selectionMode=="single" && !this.active[i]) this._resetActive()
 				this.active[i] = !this.active[i]
@@ -149,6 +156,26 @@ export default class Menu extends Element{
 		}
 
 		let iOver = this.indexOver!=null?this.indexOver:this.highlightIndex
+
+		if(overSome){
+			// if(!this.prevOverSome){
+			// 	this.callBackSendData({
+			// 		type:"over",
+			// 		value:this.values[iOver],
+			// 		index:iOver,
+			// 		selectedValues:this.selectedValues,
+			// 		selectedIndexes:this.selectedIndexes
+			// 	})
+			// }
+		} else if(this.prevOverSome){
+			this.callBackSendData({
+				type:"out",
+				selectedValues:this.selectedValues,
+				selectedIndexes:this.selectedIndexes
+			})
+		}
+
+		
 		if(iOver!=null){
 			this.k.stroke('black', 2)
 			switch(this.mode){
@@ -160,7 +187,9 @@ export default class Menu extends Element{
 					break
 			}
 			
-		}
+		} 
+
+		this.prevOverSome = overSome
 
 		if(this.indexOver!=null && this.indexOver != indexOverPrev) this.callBackSendData({type:'over', value:this.values[this.indexOver], index:this.indexOver, active:this.active[this.indexOver]})
 	}

@@ -42,6 +42,7 @@ For a comprehensive documentation of all the Objects received and sent by NetVie
 
 
 
+
 ///////////////////configuration object
 
 nodes:
@@ -77,6 +78,7 @@ physics:
 	k:0.01 									//strength factor fo the system
 	dEqSprings:130							//equilibrium distance between connected nodes
 	dEqRepulsors:220 						//equilibrium distance between non connected nodes
+	attractionToCenter:false				//nodes are attracted to center of space
 
 view:
 	background:'white' 						//background color
@@ -93,14 +95,27 @@ layout:
 	selection_mode:'spanning_tree'			//other options: impact_from, impact_to, spanning_tree
 	r_spanning_circles:120
 	draw_loops:0 							//draw loops of size n, if n>0
-	draw_grid:true
-	simulation:false						//for fixed values of x or y
+	draw_grid:true 							//for fixed values of x or y
+	simulation:false						
 	clusters_circles_margin:4
+
+
+
+In order to change any configuration value, or a few of them, only the object with such property or properties need to be sent.
+
+example:
+
+tile.sendData({type:"configuration", value:{nodes:{text_size:12, fixed_width:300}, physics:{attractionToCenter:true}}})
+
+will change three configuration parameters while keeping the remaining with the same default value. It´s possible to change configuration properties many times during a session.
 
 
 
 
 ///////////////////layouts
+
+
+to set a layout send an object with type "layout" and any of the following values:
 
 
 clusters
@@ -124,3 +139,11 @@ free y (frees nodes from y position)
 fit in window (keeps relative current positions and places all nodes within window boundaries)
 
 center (moves stage to have the net in the center of screen)
+
+
+
+example:
+
+tile.sendData({type:"layout", value:"x"}) 
+
+will fix horizontal position of nodes, requiring they have an x property with numeric value, while keeping vertical positions free.

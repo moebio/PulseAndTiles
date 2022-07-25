@@ -2,7 +2,7 @@ let MODULES_LOADED = []
 let MODULES = []
 let tileToRemove
 
-loadTile = function(path, loadedCallBack, dataCallBack, name, detectMouse){
+loadTile = function(path, loadedCallBack, dataCallBack, name, detectMouse=true){
   //console.log("1 path", path)
   let iframe = _buildIframe()
   let scope = this
@@ -28,7 +28,6 @@ loadTile = function(path, loadedCallBack, dataCallBack, name, detectMouse){
     loaded:false,
     appended:true,
     setDimensions:function(x,y,w=100,h=100,zIndex=1){
-      console.log("*** >>> setDimensions ", name, x,y,w,h)
       if(x==null){
         x = 0
         y = 0
@@ -39,7 +38,7 @@ loadTile = function(path, loadedCallBack, dataCallBack, name, detectMouse){
     },
     sendData:function(data){
       if(this.scope?._) data = _convertDataToMo(data, this.scope)
-    	this.scope?this.scope.receiveData(data):(this.scope.__receiveData?this.scope.__receiveData(data):this.scope.onMessageReceived({data:[data]}))
+    	this.scope?.receiveData?this.scope.receiveData(data):(this.scope.__receiveData?this.scope.__receiveData(data):this.scope.onMessageReceived({data:[data]}))
     },
     mouseIsOver:false,
     detectMouse
@@ -90,10 +89,20 @@ loadTile = function(path, loadedCallBack, dataCallBack, name, detectMouse){
   
   if(detectMouse){
     iframe.addEventListener('mouseover', function(){
-      //console.log("/////// over tilee:", tile.name)
+      console.log("/////// over tilee:", tile.name)
       MODULES_LOADED.forEach(mdl=>{
         mdl.mouseIsOver = mdl==tile
-        mdl.sendData({type:mdl.mouseIsOver?"mouse_over_tilee":"mouse_out_tilee"})
+        //mdl.sendData({type:mdl.mouseIsOver?"mouse_over_tile":"mouse_out_tile"})
+        if(mdl.mouseIsOver){
+          mdl.sendData({type:"mouse_over_tile"})
+        }
+      })
+    })
+    iframe.addEventListener('mouseout', function(){
+      console.log("/////// out tilee:", tile.name)
+      MODULES_LOADED.forEach(mdl=>{
+        mdl.mouseIsOver = mdl!=tile
+        if(!mdl.mouseIsOver) mdl.sendData({type:"mouse_out_tile"})
       })
     })
   }

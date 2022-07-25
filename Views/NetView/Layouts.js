@@ -78,7 +78,6 @@ export default class Layouts{
 			x = selectedNode.xF + dx*i*direction
 			for(j=0; j<levelsTableMain[i].length; j++){
 				levelsTableMain[i][j].xF = x
-
 				levelsTableMain[i][j].yF = selectedNode.yF + dy*(j-(levelsTableMain[i].length-1)*0.5)
 			}
 		}
@@ -338,14 +337,20 @@ export default class Layouts{
 		let bary = 0
 
 		this.view.net.nodes.forEach(n=>{
-			barx+=(n.x+this.drawMethods.x0)
-			bary+=(n.y+this.drawMethods.y0)
+			barx+=this.drawMethods.fX(n.x)
+			bary+=this.drawMethods.fY(n.y)
 		})
 
 		barx/=this.view.net.nodes.length
 		bary/=this.view.net.nodes.length
+		
+		let x0F = this.drawMethods.x0 - (barx - this.k.cX)
+		let y0F = this.drawMethods.y0 - (bary - this.k.cY)
 
-		this.drawMethods.x0 -= barx - this.k.cX
-		this.drawMethods.y0 -= bary - this.k.cY
+		let interval = setInterval(()=>{
+			this.drawMethods.x0=0.85*this.drawMethods.x0+0.15*x0F
+			this.drawMethods.y0=0.85*this.drawMethods.y0+0.15*y0F
+			if(Math.abs(this.drawMethods.x0-x0F)<0.05) clearInterval(interval)
+		}, 40)
 	}
 }
