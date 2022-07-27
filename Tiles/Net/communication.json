@@ -45,6 +45,14 @@
 		}
 		,
 		{
+			"type":"load_image",
+			"description":"node or id of node to start downloading its image. If a node has the property urlImage it starts downloading the image (once it loaded it will be drawn, depending on the drawing mode)",
+			"value_type":"Object",
+			"kind":"command",
+			"optional":"true"
+		}
+		,
+		{
 			"type":"layout",
 			"description":"sets a layout, options are: clusters, clusters category (uses category property of nodes), cloud, xy (uses properties x and y of nodes), x (uses property x of nodes), y (uses property y of nodes), free (free nodes from fixed x and/or y positions), free x (frees nodes from x position), free y (frees nodes from y position), fit in window. See documentation.txt",
 			"value_type":"",

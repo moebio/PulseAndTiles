@@ -89,7 +89,6 @@ loadTile = function(path, loadedCallBack, dataCallBack, name, detectMouse=true){
   
   if(detectMouse){
     iframe.addEventListener('mouseover', function(){
-      console.log("/////// over tilee:", tile.name)
       MODULES_LOADED.forEach(mdl=>{
         mdl.mouseIsOver = mdl==tile
         //mdl.sendData({type:mdl.mouseIsOver?"mouse_over_tile":"mouse_out_tile"})

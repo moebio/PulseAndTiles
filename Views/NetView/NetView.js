@@ -107,6 +107,8 @@ export default class NetView{
 	}
 
 	receiveData(dataObj){
+		let node
+
 		switch(dataObj.type){
 			case "network":
 			case "data":
@@ -120,11 +122,7 @@ export default class NetView{
 				this.nodeSelected(dataObj.value)
 				break
 			case "over":
-				/**
-				To Be Done
-				these are just tests
-				**/
-				let node = typeof(dataObj.value)=="string"?this.net.get(dataObj.value):dataObj.value
+				node = typeof(dataObj.value)=="string"?this.net.get(dataObj.value):dataObj.value
 				this.k.mX = node._px+2
 				this.k.mY = node._py+2
 				this.drawMethods.draw(true)
@@ -140,6 +138,19 @@ export default class NetView{
 				if(dataObj.value.x) this.drawMethods.x0 = dataObj.value.x
 				if(dataObj.value.y) this.drawMethods.y0 = dataObj.value.y
 				if(dataObj.value.zoom) this.drawMethods.zoom = dataObj.value.zoom
+				break
+			case "load_image":
+				node = typeof(dataObj.value)=="string"?this.net.get(dataObj.value):dataObj.value
+				
+				if(!node.urlImage || node._loadingImage || (node.image && node.image.width)) return
+				
+				node._loadingImage = true
+		        _.loadImage(node.urlImage, o=>{
+			          if(!o.result) return
+			          node.image=o.result
+			          node._w_base = 0.8*this.config.nodes.fixed_width
+			          node._h_base = (node.image.height/node.image.width)*node._w_base
+		        })
 				break
 			case "layout":
 				if(!dataObj.value.includes("free") || dataObj.value=="center") this.layout_value = dataObj.value
@@ -197,6 +208,7 @@ export default class NetView{
 				this.k.mX = 99999
 				this.k.mY = 99999
 				this.nodeOut()
+				break
 		}
 	}
 

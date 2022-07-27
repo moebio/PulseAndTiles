@@ -548,6 +548,7 @@ sL.toL=function(array, forceToString) {
  result.trim = sL.prototype.trim;
   //override
  result.clone = sL.prototype.clone;
+ result.add = sL.prototype.add;
   return result;
 }
 
@@ -3287,6 +3288,19 @@ sL.prototype.replace=function(regExp, string) {
    newStringList[i] = this[i].replace(regExp, string);
  }
   return newStringList;
+}
+sL.prototype.add = function(toBeAdded){
+    let newsl
+    if(typeof(toBeAdded)=="string"){
+        newsl = this.map(s=>s+toBeAdded).tosL()
+    }
+
+    if(Array.isArray(toBeAdded)){
+        newsl = this.map((s,i)=>s+toBeAdded[i%toBeAdded.length]).tosL()
+    }
+
+    newsl.name = this.name
+    return newsl
 }
 sL.prototype.getConcatenated=function(separator) {
  separator = separator == null ? ' ' : separator;
