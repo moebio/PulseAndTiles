@@ -220,7 +220,7 @@ export default class Draw{
 
 		let mode = view.config.nodes.color_mode
 
-		if(mode=="image" && !nd.image){
+		if((mode=="image" || mode=="image_with_frame") && !nd.image){
 			mode="box"
 
 			//starts loading image if it has not yet
@@ -236,6 +236,9 @@ export default class Draw{
 		}
 
 		switch(mode){
+			case 'image_with_frame':
+				k.fill(nd.color)
+				k.fRect(nd._px-nd._w*0.5-2, nd._py-nd._h*0.5-2, nd._w+4, nd._h+4)
 			case 'image':
 				k.drawImage(nd.image, nd._px-nd._w*0.5, nd._py-nd._h*0.5, nd._w, nd._h)
 				break
@@ -649,7 +652,6 @@ export default class Draw{
 			if(Math.abs(d-r)<15){
 				this.k.setCursor("pointer")
 				if(this.k.MOUSE_DOWN){
-					console.log("n.impact", n.impact)
 					this.k.MOUSE_DOWN=false
 					this.k.MOUSE_PRESSED=false
 					this.nodeChangingImpact = n

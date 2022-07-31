@@ -4471,9 +4471,7 @@ nL.prototype.getMedian=function() {
  let onIndex = prop == entProp;
  return onIndex ? sorted[prop] : (0.5 * sorted[entProp] + 0.5 * sorted[entProp + 1]);
 }
-nL.prototype.getQuantiles=function(nQuantiles, mode) {//TODO: defines different options for return
- nQuantiles = nQuantiles==null?4:nQuantiles;
- mode = mode || 0;
+nL.prototype.getQuantiles=function(nQuantiles=4, mode=0) {//TODO: defines different options for return
   var l = this.length;
  let sorted = this.getSorted(true);
  let prop = l/nQuantiles;
@@ -4512,6 +4510,7 @@ nL.prototype.getQuantiles=function(nQuantiles, mode) {//TODO: defines different 
   numberQuantil._quantiles = quantiles;
  return numberQuantil;
 }
+
 nL.prototype.getSorted=function(ascending) {
  ascending = ascending == null ? true : ascending;
   var newList;
@@ -6224,7 +6223,7 @@ MetaCanvas.prototype.drawTriangleFromBase=function (x, y, base, height, angle) {
  this.context.lineTo(x + 0.5 * base * Math.cos(angle + Math.PI * 0.5), y + 0.5 * base * Math.sin(angle + Math.PI * 0.5));
 }
 
-MetaCanvas.prototype.applyTransformationFunctions=function (fX, fY, fXY) {
+MetaCanvas.prototype.applyTransformationFunctions=function (fX, fY, fXY, invfX, invfY) {
  if (this._fRect == null) {
    this._line = this.line;
    this._sLines = function () {
@@ -6273,8 +6272,12 @@ MetaCanvas.prototype.applyTransformationFunctions=function (fX, fY, fXY) {
    this.drawImage = this._drawImage;
    return;
  }
-  this.fX = fX;
- this.fY = fY;
+    this.fX = fX
+    this.fY = fY
+
+    if(invfX) this.invfX = invfX
+    if(invfY) this.invfY = invfY
+
  this.sX = function(x){
    return this.fX(x+0.5)-this.fX(x-0.5);
  };
@@ -14046,6 +14049,7 @@ let substr=function(string, i0, length) {
  i0 = i0 || 0;
  return string.substr(i0, length);
 }
+
 let splitString=function(string, separator, segments, trim) {
  if(string == null) return null;
  if(segments != null && !isNaN(segments) && segments != 0){
@@ -14265,12 +14269,19 @@ let removeAccentsAndDiacritics=function(string) {
   return r;
 }
 
-let getWordsOccurrencesTable=function(string, stopWords, includeLinks, limit, minSizeWords, wordDelimiter) {
+
+let getWordsOccurrencesTable=function(string, stopWords, includeLinks, limit, minSizeWords, wordDelimiter, includeBiGrams=false) {
  if(string == null) return;
  if(string.length === 0) return new T(new sL(), new nL());
   if(stopWords==1) stopWords = StringOperators_STOP_WORDS
-  var words = getWords(string, false, stopWords, false, includeLinks, null, minSizeWords, wordDelimiter)
- let table;
+    //console.log(stopWords, includeLinks, limit, minSizeWords, wordDelimiter, includeBiGrams)
+    var words = getWords(string, false, stopWords, false, includeLinks, null, minSizeWords, wordDelimiter)
+    if(includeBiGrams) words = words.concat(getBigrams(string, false, stopWords, false, includeLinks, null, minSizeWords))
+
+
+
+
+ let table
  if(limit != null)
    table = words.getFrequenciesTable(true).sliceRows(0, limit-1);
  else
@@ -14279,6 +14290,7 @@ let getWordsOccurrencesTable=function(string, stopWords, includeLinks, limit, mi
  table[1].name = 'Frequency';
  return table
 }
+
 
 let indexesOf=function(text, string, asWord) { //TODO:test
  let indexes, index;
@@ -21229,7 +21241,11 @@ L.prototype.concatNew = function(array){
  MetaCanvas.prototype._setDragZoomTransformation = function(value){
    let fX = x => x*this.ZOOM + this.x0
      let fY = y => y*this.ZOOM + this.y0
-     this.applyTransformationFunctions(fX, fY)
+
+     let invfX = x => (x-this.x0)/this.ZOOM
+     let invfY = y => (y-this.y0)/this.ZOOM
+
+     this.applyTransformationFunctions(fX, fY, null, invfX, invfY)
  }
  MetaCanvas.prototype.setDRAGGABLE = function(value){
     if(this.DRAGGABLE == value) return
