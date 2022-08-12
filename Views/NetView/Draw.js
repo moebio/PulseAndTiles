@@ -145,7 +145,7 @@ export default class Draw{
 		}
 
 		if(this.k.MOUSE_UP_FAST){
-			if(view.overRelation){
+			if(view.overRelation && view.config.relations.selectRelations){
 				view.relationSelected(view.overRelation)
 				view.selectPair(view.overRelation.node0, view.overRelation.node1, false)
 			} else if(view.selectedNode && view.config.interaction.node_unselection=="anywhere" && (!view.overNode || view.overNode==view.selectedNode)){

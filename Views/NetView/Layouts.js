@@ -314,25 +314,22 @@ export default class Layouts{
 		let y1 = -999999
 
 		this.view.net.nodes.forEach(n=>{
-			x0 = Math.min(x0, n.x)
-			x1 = Math.max(x1, n.x)
-			y0 = Math.min(y0, n.y)
-			y1 = Math.max(y1, n.y)
+			x0 = Math.min(x0, n._px)
+			x1 = Math.max(x1, n._px)
+			y0 = Math.min(y0, n._py)
+			y1 = Math.max(y1, n._py)
 		})
 
-		let ampx = x1-x0
-		let ampy = y1-y0
+		let ampx = this.k.W/(x1-x0)
+		let ampy = this.k.H/(y1-y0)
 
-		this.view.net.nodes.forEach(n=>{
-			n.xF = this.k.W*(n.x-x0)/ampx
-			n.yF = this.k.H*(n.y-y0)/ampy
-			if(n.fixed_x) n.fixed_x = n.xF
-			if(n.fixed_y) n.fixed_y = n.yF
-		})
+		this.drawMethods.zoom*=Math.min(ampx, ampy)
+
+		this.center(false)
 
 	}
 
-	center = function(){
+	center = function(smooth=true){
 		let barx = 0
 		let bary = 0
 
@@ -347,10 +344,24 @@ export default class Layouts{
 		let x0F = this.drawMethods.x0 - (barx - this.k.cX)
 		let y0F = this.drawMethods.y0 - (bary - this.k.cY)
 
-		let interval = setInterval(()=>{
-			this.drawMethods.x0=0.85*this.drawMethods.x0+0.15*x0F
-			this.drawMethods.y0=0.85*this.drawMethods.y0+0.15*y0F
-			if(Math.abs(this.drawMethods.x0-x0F)<0.05) clearInterval(interval)
-		}, 40)
+		this.goto(x0F, y0F, null, smooth)
+		
+	}
+
+	goto = function(x, y, zoom, smooth=true){
+		if(zoom==null) zoom = this.drawMethods.zoom
+
+		if(smooth){
+			let interval = setInterval(()=>{
+				this.drawMethods.x0=0.85*this.drawMethods.x0+0.15*x
+				this.drawMethods.y0=0.85*this.drawMethods.y0+0.15*y
+				this.drawMethods.zoom=0.85*this.drawMethods.zoom+0.15*zoom
+				if(Math.abs(this.drawMethods.x0-x)<0.05) clearInterval(interval)
+			}, 40)
+		} else {
+			this.drawMethods.x0=x
+			this.drawMethods.y0=y
+			this.drawMethods.zoom=zoom
+		}
 	}
 }

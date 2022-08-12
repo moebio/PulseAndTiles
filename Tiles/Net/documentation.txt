@@ -11,7 +11,8 @@ urlImage			//if nodes have this property its image will be downloaded
 weight 				//used for sizing the nodes, but any other numeric property could be used
 description 		//used for tooltips (although any string property could be used)
 colorsTable 		//an array with two arrays, [ [colors], [weights, normalized to sum = 1] ]
-
+x 					//a numeric value that could be used for positioning the node
+y 					//idem
 
 
 Some properties in the relations could be used in the visualziation:
@@ -53,7 +54,7 @@ nodes:
 	box_border_color:'black'
 	box_padding:2
 	fixed_width:100
-	color_mode:'image'						//other options: box
+	color_mode:'image'						//other options: box, image_with_frame, text 
 	font:"Arial"
 	size_property:"weight"
 	draggable:true

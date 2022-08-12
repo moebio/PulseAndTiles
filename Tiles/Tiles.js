@@ -38,7 +38,7 @@ loadTile = function(path, loadedCallBack, dataCallBack, name, detectMouse=true){
     },
     sendData:function(data){
       if(this.scope?._) data = _convertDataToMo(data, this.scope)
-    	this.scope?.receiveData?this.scope.receiveData(data):(this.scope.__receiveData?this.scope.__receiveData(data):this.scope.onMessageReceived({data:[data]}))
+    	this.scope?.receiveData?this.scope.receiveData(data):(this.scope.__receiveData?this.scope.__receiveData(data):(this.scope.onMessageReceived?this.scope.onMessageReceived({data:[data]}):console.log("no receiveData function found in tile "+name)))
     },
     mouseIsOver:false,
     detectMouse
@@ -98,7 +98,6 @@ loadTile = function(path, loadedCallBack, dataCallBack, name, detectMouse=true){
       })
     })
     iframe.addEventListener('mouseout', function(){
-      console.log("/////// out tilee:", tile.name)
       MODULES_LOADED.forEach(mdl=>{
         mdl.mouseIsOver = mdl!=tile
         if(!mdl.mouseIsOver) mdl.sendData({type:"mouse_out_tile"})

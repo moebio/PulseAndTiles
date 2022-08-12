@@ -12,6 +12,10 @@ export default class Text{
     this.buildTextPanel()
     this.resize()
 
+    // this.configuration = this.defaultConfiguration = {
+    //   input:false
+    // }
+
     document.body.style = "background-color:rgb(240,240,240)"
     window.addEventListener("resize", this.resize)
   }
@@ -96,7 +100,8 @@ export default class Text{
   }
 
   setConfiguration = function(confObject){
-
+    // this.configuration = Object.assign(this.defaultConfiguration)//config?Object.assign(NetView.defaultConfig, config):NetView.defaultConfig
+    // _.deepAssign(this.configuration, confObject)
   }
 
   //this function will be overriden by the emebeder, so the module can send data to the embedder

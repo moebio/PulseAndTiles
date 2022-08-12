@@ -48,7 +48,7 @@ export default class NetView{
 			box_border_color:'black',
 			box_padding:2,
 			fixed_width:100,
-			color_mode:'image_with_frame', //'box',//text, box, categories
+			color_mode: 'image',//'image_with_frame', //'box',//text, box, categories
 			download_images_automatically:true,
 			font:"Arial",
 			size_property:"weight",
@@ -62,6 +62,7 @@ export default class NetView{
 			//draw:'node_over',//node_over,always
 			show_mode:'over',//all,over,close_all,close_few
 			show_mode_on_layout:'context',//all,
+			selectRelations:true,
 			curvature:0,//inactive if 0
 			arrow_size:0,//inactive if 0
 			color:null,
@@ -121,12 +122,16 @@ export default class NetView{
 				this.layoutClusters = false
 				this.nodeSelected(dataObj.value)
 				break
+			case "select by name":
+				this.layoutClusters = false
+				this.nodeSelected(this.net.getByName(dataObj.value))
+				break
 			case "over":
 				node = typeof(dataObj.value)=="string"?this.net.get(dataObj.value):dataObj.value
 				this.k.mX = node._px+2
 				this.k.mY = node._py+2
 				this.drawMethods.draw(true)
-				this.k.stop()
+				//this.k.stop()
 				break
 			case "unselect":
 				this.nodeUnSelected()
@@ -135,9 +140,22 @@ export default class NetView{
 				this.setNewDrawNodeFunction(dataObj.value)
 				break
 			case "position":
-				if(dataObj.value.x) this.drawMethods.x0 = dataObj.value.x
-				if(dataObj.value.y) this.drawMethods.y0 = dataObj.value.y
-				if(dataObj.value.zoom) this.drawMethods.zoom = dataObj.value.zoom
+
+				//if(dataObj.value.smooth){
+					let xF = dataObj.value.x!=null?dataObj.value.x:this.drawMethods.x0
+					let yF = dataObj.value.y!=null?dataObj.value.y:this.drawMethods.x0
+					let zoomF = dataObj.value.zoom!=null?dataObj.value.zoom:this.drawMethods.zoom
+
+
+				//}
+
+				// if(dataObj.value.x) this.drawMethods.x0 = dataObj.value.x
+				// if(dataObj.value.y) this.drawMethods.y0 = dataObj.value.y
+				// if(dataObj.value.zoom) this.drawMethods.zoom = dataObj.value.zoom
+
+				this.layouts.goto(xF, yF, zoomF, dataObj.value.smooth)
+
+				if(dataObj.value=="center") this.receiveData({type:"layout", value:"center"})
 				break
 			case "load_image":
 				node = typeof(dataObj.value)=="string"?this.net.get(dataObj.value):dataObj.value
@@ -215,8 +233,11 @@ export default class NetView{
 	setNetwork(net){
 		//random network
 		if(net.nodes && typeof(net.nodes)=="number" && net.relations && typeof(net.relations)=="number"){
+			console.log("---->", net.nodes, net.relations)
 			net = _.createRandomNetwork(net.nodes, net.relations)
 		}
+
+		console.log("----> net:", net)
 
 		//network to be parsed
 		if(net["type"]!="Net" && net["type"]!="Tr") net = _.parseNet(net)
@@ -375,12 +396,16 @@ export default class NetView{
 
 
 	setConfiguration(config){
+		if(config=="default") {
+			config = JSON.parse(JSON.stringify(NetView.defaultConfig))
+		}
+
 		if(config.physics?.friction) this._FORCES_ACTIVE = true
 
 		let change_in_nodes_size_property = (this.config.nodes.size_property!=config.nodes?.size_property||this.config.nodes.maxSize!=config.nodes?.maxSize)
 		let change_in_relations_size_property = this.config.relations.size_property!=config.relations?.size_property
 
-		this.config = Object.assign(NetView.defaultConfig)//config?Object.assign(NetView.defaultConfig, config):NetView.defaultConfig
+		this.config = JSON.parse(JSON.stringify(NetView.defaultConfig))//Object.assign(NetView.defaultConfig)//config?Object.assign(NetView.defaultConfig, config):NetView.defaultConfig
 		_.deepAssign(this.config, config)
 
 		if(change_in_nodes_size_property && this.net) this.net.nodes.forEach(n=>this.assignSizeToNode(n))
@@ -393,9 +418,18 @@ export default class NetView{
 
 		this.forces.k = this.config.physics.k
 		this.forces.friction = this.config.physics.friction
-		this.forces.dEqSprings = this.config.physics.dEqSprings
+		
+		
 		this.forces.dEqRepulsors = this.config.physics.dEqRepulsors
 		this.forces.attractionToCenter = this.config.physics.attractionToCenter
+
+		let changeInDEqSprings = this.forces.dEqSprings != this.config.physics.dEqSprings
+		if(changeInDEqSprings){
+			this.forces.dEqSprings = this.config.physics.dEqSprings
+			this.forces.equilibriumDistances = Array(this.forces.equilibriumDistances.length).fill(this.forces.dEqSprings).tonL()
+		}
+
+		
 		
 		this.NODES_DYNAMIC_ZOOM = this.config.interaction.nodes_zoom=='dynamic' || this.config.interaction.nodes_zoom=='close'
 		this.NODES_CLOSE_ZOOM = this.config.interaction.nodes_zoom=='close'

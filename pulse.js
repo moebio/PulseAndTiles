@@ -5759,9 +5759,8 @@ MetaCanvas.prototype.drawImage=function (image) {
 }
 
 
-MetaCanvas.prototype.fitImage=function (image, rectangle, mode) {
- if (image == null || rectangle == null) return;
- if(mode==null) mode = 0;
+MetaCanvas.prototype.fitImage=function (image, rectangle, mode=0) {
+ if (image == null || rectangle == null) return
   var propIm = image.width / image.height;
  let propRc = rectangle.width / rectangle.height;
  let compProp = propIm / propRc;
