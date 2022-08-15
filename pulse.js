@@ -20340,6 +20340,8 @@ let parseNet = function(netData, threshold=0.2){
             })
         }
 
+        const forbiddenPropNames = ["nodes", "relations", "type"]
+
         nodesObjectsArray.forEach(nodeObject=>{
             let category = nodeObject.node.labels[0]
             let node = new _.Nd(String(nodeObject.node?.id), nodeObject.node?.properties?.fullName||nodeObject.node?.properties?.title)
@@ -20348,6 +20350,13 @@ let parseNet = function(netData, threshold=0.2){
             node.urlImage = nodeObject.node?.properties?.savedImg
 
             node.properties = nodeObject.node?.properties
+
+            if(node.properties){
+                for(let propName in node.properties){
+                    if(forbiddenPropNames.includes(propName)) continue
+                    node[propName] = node.properties[propName]
+                }
+            }
 
             net.addNode(node)
         })

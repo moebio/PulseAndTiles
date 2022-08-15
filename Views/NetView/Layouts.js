@@ -264,6 +264,48 @@ export default class Layouts{
 
 		return axis
 	}
+
+	placeNodesInXProperty = function(propertyValue, fixed){
+		propertyValue = this._checkXYProperty(propertyValue)
+		
+		this.view.fixedX = this._fixedAxis(propertyValue, false, fixed)
+		if(this.view.fixedX==null) return
+		this.view.net.nodes.forEach(n=>{
+			if(n[propertyValue]!=null) n.fixed_x = this.view.fixedX.projection(n[propertyValue])
+		})
+		this._FORCES_ACTIVE = true
+		this.view.forces.friction = this.view.config.physics.friction
+	}
+	placeNodesInYProperty = function(propertyValue, fixed){
+		propertyValue = this._checkXYProperty(propertyValue)
+		
+		this.view.fixedY = this._fixedAxis(propertyValue, false, fixed)
+		if(this.view.fixedY==null) return
+		this.view.net.nodes.forEach(n=>{
+			if(n[propertyValue]!=null) n.fixed_y = this.view.fixedY.projection(n[propertyValue])
+		})
+		this._FORCES_ACTIVE = true
+		this.view.forces.friction = this.view.config.physics.friction
+	}
+
+	_checkXYProperty = function(propertyValue){
+		if(propertyValue=="between") propertyValue = "betweennessCentrality"
+		if(propertyValue=="eigen") propertyValue = "eigenvectorCentrality"
+		
+		if(propertyValue=="betweennessCentrality" && this.view.net.nodes[0]["betweennessCentrality"]==null){
+			_.addBetweennessCentralityToNodes(this.view.net)
+		}
+		if(propertyValue=="eigenvectorCentrality" && this.view.net.nodes[0]["eigenvectorCentrality"]==null){
+			_.addEigenvectorCentralityToNodes(this.view.net)
+		}
+		if(propertyValue=="degree" && this.view.net.nodes[0]["degree"]==null){
+			this.view.net.nodes.forEach(n=>n.degree=n.nodes.length)
+		}
+		
+		return propertyValue
+	}
+
+
 	placeNodesInX = function(fixed){
 		this.view.fixedX = this._fixedAxis("position_x", false, fixed)
 		if(this.view.fixedX==null) return

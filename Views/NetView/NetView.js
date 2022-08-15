@@ -170,6 +170,24 @@ export default class NetView{
 			          node._h_base = (node.image.height/node.image.width)*node._w_base
 		        })
 				break
+			case "x":
+				switch(dataObj.value){
+					case "free":
+						this.layouts.freeNodesInX()
+						break
+					default:
+						this.layouts.placeNodesInXProperty(dataObj.value)
+				}
+				break
+			case "y":
+				switch(dataObj.value){
+					case "free":
+						this.layouts.freeNodesInY()
+						break
+					default:
+						this.layouts.placeNodesInYProperty(dataObj.value)
+				}
+				break
 			case "layout":
 				if(!dataObj.value.includes("free") || dataObj.value=="center") this.layout_value = dataObj.value
 				switch(dataObj.value){
@@ -233,11 +251,8 @@ export default class NetView{
 	setNetwork(net){
 		//random network
 		if(net.nodes && typeof(net.nodes)=="number" && net.relations && typeof(net.relations)=="number"){
-			console.log("---->", net.nodes, net.relations)
 			net = _.createRandomNetwork(net.nodes, net.relations)
 		}
-
-		console.log("----> net:", net)
 
 		//network to be parsed
 		if(net["type"]!="Net" && net["type"]!="Tr") net = _.parseNet(net)
