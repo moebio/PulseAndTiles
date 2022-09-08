@@ -422,7 +422,14 @@ export default class Layouts{
 		} else {
 			if(x!=null) this.drawMethods.x0=x
 			if(y!=null) this.drawMethods.y0=y
-			if(zoom!=null) this.drawMethods.zoom=zoom
+			if(zoom!=null){
+				let zoomChange = zoom/this.drawMethods.zoom
+				this.drawMethods.zoom=zoom
+				if(x==null || y==null){
+					this.drawMethods.x0 = (this.drawMethods.x0 - this.k.cX)*zoomChange + this.k.cX
+		   			this.drawMethods.y0 = (this.drawMethods.y0 - this.k.cY)*zoomChange + this.k.cY
+				}
+			}
 		}
 	}
 }
