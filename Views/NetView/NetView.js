@@ -144,21 +144,16 @@ export default class NetView{
 				break
 			case "position":
 
-				//if(dataObj.value.smooth){
-					let xF = dataObj.value.x!=null?dataObj.value.x:this.drawMethods.x0
-					let yF = dataObj.value.y!=null?dataObj.value.y:this.drawMethods.x0
-					let zoomF = dataObj.value.zoom!=null?dataObj.value.zoom:this.drawMethods.zoom
-
-
-				//}
-
-				// if(dataObj.value.x) this.drawMethods.x0 = dataObj.value.x
-				// if(dataObj.value.y) this.drawMethods.y0 = dataObj.value.y
-				// if(dataObj.value.zoom) this.drawMethods.zoom = dataObj.value.zoom
-
+				let xF = dataObj.value.x//!=null?dataObj.value.x:this.drawMethods.invfX(this.k.cX)
+				let yF = dataObj.value.y//!=null?dataObj.value.y:this.drawMethods.invfY(this.k.cY)
+				let zoomF = dataObj.value.zoom//!=null?dataObj.value.zoom:this.drawMethods.zoom
+				
 				this.layouts.goto(xF, yF, zoomF, dataObj.value.smooth)
 
 				if(dataObj.value=="center") this.receiveData({type:"layout", value:"center"})
+				break
+			case "nodes zoom":
+				this.drawMethods.nodes_zoom = Math.max(Math.min(dataObj.value, this.config.view.nodes_zoom_max), this.config.view.nodes_zoom_min)
 				break
 			case "load_image":
 				node = typeof(dataObj.value)=="string"?this.net.get(dataObj.value):dataObj.value

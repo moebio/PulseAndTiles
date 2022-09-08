@@ -402,17 +402,27 @@ export default class Layouts{
 	goto = function(x, y, zoom, smooth=true){
 		if(zoom==null) zoom = this.drawMethods.zoom
 
+		if(this.interval) clearInterval(this.interval)
+
 		if(smooth){
-			let interval = setInterval(()=>{
-				this.drawMethods.x0=0.85*this.drawMethods.x0+0.15*x
-				this.drawMethods.y0=0.85*this.drawMethods.y0+0.15*y
-				this.drawMethods.zoom=0.85*this.drawMethods.zoom+0.15*zoom
-				if(Math.abs(this.drawMethods.x0-x)<0.05) clearInterval(interval)
+			this.interval = setInterval(()=>{
+				if(x!=null) this.drawMethods.x0=0.85*this.drawMethods.x0+0.15*x
+				if(y!=null) this.drawMethods.y0=0.85*this.drawMethods.y0+0.15*y
+				if(zoom!=null){
+					let prevZoom = this.drawMethods.zoom
+					this.drawMethods.zoom=0.85*this.drawMethods.zoom+0.15*zoom
+					let zoomChange = this.drawMethods.zoom/prevZoom
+					if(x==null || y==null){
+						this.drawMethods.x0 = (this.drawMethods.x0 - this.k.cX)*zoomChange + this.k.cX
+			   			this.drawMethods.y0 = (this.drawMethods.y0 - this.k.cY)*zoomChange + this.k.cY
+					}
+				}
+				if((Math.abs(this.drawMethods.x0-x)||0)+(Math.abs(this.drawMethods.y0-y)||0)+(Math.abs(this.drawMethods.zoom-zoom)||0)<0.05) clearInterval(this.interval)
 			}, 40)
 		} else {
-			this.drawMethods.x0=x
-			this.drawMethods.y0=y
-			this.drawMethods.zoom=zoom
+			if(x!=null) this.drawMethods.x0=x
+			if(y!=null) this.drawMethods.y0=y
+			if(zoom!=null) this.drawMethods.zoom=zoom
 		}
 	}
 }
