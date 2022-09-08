@@ -5992,7 +5992,7 @@ MetaCanvas.prototype.nLines=function (text, width) {
 MetaCanvas.prototype._textWidthSectionsInfo=function (text, width) {
     if(this["sections_"+width+"_"+text]) return this["sections_"+width+"_"+text]
 
-    let newText = text.replace(/[\s\n]+/g, " ").trim()
+    let newText = (String(text)||"").replaceAll(/[\s\n]+/g, " ").trim()
     let words = newText.split(" ").filter(w=>w!="")
     let accumulatedSection = 0
     let sections = []
@@ -15096,6 +15096,22 @@ let modelInfluence=function(network, node, impact=1, spread_strength=1){
     network.nodes.forEach(n=>console.log(n.name, n.impact))
 }
 
+
+let prepareTable = function(names, types){
+    let t = new T()
+    names.forEach((name, i)=>{
+        let l
+        if(types && types[i]){
+            l = new types[i]()
+        } else {
+            l = new L()
+        }
+        l.name = name
+        t.push(l)
+    })
+    return t
+}
+
 let NetworkToTable=function(network, useIds, includeLabelsList, countMode){
  if(network==null) return;
   useIds = useIds==null?true:useIds;
@@ -18826,6 +18842,8 @@ let shortestPaths=function(network, node0, node1, shortPath, spTree) {
   var toAdd;
  let nPaths;
  let path;
+ if(allPaths.length==0) return allPaths
+
   while(allPaths[0].length<spTree.nLevels){
    
    newPaths = new T();
@@ -20947,7 +20965,9 @@ exports._parseData = _parseData
 // Extend
 exports.loadData = function(url, callback, parse, parseParams){
   var _parseD = _parseData
-  fetch(url)
+  var myHeaders = new Headers();
+myHeaders.append('Content-Type','text/plain; charset=UTF-8');
+  fetch(url, myHeaders)
     .then(res => res.text())
     .then(data => callback({result:_parseD(data, parse, parseParams), path:url}))
 };
@@ -21817,7 +21837,7 @@ exports._regexWordForTextNet=_regexWordForTextNet
 exports.encodeTextNet=encodeTextNet
 
 exports.modelInfluence=modelInfluence
-
+exports.prepareTable = prepareTable
 exports.NetworkToTable=NetworkToTable
 exports.TableToNetwork=TableToNetwork
 exports.TableToNetworkPairs=TableToNetworkPairs

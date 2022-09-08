@@ -97,7 +97,8 @@ export default class Layouts{
 	}
 
 	placeNodesInShortestPaths = function(node0, node1, paths){
-		
+		if(paths.length==0) return
+			
 		let nPaths = paths.length
 		let lPaths = paths[0].length
 
@@ -117,13 +118,21 @@ export default class Layouts{
 		let xCenter = this.drawMethods.invfX(this.k.cX)
 		let yCenter = this.drawMethods.invfY(this.k.cY)
 
+		let maxY = 0
 		this.view.net.nodes.forEach(n=>{
 			if(n._inPath){
 				n.xF = xCenter - DX*0.5 + DX*n._posInPath/n._lPath
 				n.yF = yCenter - DY*0.5 + DY*n._iPath/nPaths
-			} else {
-				n.xF = n._px
-				n.yF = n._py<yCenter?n._py-DY*0.5:n._py+DY*0.5
+				maxY = Math.max(maxY, Math.abs(n.yF-yCenter))
+			}
+		})
+
+		maxY+=DY*0.3
+
+		this.view.net.nodes.forEach(n=>{
+			if(!n._inPath){
+				n.xF = n.x
+				n.yF = n.y<yCenter?n.y-maxY:n.y+maxY
 			}
 		})
 

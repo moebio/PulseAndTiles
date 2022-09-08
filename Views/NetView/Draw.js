@@ -17,6 +17,7 @@ export default class Draw{
 	///////GENERAL
 
 	draw(){
+
 		let view = this.view
 		if(this.k==null || view.net==null) return
 
@@ -104,9 +105,16 @@ export default class Draw{
 		if(this.pressedNode && (this.k.SHIFT_PRESSED || view.config.nodes.draggable) ){
 			this.pressedNode.x = this.invfX(this.k.mX)
 			this.pressedNode.y = this.invfY(this.k.mY)
+
+			this.pressedNode._px = this.k.mX
+			this.pressedNode._py = this.k.mY
 			
 			this.pressedNode.vx = 0
 			this.pressedNode.vy = 0
+
+			this.pressedNode.fixed_x = this.pressedNode.x
+			this.pressedNode.fixed_y = this.pressedNode.y
+
 			view._FORCES_ACTIVE = true
 			view.forces.friction = view.config.physics.friction
 		} else {
@@ -135,13 +143,16 @@ export default class Draw{
 		if(this.superPressedNode0 && view.overNode && view.overNode!=this.superPressedNode0) this.superPressedNode1 = view.overNode
 
 		if(this.k.MOUSE_UP){
-			this.pressedNode = null
+			if(this.pressedNode){
+				this.pressedNode.fixed_x = null
+				this.pressedNode.fixed_y = null
+				this.pressedNode = null
+			}
 			if(this.superPressedNode1){
 				view.selectPair(this.superPressedNode0, this.superPressedNode1)
 			}
 			this.superPressedNode0 = null
 			this.superPressedNode1 = null
-			
 		}
 
 		if(this.k.MOUSE_UP_FAST){
@@ -234,6 +245,8 @@ export default class Draw{
 				})
 			}
 		}
+
+		//console.log("draw node | mode, nd._px, nd._py", mode, nd._px, nd._py)
 
 		switch(mode){
 			case 'image_with_frame':
@@ -332,10 +345,11 @@ export default class Draw{
 	_projectionNode(nd){
 		// nd._px = this.k.fX(nd.x)
 		// nd._py = this.k.fY(nd.y)
+		//console.log("1.   ", nd.x, nd.y, this.fX)
 		nd._px = this.fX(nd.x)
 		nd._py = this.fY(nd.y)
 		nd._visible = nd._py>=-this.view.config.layout.margin_for_visibility && nd._py<=this.k.H+this.view.config.layout.margin_for_visibility && nd._px>=-this.view.config.layout.margin_for_visibility && nd._px<=this.k.W+this.view.config.layout.margin_for_visibility
-		
+		//console.log("2.   ", nd._px, nd._py, nd._visible)
 		// nd.ax += -0.001*nd.x
 		// nd.ay += -0.001*nd.y
 	}
@@ -361,8 +375,8 @@ export default class Draw{
 	drawSuperPressedNode(spNd, spNd2){
      	this.drawNodeOver(spNd, 'black', 8)
 
-      this.k.stroke('rgba(0,0,0,0.3)', 2)
-			this.k.context.setLineDash([5, 10])
+      this.k.stroke('rgba(0,0,0,0.5)', 5)
+			this.k.context.setLineDash([7, 10])
 
       if(spNd2){
       	this.k.line(spNd._px, spNd._py, spNd2._px, spNd2._py)
@@ -449,7 +463,7 @@ export default class Draw{
 					pMx, pMy,
 					rel.node1._px, rel.node1._py,
 					a-1.5708,
-					(view.config.relations.arrow_size*this.zoom*rel._thickFactor*0.8+2)*rel._size
+					(view.config.relations.arrow_size*this.zoom*rel._thickFactor*0.8+1)*rel._size
 				)
 			}
 			if(view.config.relations.tooltip){
@@ -461,7 +475,7 @@ export default class Draw{
 						pMx, pMy,
 						rel.node1._px, rel.node1._py,
 						a-1.5708,
-						(view.config.relations.arrow_size*this.zoom*rel._thickFactor*0.8+4)*rel._size
+						(view.config.relations.arrow_size*this.zoom*rel._thickFactor*0.8+1)*rel._size
 					)
 				}
 			}

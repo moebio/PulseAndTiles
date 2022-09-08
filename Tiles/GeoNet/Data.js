@@ -13,6 +13,12 @@ receiveData = function(dataObj){
       //netView.receiveData(dataObj)
       break
 
+    case "texts":
+      //network where (some) nodes have long, lat numeric properties
+      setTexts(dataObj.value)
+      //netView.receiveData(dataObj)
+      break
+
     case "configuration":
       setConfiguration(dataObj.value)
       break
@@ -23,6 +29,11 @@ receiveData = function(dataObj){
   }
 
   //processData(dataObj)
+}
+
+
+setTexts = function(array){
+  this.texts = array
 }
 
 setCoordinates = function(table){

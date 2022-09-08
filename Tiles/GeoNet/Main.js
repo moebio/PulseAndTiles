@@ -221,6 +221,7 @@ cycle=function(moving){
   //adjust map size so bottom links dissappear
   document.getElementById("map").style.height = window.innerHeight+16;
 
+  
 
   if(!this.net) return // [!] change this: GeoNet could draw points and no net
     _nSearch = 0
@@ -232,6 +233,15 @@ cycle=function(moving){
   attractionToFixed()
 
   if(geoPoints) drawCoordinates()
+
+
+  if(this.texts){
+    this.texts.forEach(text=>{
+      let point = geoProject(text.lat, text.lon)
+      this.k.setText("rgba(255,255,255,0.6)", 68*this.map.zoom, null, "center", "middle")
+      this.k.fText(text.text, point.x, point.y)
+    })
+  }
 
   drawFrameForArrowsForFixed()
 
@@ -325,6 +335,8 @@ cycle=function(moving){
   //   colorsTiles.push('orange')
   //   colorsNonSelected.push('white')
   })
+
+  
 
   this.k.MOUSE_UP = false
 }

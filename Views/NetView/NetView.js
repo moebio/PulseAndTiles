@@ -48,7 +48,7 @@ export default class NetView{
 			box_border_color:'black',
 			box_padding:2,
 			fixed_width:100,
-			color_mode: 'image',//'image_with_frame', //'box',//text, box, categories
+			color_mode: 'box',//'image_with_frame', //'box',//text, box, categories
 			download_images_automatically:true,
 			font:"Arial",
 			size_property:"weight",
@@ -108,6 +108,7 @@ export default class NetView{
 	}
 
 	receiveData(dataObj){
+		//console.log("Net receiveData:", dataObj)
 		let node
 
 		switch(dataObj.type){
@@ -254,8 +255,12 @@ export default class NetView{
 			net = _.createRandomNetwork(net.nodes, net.relations)
 		}
 
+
+
 		//network to be parsed
 		if(net["type"]!="Net" && net["type"]!="Tr") net = _.parseNet(net)
+
+		//console.log(">>>net", net)
 
 		let firstNet = net && this.net==null
 
@@ -288,7 +293,7 @@ export default class NetView{
 			net.relations.forEach(r=>r._size = r[this.config.relations.size_property]||1)
 
 			if(allCoordinatesZero) nodesHaveCoordinates=false
-
+			//console.log("--_>>>> forces, nodesHaveCoordinates", nodesHaveCoordinates)
 			this.forces.forcesForNetwork(net, nodesHaveCoordinates?0:200, new _.P(500,400), null, null, this.config.physics.attractionToCenter)
 			this.k.context.font = "12px "+this.config.nodes.font
 			this.net.nodes.forEach(nd=>{
@@ -304,6 +309,8 @@ export default class NetView{
 					nd._w_base = this.k.getTextW(nd.name)+this.config.nodes.box_padding*2
 					nd._h_base = 12+this.config.nodes.box_padding*2
 				}
+
+				//console.log("         --_>>>> forces, nd.x, nd.y",nd.x, nd.y)
 
 				//images
 				//console.log("||| 1 this.config.nodes.download_images_automatically, nd.urlImage", this.config.nodes.download_images_automatically, nd.urlImage)
@@ -329,6 +336,8 @@ export default class NetView{
 
 			if(this.config.layout.draw_loops) this.calculateLoops()
 
+
+
 			if(!previous && !nodesHaveCoordinates){
 
 				if(this.config.savesNodesPositionsOnBrowser && localStorage.NetViewNodesPositions){
@@ -342,10 +351,19 @@ export default class NetView{
 							node.x = node.xF = Number(parts[1])
 							node.y = node.yF = Number(parts[2])
 						}
+						console.log(Number(parts[1]))
 					})
 
+					
+
 				} else {
+
+					//this.net.nodes.forEach(n=>{console.log("1", n.x)})
+					//this.forces.friction = 0.52
 					this.forces.iterate(200)
+
+					//this.net.nodes.forEach(n=>{console.log("2", n.x)})
+
 					if(this.config.savesNodesPositionsOnBrowser){
 						localStorage.NetViewNodesPositions = ''
 						this.net.nodes.forEach(n=>{
@@ -355,6 +373,8 @@ export default class NetView{
 				}
 				
 			}
+
+
 
 
 			if(previousSelected){
@@ -375,6 +395,8 @@ export default class NetView{
 		} else {
 			this.callBackSendData({type:'report', value:'new'})
 		}
+
+
 	}
 
 	_resetThickFactor = function(thickness=1){
@@ -420,7 +442,7 @@ export default class NetView{
 		let change_in_nodes_size_property = (this.config.nodes.size_property!=config.nodes?.size_property||this.config.nodes.maxSize!=config.nodes?.maxSize)
 		let change_in_relations_size_property = this.config.relations.size_property!=config.relations?.size_property
 
-		this.config = JSON.parse(JSON.stringify(NetView.defaultConfig))//Object.assign(NetView.defaultConfig)//config?Object.assign(NetView.defaultConfig, config):NetView.defaultConfig
+		//this.config = JSON.parse(JSON.stringify(NetView.defaultConfig))//Object.assign(NetView.defaultConfig)//config?Object.assign(NetView.defaultConfig, config):NetView.defaultConfig
 		_.deepAssign(this.config, config)
 
 		if(change_in_nodes_size_property && this.net) this.net.nodes.forEach(n=>this.assignSizeToNode(n))
@@ -478,13 +500,9 @@ export default class NetView{
 	//actions that send data
 
 	nodeSelected(selectedNode){
-		console.log("selectedNode::", selectedNode)
-
 		if(typeof(selectedNode)=="string" ){
 			selectedNode=this.net.get(selectedNode)
 		}
-
-		console.log("selectedNode::", selectedNode)
 
 		this._FORCES_ACTIVE = false
 		if(this.pairSelected){
@@ -545,12 +563,35 @@ export default class NetView{
 			path_relations:_.getRelationsBetweenNodeLists(this.net, path, path, false)||[]
 		}
 
-		this.net.relations.forEach(r=>r._thickFactor=0.5)
+		this.net.relations.forEach(r=>r._thickFactor=0.3)
 
 		let paths = _.shortestPaths(this.net, node0, node1)||[]
+
+		if(paths.length==0){
+			this.pairSelected = null
+			this._FORCES_ACTIVE = true
+			this.forces.friction = this.config.physics.friction
+			this._resetThickFactor()
+			return
+		}
+
 		let paths_combined = new _.ndL()
-		paths.forEach(nl=>paths_combined = paths_combined.concat(nl))
-		_.getRelationsBetweenNodeLists(this.net, paths_combined, paths_combined, false).forEach(r=>r._thickFactor=1.2)
+		paths.forEach(nl=>paths_combined = paths_combined.concat(nl))//.getWithoutRepetitions()
+
+		console.log("paths_combined:", paths_combined.map(n=>n.name).join(","))
+
+		paths_combined = paths_combined.getWithoutRepetitions()
+
+		console.log("paths_combined:", paths_combined.map(n=>n.name).join(","))
+
+		let relations = _.getRelationsBetweenNodeLists(this.net, paths_combined, paths_combined, false)
+
+		console.log("relations.length:", relations.length)
+		console.log("relations:", relations.map(n=>n.name).join(","))
+
+
+
+		relations.forEach(r=>r._thickFactor=2.5)
 		
 		this.pairSelected.path_relations.forEach(r=>r._thickFactor=3.2)
 
