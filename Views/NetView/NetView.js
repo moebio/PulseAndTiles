@@ -81,7 +81,9 @@ export default class NetView{
 		view:{
 			background:'white',
 			zoom_min:0.1,
-			zoom_max:15,
+			zoom_max:20,
+			nodes_zoom_min:0.2,
+			nodes_zoom_max:5
 		},
 		interaction:{
 			nodes_zoom:'close',//static,close
@@ -550,6 +552,14 @@ export default class NetView{
 
 	relationSelected(selectedRelation){
 		this.callBackSendData({type:'selected relation', value:selectedRelation})
+	}
+
+	positionChanged(object){
+		this.callBackSendData({type:'position change', value:object})
+	}
+
+	nodesZoomChanged(zoom){
+		this.callBackSendData({type:'nodes zoom change', value:zoom})
 	}
 
 	selectPair(node0, node1, sendData=true){

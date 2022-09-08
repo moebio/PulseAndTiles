@@ -177,22 +177,27 @@ export default class Draw{
 		}
 
 		if(this.k.WHEEL_CHANGE && !this.k.SHIFT_PRESSED){
-			this.MIN_ZOOM = 0.01
-			this.MAX_ZOOM = 100
-
 			 let zoomChange = 1 + 0.3*this.k.WHEEL_CHANGE
-		   if(this.zoom*zoomChange>=this.MAX_ZOOM || this.zoom*zoomChange<=this.MIN_ZOOM) zoomChange = 1;
+		   if(this.zoom*zoomChange>=view.config.view.zoom_max || this.zoom*zoomChange<=view.config.view.zoom_min) zoomChange = 1;
 		   this.zoom *= zoomChange;
-		   this.zoom = Math.max(Math.min(this.zoom, this.MAX_ZOOM), this.MIN_ZOOM);
-		   this.x0 = (this.x0 - this.k.mX)*zoomChange + this.k.mX;
+		   this.zoom = Math.max(Math.min(this.zoom, view.config.view.zoom_max), view.config.view.zoom_min);
+		   this.x0 = (this.x0 - this.k.mX)*zoomChange + this.k.mX
 		   this.y0 = (this.y0 - this.k.mY)*zoomChange + this.k.mY
+
+		   view.positionChanged({x0:this.x0, y0:this.y0, zoom:this.zoom, trigger:"zoom"})
 		}
 		if(!this.pressedNode && !this.superPressedNode0 && this.k.MOUSE_PRESSED){
        this.x0+=this.k.DX_MOUSE_PRESSED
        this.y0+=this.k.DY_MOUSE_PRESSED
+
+       view.positionChanged({x0:this.x0, y0:this.y0, zoom:this.zoom, trigger:"position"})
     }
 
-		if(this.k.SHIFT_PRESSED && view.config.interaction.shift_nodes_zoom) this.nodes_zoom*=(1+this.k.WHEEL_CHANGE*0.1)
+		if(this.k.SHIFT_PRESSED && view.config.interaction.shift_nodes_zoom){
+			this.nodes_zoom*=(1+this.k.WHEEL_CHANGE*0.1)
+			this.nodes_zoom = Math.max(Math.min(this.nodes_zoom, view.config.view.nodes_zoom_max), view.config.view.nodes_zoom_min);
+			view.nodesZoomChanged(this.nodes_zoom)
+		}
 		
 		
 		if(view.overNode!=prevNodeOver && !view.overNode) view.nodeOut()

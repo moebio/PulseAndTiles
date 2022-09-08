@@ -82,9 +82,11 @@ physics:
 	attractionToCenter:false				//nodes are attracted to center of space
 
 view:
-	background:'white' 						//background color
-	zoom_min:0.1 							//maximum zoom in
+	background:'white' 						//background color 
+	zoom_min:0.1 							//maximum zoom in (zoom is controlled with wheel)
 	zoom_max:15 							//maximum zoom out
+	nodes_zoom_min:0.1 						//maximum nodes zoom in (zoom is controlled with SHIFT + wheel)
+	nodes_zoom_max:15 						//maximum nodes zoom out
 	
 interaction:
 	nodes_zoom:'close'						//other options: static,close
