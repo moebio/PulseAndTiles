@@ -5499,16 +5499,26 @@ MetaCanvas.prototype.fsRect=function (x, y, width, height) {
  this.context.fillRect(x, y, width, height);
  this.context.strokeRect(x, y, width, height);
 }
-MetaCanvas.prototype.fArc=function (x, y, r, a0, a1, counterclockwise) {
+MetaCanvas.prototype.fArc=function (x, y, r, a0, a1, counterclockwise=true) {
  this.context.beginPath();
  this.context.arc(x, y, r, a0, a1, counterclockwise);
  this.context.fill();
 }
-MetaCanvas.prototype.sArc=function (x, y, r, a0, a1, counterclockwise) {
+MetaCanvas.prototype.sArc=function (x, y, r, a0, a1, counterclockwise=true) {
  this.context.beginPath();
  this.context.arc(x, y, r, a0, a1, counterclockwise);
  this.context.stroke();
 }
+
+MetaCanvas.prototype.fArcSection=function (x, y, r0, r1, a0, a1) {
+ this.context.beginPath();
+ this.context.moveTo(x + r0*Math.cos(a0), y + r0*Math.sin(a0))
+ this.context.arc(x, y, r1, a0, a1);
+ this.context.lineTo(x + r0*Math.cos(a1), y + r0*Math.sin(a1))
+ this.context.arc(x, y, r0, a1, a0, true);
+ this.context.fill();
+}
+
 MetaCanvas.prototype.fCircle=function (x, y, r) {
  this.context.beginPath();
  this.context.arc(x, y, r, 0, TwoPi);
@@ -5758,6 +5768,22 @@ MetaCanvas.prototype.drawImage=function (image) {
   }
 }
 
+MetaCanvas.prototype.drawImageCircle=function (image, x, y, r) {
+    if (image == null) return
+    let w,h
+    if(image.width>image.height){
+        w = 2*r*image.width/image.height
+        h = 2*r
+    } else {
+        w = 2*r
+        h = 2*r*image.height/image.width
+    }
+
+    this.clipCircle(x, y, r)
+    this.drawImage(image, x-w*0.5, y-h*0.5, w, h)
+    this.restore()
+}
+
 
 MetaCanvas.prototype.fitImage=function (image, rectangle, mode=0) {
  if (image == null || rectangle == null) return
@@ -5812,13 +5838,7 @@ MetaCanvas.prototype.stroke=function (style, lineWidth) {
 MetaCanvas.prototype.setLW=function (lineWidth) {
  this.context.lineWidth = lineWidth;
 }
-MetaCanvas.prototype.clipCircle=function (x, y, r) {
- this.context.save();
- this.context.beginPath();
- this.context.arc(x, y, r, 0, TwoPi, false);
- this.context.closePath();
- this.context.clip();
-}
+
 
 /**
  * performs a mask
@@ -5839,6 +5859,15 @@ MetaCanvas.prototype.clipRect=function (x, y, w, h) {
  this.context.lineTo(x, y + h);
  this.context.clip();
 }
+
+MetaCanvas.prototype.clipCircle=function (x, y, r) {
+ this.context.save();
+ this.context.beginPath();
+ this.context.arc(x, y, r, 0, TwoPi, false);
+ this.context.closePath();
+ this.context.clip();
+}
+
 
 MetaCanvas.prototype.save=function () {
  this.context.save();
@@ -14807,7 +14836,7 @@ let decodeTextNet=function(code) {
          });
         } else {
          if(lines != null) node._lines = node._lines.concat(lines.slice(1));
-          node.content += index != -1 ? (" | " + line.substr(index + sep.length).trim()) : "";
+          node.content += index != -1 ? (" | " + line.substr(index + sep.length).trim()) : "";
           if(colorSegments[nLineParagraph] == null) colorSegments[nLineParagraph] = [];
           colorSegments[nLineParagraph].push({
            type: 'node_name_repeated',
@@ -16952,7 +16981,9 @@ let numberFromBinaryValues=function(binaryValues) {
  }
  return n;
 }
-let powersOfTwoDecomposition=function(number, length) {
+
+//converts number into binary, return array
+let _powersOfTwoDecomposition=function(number, length) {
   var powers = new nL();
   var constructingNumber = 0;
  let biggestPower;
@@ -16973,7 +17004,7 @@ let powersOfTwoDecomposition=function(number, length) {
 }
 
 let toBinary=function(number, length, bLeastSignificantFirst=true){
- let nL = powersOfTwoDecomposition(number, length);
+ let nL = _powersOfTwoDecomposition(number, length);
  if(!bLeastSignificantFirst)
    nL = nL.getReversed();
  return nL;
@@ -21162,7 +21193,8 @@ L.prototype.concatNew = function(array){
 	//transformative
 	//takes an object an recursevely adds properties to it
 	exports.deepAssign = function(object, objectToFusion, _level=0){//TODO: move to ObjectOperators
-		_level++;//used to optionally control depth, log levels…
+		//objectToFusion = JSON.parse(JSON.stringify(objectToFusion))
+        _level++;//used to optionally control depth, log levels…
 		for(var propName in object){
 			if(objectToFusion[propName]!=null){
 				if(objectToFusion[propName] instanceof Array){
@@ -21917,7 +21949,7 @@ exports.numberToString=numberToString
 exports.getRandomWithSeed=getRandomWithSeed
 exports.numberFromBinaryPositions=numberFromBinaryPositions
 exports.numberFromBinaryValues=numberFromBinaryValues
-exports.powersOfTwoDecomposition=powersOfTwoDecomposition
+exports._powersOfTwoDecomposition=_powersOfTwoDecomposition
 exports.toBinary=toBinary
 exports.binaryToNumber=binaryToNumber
 exports.positionsFromBinaryValues=positionsFromBinaryValues

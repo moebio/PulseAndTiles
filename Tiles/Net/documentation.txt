@@ -54,7 +54,7 @@ nodes:
 	box_border_color:'black'
 	box_padding:2
 	fixed_width:100
-	color_mode:'image'						//other options: box, image_with_frame, text 
+	draw_mode:'image'						//box, image_with_frame, image_circle, image_circle_with_frame text 
 	font:"Arial"
 	size_property:"weight"
 	draggable:true

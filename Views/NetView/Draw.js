@@ -12,6 +12,9 @@ export default class Draw{
 		this.y0 = 0
 
 		this.iCircle
+
+		this.drawNode = this.drawNode
+		this.loadImage = this.loadImage
 	}
 
 	///////GENERAL
@@ -230,30 +233,49 @@ export default class Draw{
 		//if(Math.random()<0.1) console.log("[NV Dr] drawNodeBeforeRelations")
 	}
 
+	loadImage(nd){
+		nd._loadingImage=true
+		_.loadImage(nd.urlImage, o=>{
+			if(!o.result) return
+			nd.image=o.result
+			nd._w_base = 0.8*this.view.config.nodes.fixed_width
+			//nd._h_base_no_image = nd._h_base
+			nd._h_base_image = (nd.image.height/nd.image.width)*nd._w_base
+		})
+	}
+
 	drawNode(nd){
 		let view = this.view
 		let k = this.k
 
-		let mode = view.config.nodes.color_mode
+		let mode = view.config.nodes.draw_mode//||view.config.nodes.color_mode
 
-		if((mode=="image" || mode=="image_with_frame") && !nd.image){
+		let mode_with_image = mode=="image" || mode=="image_with_frame" || mode=="image_circle" || mode=="image_circle_with_frame"
+
+		if(mode_with_image && nd.image) nd._h = nd._h_base_image*nd._s
+
+		if(mode_with_image && !nd.image){
 			mode="box"
 
 			//starts loading image if it has not yet
 			if(nd.urlImage && !nd._loadingImage && view.config.nodes.download_images_automatically){
-				nd._loadingImage=true
-				_.loadImage(nd.urlImage, o=>{
-					if(!o.result) return
-					nd.image=o.result
-					nd._w_base = 0.8*view.config.nodes.fixed_width
-					nd._h_base = (nd.image.height/nd.image.width)*nd._w_base
-				})
+				this.loadImage(nd)
 			}
 		}
 
 		//console.log("draw node | mode, nd._px, nd._py", mode, nd._px, nd._py)
 
 		switch(mode){
+			case 'image_circle_with_frame':
+				k.fill(nd.color)
+				k.fCircle(nd._px, nd._py, nd._w*0.5+2)
+				k.drawImageCircle(nd.image, nd._px, nd._py, nd._h*0.5)
+				break
+			case 'image_circle':
+				k.fill(nd.color)
+				k.fCircle(nd._px, nd._py, nd._w*0.5)
+				k.drawImageCircle(nd.image, nd._px, nd._py, nd._h*0.5)
+				break
 			case 'image_with_frame':
 				k.fill(nd.color)
 				k.fRect(nd._px-nd._w*0.5-2, nd._py-nd._h*0.5-2, nd._w+4, nd._h+4)
@@ -440,7 +462,7 @@ export default class Draw{
 		let weight = 0.5*rel._size
 
 		if(view.DRAW_CLOSE_RELATIONS){
-			let minDistance2 = Math.min(rel.node0._distanceToCursor2, rel.node1._distanceToCursor2)
+			let minDistance2 = Math.min(rel.node0._distanceToCursor2||99999, rel.node1._distanceToCursor2||99999)
 			if(view.DRAW_RELATION_CENTER) minDistance2 = Math.min(minDistance2, (this.k.mX-rel._pcenterx)**2 + (this.k.mY-rel._pcentery)**2)
 			weight*=(0.2 + 0.8*7000/(500+minDistance2))
 		}

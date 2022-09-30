@@ -24,12 +24,9 @@ export default class Text{
     if(this.textArea) return
 
     this.textArea = new HtmlArea(cb=>{console.log("HtmlArea cb:",cb)})
-    console.log("this.textArea", this.textArea)
     
     let css = ".overall{font-family: Arial, Helvetica, sans-serif;color: rgb(0,0,0);}"
     this.textArea.setCSS(css)
-
-    //window.scope = this
   }
 
   resize = function(){

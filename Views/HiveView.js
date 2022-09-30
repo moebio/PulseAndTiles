@@ -169,7 +169,7 @@ export default class HiveView extends NetView{
   nodeSelected(selectedNode){
     super.nodeSelected(selectedNode)
     this._loadImageForNode(selectedNode)
-    selectedNode.nodes.forEach(n=>this._loadImageForNode(n))
+    selectedNode.nodes?.forEach(n=>this._loadImageForNode(n))
     this.ZOOM_TO_CURSOR = false
   }
   nodeUnSelected(){

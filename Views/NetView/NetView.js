@@ -17,8 +17,10 @@ export default class NetView{
 		this.callBackSendData = callBackSendData
 
 		this.forces = new _.Forces()
+
+		let defaultC = JSON.parse(JSON.stringify(NetView.defaultConfig))
   
-		this.config = config?Object.assign(NetView.defaultConfig, config):NetView.defaultConfig
+		this.config = config?Object.assign(defaultC, config):defaultC
 		this.setConfiguration(this.config)
 
 		////params
@@ -48,7 +50,7 @@ export default class NetView{
 			box_border_color:'black',
 			box_padding:2,
 			fixed_width:100,
-			color_mode: 'box',//'image_with_frame', //'box',//text, box, categories
+			draw_mode: 'box',//'image_with_frame', //'box',//text, box, categories
 			download_images_automatically:true,
 			font:"Arial",
 			size_property:"weight",
@@ -65,7 +67,7 @@ export default class NetView{
 			selectRelations:true,
 			curvature:0,//inactive if 0
 			arrow_size:0,//inactive if 0
-			color:null,
+			color:"black",
 			size_property:"weight",
 			tooltip:false,
 			tooltip_property:'name',
@@ -83,7 +85,8 @@ export default class NetView{
 			zoom_min:0.1,
 			zoom_max:20,
 			nodes_zoom_min:0.2,
-			nodes_zoom_max:5
+			nodes_zoom_max:5,
+			detect_mouse_out_tile:true
 		},
 		interaction:{
 			nodes_zoom:'close',//static,close
@@ -161,12 +164,14 @@ export default class NetView{
 				if(!node.urlImage || node._loadingImage || (node.image && node.image.width)) return
 				
 				node._loadingImage = true
-		        _.loadImage(node.urlImage, o=>{
-			          if(!o.result) return
-			          node.image=o.result
-			          node._w_base = 0.8*this.config.nodes.fixed_width
-			          node._h_base = (node.image.height/node.image.width)*node._w_base
-		        })
+
+				this.drawMethods.loadImage(node)
+		        // _.loadImage(node.urlImage, o=>{
+			       //    if(!o.result) return
+			       //    node.image=o.result
+			       //    node._w_base = 0.8*this.config.nodes.fixed_width
+			       //    node._h_base = (node.image.height/node.image.width)*node._w_base
+		        // })
 				break
 			case "x":
 				switch(dataObj.value){
@@ -239,9 +244,11 @@ export default class NetView{
 				}
 				break
 			case "mouse_out_tile":
-				this.k.mX = 99999
-				this.k.mY = 99999
-				this.nodeOut()
+				if(this.config.view.detect_mouse_out_tile){
+					this.k.mX = 99999
+					this.k.mY = 99999
+					this.nodeOut()
+				}
 				break
 		}
 	}
@@ -434,9 +441,11 @@ export default class NetView{
 			config = JSON.parse(JSON.stringify(NetView.defaultConfig))
 		}
 
+		if(config.nodes?.color_mode && !config.nodes?.draw_mode) config.nodes.draw_mode = config.nodes.color_mode
+
 		if(config.physics?.friction) this._FORCES_ACTIVE = true
 
-		let change_in_nodes_size_property = (this.config.nodes.size_property!=config.nodes?.size_property||this.config.nodes.maxSize!=config.nodes?.maxSize)
+		let change_in_nodes_size_property = this.config.nodes.size_property!=config.nodes?.size_property || this.config.nodes.maxSize!=config.nodes?.maxSize
 		let change_in_relations_size_property = this.config.relations.size_property!=config.relations?.size_property
 
 		//this.config = JSON.parse(JSON.stringify(NetView.defaultConfig))//Object.assign(NetView.defaultConfig)//config?Object.assign(NetView.defaultConfig, config):NetView.defaultConfig
