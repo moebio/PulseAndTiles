@@ -9,6 +9,24 @@ export default class NetView{
 	constructor(k, callBackSendData, config) {//extends View
 		//super(...args) //when extending View
 
+
+		const font = new FontFace("myfont", "url(https://fonts.gstatic.com/s/bitter/v7/HEpP8tJXlWaYHimsnXgfCOvvDin1pK8aKteLpeZ5c0A.woff2)", {
+		  style: "italic",
+		  weight: "400",
+		  stretch: "condensed",
+		});
+
+		font.load();
+
+		document.fonts.add(font);
+
+		//k.context.font = "80px myfont"
+
+		document.fonts.ready.then(() => {
+		  //console.log("font ready", font)
+		});
+
+
 		this.k = k
 
 		this.drawMethods = new Draw(this)
@@ -58,7 +76,8 @@ export default class NetView{
 			tooltip:false,
 			tooltip_property:'description',
 			useColorsTable:false, //requires that node has property colorsTable
-			maxSize:1
+			maxSize:1,
+			minSize:0.05
 		},
 		relations:{
 			//draw:'node_over',//node_over,always
@@ -75,6 +94,7 @@ export default class NetView{
 		},
 		physics:{
 			friction:0.9,
+			frictionDecay:0.995,
 			k:0.01,
 			dEqSprings:130,
 			dEqRepulsors:220,
@@ -95,7 +115,7 @@ export default class NetView{
 			milliseconds_for_superpressing:300 //time elapsed when pressing a node to start conencting to another node
 		},
 		layout:{
-			selection_mode:'spanning_tree',//impact_from,impact_to,spanning_tree, (center)
+			selection_mode:'spanning_tree',//impact_from,impact_to,spanning_tree, center
 			r_spanning_circles:120,
 			dx_impact_columns:180,
 			dy_impact_columns:50,
@@ -260,7 +280,6 @@ export default class NetView{
 		}
 
 
-
 		//network to be parsed
 		if(net["type"]!="Net" && net["type"]!="Tr") net = _.parseNet(net)
 
@@ -272,7 +291,7 @@ export default class NetView{
 			var previous = this.net;
 			var previousSelected = this.selectedNode
 
-			var previousLayoutValue = this.layout_value && this.layout_value!="center"
+			var previousLayoutValue = this.layout_value// && this.layout_value!="center"
 			this.layoutClusters = false
 
 			this.net = net
@@ -445,7 +464,7 @@ export default class NetView{
 
 		if(config.physics?.friction) this._FORCES_ACTIVE = true
 
-		let change_in_nodes_size_property = this.config.nodes.size_property!=config.nodes?.size_property || this.config.nodes.maxSize!=config.nodes?.maxSize
+		let change_in_nodes_size_property = this.config.nodes.size_property!=config.nodes?.size_property || this.config.nodes.maxSize!=config.nodes?.maxSize || this.config.nodes.minSize!=config.nodes?.minSize
 		let change_in_relations_size_property = this.config.relations.size_property!=config.relations?.size_property
 
 		//this.config = JSON.parse(JSON.stringify(NetView.defaultConfig))//Object.assign(NetView.defaultConfig)//config?Object.assign(NetView.defaultConfig, config):NetView.defaultConfig
@@ -455,6 +474,7 @@ export default class NetView{
 		if(change_in_relations_size_property && this.net) this.net.relations.forEach(r=>r._size = r[this.config.relations.size_property])
 		if(this.config.layout.draw_loops) this.calculateLoops()
 
+		this.config.nodes._amplitudeSize = this.config.nodes.maxSize - this.config.nodes.minSize
 
 		this.ZOOM_MIN = this.config.view.zoom_min
 		this.ZOOM_MAX = this.config.view.zoom_max
@@ -517,6 +537,12 @@ export default class NetView{
 		}
 		this.selectedNode = selectedNode
 		switch(this.config.layout.selection_mode){
+			case 'center':
+				//this.layouts.placeNodesInSpanningTree(selectedNode)
+				this.layouts.gotoNode(selectedNode)
+				//this.nodeUnSelected()
+
+				break
 			case 'spanning_tree':
 				this.layouts.placeNodesInSpanningTree(selectedNode)
 				break

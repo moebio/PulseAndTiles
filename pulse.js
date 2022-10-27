@@ -140,6 +140,8 @@ L.toL=function(array, type) {
  array.removeElementsAtIndexes = L.prototype.removeElementsAtIndexes;
  array.removeElements = L.prototype.removeElements
  array.pushIfUnique = L.prototype.pushIfUnique
+
+ array.forEachPair = L.prototype.forEachPair
  
  array.replace = L.prototype.replace;
  //deprectaed
@@ -149,6 +151,9 @@ L.toL=function(array, type) {
  array._splice = Array.prototype.splice;
  array.splice = L.prototype.splice;
   array.isList = true
+
+
+
   return array;
 }
 
@@ -2172,6 +2177,16 @@ L.prototype.pushIfUnique=function(element) {
  if(notIncluded) this.push(element)
   return notIncluded
 }
+
+L.prototype.forEachPair=function(func) {
+ for(var i=0; i<this.length; i++){
+    for(var j=i+1; j<this.length; j++){
+        func.call(this, this[i], this[j], i, j)
+    }
+ }
+}
+
+
 
 
 
@@ -4423,7 +4438,7 @@ nL.prototype.getNumbersSimplified=function(method, param) {
  }
   return newList;
 }
-nL.prototype.toPolygon=
+//nL.prototype.toPolygon=
 nL.prototype.getMean=function() {//@todo: change name to getMean
  return this.getSum()/this.length;
 }
@@ -5715,12 +5730,12 @@ MetaCanvas.prototype.sCircleM=function (x, y, r, margin=0) {
  this.context.stroke();
  return Math.pow(x - this.mX, 2) + Math.pow(y - this.mY, 2) < Math.pow(r + margin, 2);
 }
-MetaCanvas.prototype.fsCircleM=function (x, y, r, margin) {
- margin = margin == null ? 0 : margin;
- this.context.beginPath();
- this.context.arc(x, y, r, 0, TwoPi);
- this.context.stroke();
- this.context.fill();
+MetaCanvas.prototype.fsCircleM=function (x, y, r, margin=0) {
+ // this.context.beginPath();
+ // this.context.arc(x, y, r, 0, TwoPi);
+ // this.context.stroke();
+ // this.context.fill();
+ this.fsCircle(x, y, r)
  return Math.pow(x - this.mX, 2) + Math.pow(y - this.mY, 2) < Math.pow(r + margin, 2);
 }
 MetaCanvas.prototype.lineM=function (x0, y0, x1, y1, d = 4) {
@@ -6074,16 +6089,19 @@ MetaCanvas.prototype.captureCanvas=function (x0=0, y0=0, w, h) {
   im.src = canvas.toDataURL();
   return im;
 }
+
 MetaCanvas.prototype.setCursor=function(name="default") {
  this.canvas.style.cursor = name
 }
+
 MetaCanvas.prototype.pointer=function() {
  this.canvas.style.cursor = "pointer"
 }
 
 MetaCanvas.prototype.getFrame=function () {
- return new Rec(0, 0, this.W, this.H);
+ return new Rec(0, 0, this.W, this.H)
 }
+
 MetaCanvas.prototype._linesInFrame=function (axis2D, nlX, nlY) {
  let l = Math.min(nlX.length, nlY.length);
  let i;
@@ -6714,22 +6732,16 @@ Forces.prototype.avoidOverlapping=function(delta=0) {
  }
  this._i0++;
 }
-Forces.prototype.avoidOverlappingRadial=function(delta, K) {
- delta = delta || 0;
- K = K || 1;
- let i;
- let node0;
- let node1;
- let l = this.nodes.length;
- let vx;
- let vy;
- let d;
- let dMin;
+Forces.prototype.avoidOverlappingRadial=function(delta=0, K=1) {
+ let node0, node1
+ let l = this.nodes.length
+ let vx, vy
+ let d, dMin
  let k;
  let delta2 = delta * 2;
-  for(i = 0; this.nodes[i + 1] != null; i++) {
+  for(let i = 0; this.nodes[i + 1] != null; i++) {
    node0 = this.nodes[(i + this._i0) % l];
-   for(var j = i + 1; this.nodes[j] != null; j++) {
+   for(let j = i + 1; this.nodes[j] != null; j++) {
      node1 = this.nodes[(j + this._i0 + i) % l];
      vx = node1.x - node0.x;
      vy = node1.y - node0.y;
@@ -10234,7 +10246,7 @@ let stringToDate=function(string, formatCase, separator) {// @todo: move to Stri
      return new Date(y, m - 1, d) ;
  }
 }
-let dateToString=function(date, formatCase, separator) {// @todo: move to DateConversions
+let dateToString=function(date, formatCase=0, separator="-") {// @todo: move to DateConversions
  if(date == null) return null;
  if(date.type == 'dL' || _typeOf(date) == 'Array'){
    // operate on each element
@@ -10245,8 +10257,8 @@ let dateToString=function(date, formatCase, separator) {// @todo: move to DateCo
    }
    return sLRet;
  }
- separator = separator == null ? "-" : separator;
- formatCase = formatCase == null ? 0 : formatCase;
+ // separator = separator == null ? "-" : separator;
+ // formatCase = formatCase == null ? 0 : formatCase;
  if(typeof date == 'string')
    date = new Date(date);
  let year = date.getFullYear();
@@ -20370,8 +20382,8 @@ let parseNet = function(netData, threshold=0.2){
 
     if(Array.isArray(netData) && netData.length==2){
         //nodes and relations
-        let nodesObjectsArray = netData[0]
-        let relationsObjectsArray = netData[1]
+        let nodesObjectsArray = Array.isArray(netData[0])?netData[0]:netData[0].split("\n")
+        let relationsObjectsArray = Array.isArray(netData[1])?netData[1]:netData[1].split("\n")
 
 
         //nodes
@@ -20381,13 +20393,15 @@ let parseNet = function(netData, threshold=0.2){
         }catch(e){
 
         }
-        if(!Array.isArray(nodesObjectsArray==null)){
-            nodesObjectsArray=[]
-            let nodesLines = netData[0].split("\n")
-            nodesLines.forEach(line=>{
-                nodesObjectsArray.push(JSON.parse(line))
+        //if(!Array.isArray(nodesObjectsArray==null)){
+            //nodesObjectsArray=[]
+            //let nodesLines = Array.isArray(netData[0]);netData[0]:netData[0].split("\n")
+            nodesObjectsArray.forEach((line,i)=>{
+                if(typeof(line)=="string") nodesObjectsArray[i] = JSON.parse(line)
+                // line = typeof(line)=="string"?JSON.parse(line):line
+                // nodesObjectsArray.push(JSON.parse(line))
             })
-        }
+        //}
 
         const forbiddenPropNames = ["nodes", "relations", "type"]
 
@@ -20418,13 +20432,14 @@ let parseNet = function(netData, threshold=0.2){
         }catch(e){
             
         }
-        if(!Array.isArray(relationsObjectsArray)){
-            relationsObjectsArray=[]
-            let relationsLines = netData[1].split("\n")
-            relationsLines.forEach(line=>{
-                relationsObjectsArray.push(JSON.parse(line))
+        //if(!Array.isArray(relationsObjectsArray)){
+            //relationsObjectsArray=[]
+            //let relationsLines = netData[1].split("\n")
+            relationsObjectsArray.forEach((line,i)=>{
+                if(typeof(line)=="string") relationsObjectsArray[i] = JSON.parse(line)
+                //relationsObjectsArray.push(JSON.parse(line))
             })
-        }
+        //}
 
         relationsObjectsArray.forEach(relationObject=>{
             let weight = relationObject.rel?.properties?.weight
@@ -20914,6 +20929,7 @@ let expandSimpleHtml=function(abreviatedHTML, idForLinks, entersAsBreaks) {
 
   return newText;
 }
+
 let clickLink=function(param, idForLinks) {
  for(var i=0; i<FastHtml_clickLinkFunctionsToCall.length; i++){
    FastHtml_clickLinkFunctionsToCall[i].call(FastHtml_clickLinkTargetsToCall[i], param, idForLinks);
@@ -20923,12 +20939,14 @@ let clickLink=function(param, idForLinks) {
 
 //---------------types dict-----------------
 let _typeDict = {
-L,iL,cL,P,P3D,Pol,Pol3D,Rec,T,nT,polL,Nd,sL,ndL,relL,recL,Rel,Net,Tr,dI,dL,nL,I,pol3DL,cScale,MetaCanvas,Engine3D,Forces,
+    L,iL,cL,P,P3D,Pol,Pol3D,Rec,T,nT,polL,Nd,sL,ndL,relL,recL,Rel,Net,Tr,dI,dL,nL,I,pol3DL,cScale,MetaCanvas,Engine3D,Forces,
 };
 
 
 //---------------ClassUtils (only _typeOf, noOperation…)-----------------
-let TwoPi=6.28318530718;function ifDef(value, fallback) {  if (value !== undefined && value !== null) {    return value;  } else {    return fallback;  }};function typeOf(e){if(null==e)return null;var t=typeof e;return"object"!==t?t:null!=e.type?e.type:"[object Array]"==Object.prototype.toString.call(e)?"Array":null!=e.getDate?"date":"Object"}var _typeOf=function(e){if(null==e)return null;var t=typeof e;return"object"!==t?t:null!=e.type?e.type:"[object Array]"==Object.prototype.toString.call(e)?"Array":null!=e.getDate?"date":"Object"},noOperation=function(){};function resizeThrottler(e,t){var n;return function(r){n||(n=setTimeout(function(){n=null,e(r)},t))}}function instantiate(e,t){switch(e){case"number":case"string":return window[e](t);case"date":if(!t||0===t.length)return new Date;if(1==t.length){if(t[0].match(/d*.-d*.-d*Dd*.:d*.:d*/)){var n=t[0].split(" ");return n[0]=n[0].split("-"),n[1]?n[1]=n[1].split(":"):n[1]=new Array(0,0,0),new Date(Date.UTC(n[0][0],Number(n[0][1])-1,n[0][2],n[1][0],n[1][1],n[1][2]))}return"NaN"!=Number(t[0])?new Date(Number(t[0])):new Date(t[0])}return new Date(Date.UTC.apply(null,t));case"boolean":return window[e]("false"!=t&&"0"!=t);case"L":case"T":case"sL":case"nL":case"nT":case"ndL":case"relL":case"Pol":case"Pol3D":case"polL":case"dL":case"cL":case"iL":return _typeDict[e].apply(new _typeDict[e],t);case null:case void 0:case"undefined":return null}var r,a,i;return i=window[e],(a=function(){}).prototype=i.prototype,r=new a,i.apply(r,t),r}function instanceSameType(e,t){return instantiate(typeOf(e),t)}
+let TwoPi=6.28318530718;function ifDef(value, fallback) {  if (value !== undefined && value !== null) {    return value;  } else {    return fallback;  }};function typeOf(e){if(null==e)return null;var t=typeof e;return"object"!==t?t:null!=e.type?e.type:"[object Array]"==Object.prototype.toString.call(e)?"Array":null!=e.getDate?"date":"Object"}var _typeOf=function(e){if(null==e)return null;var t=typeof e;return"object"!==t?t:null!=e.type?e.type:"[object Array]"==Object.prototype.toString.call(e)?"Array":null!=e.getDate?"date":"Object"},noOperation=function(){};function resizeThrottler(e,t){var n;return function(r){n||(n=setTimeout(function(){n=null,e(r)},t))}}
+function instantiate(e,t){switch(e){case"number":case"string":return window[e](t);case"date":if(!t||0===t.length)return new Date;if(1==t.length){if(t[0].match(/d*.-d*.-d*Dd*.:d*.:d*/)){var n=t[0].split(" ");return n[0]=n[0].split("-"),n[1]?n[1]=n[1].split(":"):n[1]=new Array(0,0,0),new Date(Date.UTC(n[0][0],Number(n[0][1])-1,n[0][2],n[1][0],n[1][1],n[1][2]))}return"NaN"!=Number(t[0])?new Date(Number(t[0])):new Date(t[0])}return new Date(Date.UTC.apply(null,t));case"boolean":return window[e]("false"!=t&&"0"!=t);case"L":case"T":case"sL":case"nL":case"nT":case"ndL":case"relL":case"Pol":case"Pol3D":case"polL":case"dL":case"cL":case"iL":return _typeDict[e].apply(new _typeDict[e],t);case null:case void 0:case"undefined":return null}var r,a,i;return i=window[e],(a=function(){}).prototype=i.prototype,r=new a,i.apply(r,t),r}
+function instanceSameType(e,t){return instantiate(typeOf(e),t)}
 
 //---------------variables-----------------
 
@@ -22076,6 +22094,7 @@ exports.downloadTable=downloadTable
 exports.loadImage=loadImage
 exports.loadImages=loadImages
 
+exports.instanceSameType=instanceSameType
 
 exports.StringOperators_STOP_WORDS = StringOperators_STOP_WORDS
 }));

@@ -33,13 +33,12 @@ export default class Draw{
 
 		if(view._FORCES_ACTIVE){
 			if(view.forces.friction>0.2){
-				view.forces.friction*=0.995
+				view.forces.friction*=view.config.physics.frictionDecay//0.995
 				view.forces.calculateAndApplyForces()
-				//view.forces.attractionToPoint(new _.P())
 			}
 		}
 
-		view.someLayout = view.selectedNode!=null || view.pairSelected!=null || view.layoutClusters
+		view.someLayout = (view.selectedNode!=null && view.config.layout.selection_mode!="center") || view.pairSelected!=null || view.layoutClusters
 		
 		if(view.someLayout) view.net.nodes.forEach(n=>{n.x=0.95*n.x+0.05*n.xF; n.y=0.95*n.y+0.05*n.yF})
 
@@ -382,7 +381,7 @@ export default class Draw{
 	}
 
 	_dimensionsNode(nd){
-		nd._s = this.nodes_zoom*nd._size*(this.view.NODES_CLOSE_ZOOM?(0.5 + 0.6*5000/(4000+nd._distanceToCursor2))*this.nodesSize:this.nodesSize)
+		nd._s = this.nodes_zoom*(nd._size*this.view.config.nodes._amplitudeSize + this.view.config.nodes.minSize)*(this.view.NODES_CLOSE_ZOOM?(0.5 + 0.6*5000/(4000+nd._distanceToCursor2))*this.nodesSize:this.nodesSize)
 		nd._w = nd._w_base*nd._s
 		//nd._h = (this.view.config.nodes.text_size+this.view.config.nodes.box_padding*2)*nd._s
 		nd._h = nd._h_base*nd._s
@@ -436,6 +435,9 @@ export default class Draw{
 		if(view.selectedNode){
 
 			switch(view.config.layout.selection_mode){
+				case "center":
+					//return
+					break
 				case "spanning_tree":
 					//relation not in spanning tree
 					if(view.selectedNode && !rel._onTree) return

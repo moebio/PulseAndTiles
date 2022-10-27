@@ -417,7 +417,8 @@ export default class Layouts{
 			   			this.drawMethods.y0 = (this.drawMethods.y0 - this.k.cY)*zoomChange + this.k.cY
 					}
 				}
-				if((Math.abs(this.drawMethods.x0-x)||0)+(Math.abs(this.drawMethods.y0-y)||0)+(Math.abs(this.drawMethods.zoom-zoom)||0)<0.05) clearInterval(this.interval)
+				let zoomOrDrag = this.k.MOUSE_DOWN || this.k.WHEEL_CHANGE
+				if((Math.abs(this.drawMethods.x0-x)||0)+(Math.abs(this.drawMethods.y0-y)||0)+(Math.abs(this.drawMethods.zoom-zoom)||0)<0.05 || zoomOrDrag) clearInterval(this.interval)
 			}, 40)
 		} else {
 			if(x!=null) this.drawMethods.x0=x
@@ -432,4 +433,10 @@ export default class Layouts{
 			}
 		}
 	}
+
+	gotoNode = function(node){
+		this.goto(this.drawMethods.fX(this.drawMethods.invfX(this.k.cX)-node.x), this.drawMethods.fY(this.drawMethods.invfY(this.k.cY)-node.y))
+	}
+
+	
 }
