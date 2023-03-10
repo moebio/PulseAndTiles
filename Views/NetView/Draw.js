@@ -1,4 +1,4 @@
-import '../../pulse.js'
+//import '../../pulse.js'
 export default class Draw{
 
 	constructor(view) {
@@ -20,7 +20,6 @@ export default class Draw{
 	///////GENERAL
 
 	draw(){
-
 		let view = this.view
 		if(this.k==null || view.net==null) return
 
@@ -71,17 +70,21 @@ export default class Draw{
 		//projection
 		view.net.nodes.forEach(nd=>this.projectAndPrepareNode(nd))
 
-		if(view.pairSelected){
-			this.drawSuperPressedNode(view.pairSelected.node0, view.pairSelected.node1)
-		} else if(this.superPressedNode0){
-			this.drawSuperPressedNode(this.superPressedNode0, this.superPressedNode1)
-		}
+		
 
 		//draw relations
 		view.net.relations.forEach(r=>this.drawRelation(r, prevNodeOver, cursor_level))
 
 		//draw nodes
 		view.net.nodes.forEach(nd=>{if(nd._visible) this.drawNode(nd)})
+
+		//draw superpressed (including when connecting a superpressed node with another to be hovered)
+		if(view.pairSelected){
+			this.drawSuperPressedNode(view.pairSelected.node0, view.pairSelected.node1)
+		} else if(this.superPressedNode0){
+			this.drawSuperPressedNode(this.superPressedNode0, this.superPressedNode1)
+		}
+
 
 		if(view.overNode) view.overRelation = null
 
@@ -139,6 +142,10 @@ export default class Draw{
 			if(dx_sincepressed<2 && dy_sincepressed<2){
 				this.superPressedNode0 = this.pressedNode
 				this.pressedNode = null
+				//better to isolate an unLayout function
+				if(view.layoutClusters) view.callBackSendData({type:'layout', value:"clusters off"})
+				view.layoutClusters = false
+				view.layout_value = null
 			}
 		}
 		//console.log(this.superPressedNode0!=null, view.overNode!=null, this.k.T_MOUSE_PRESSED>100, this.k.DX_MOUSE_DRAGGED<20,this.k.DY_MOUSE_DRAGGED<20)
@@ -174,6 +181,7 @@ export default class Draw{
 				view.forces.friction = view.config.physics.friction
 				view._resetThickFactor()
 			}
+			if(view.layoutClusters) view.callBackSendData({type:'layout', value:"clusters off"})
 			view.layoutClusters = false
 			view.layout_value = null
 		}
@@ -200,7 +208,6 @@ export default class Draw{
 			this.nodes_zoom = Math.max(Math.min(this.nodes_zoom, view.config.view.nodes_zoom_max), view.config.view.nodes_zoom_min);
 			view.nodesZoomChanged(this.nodes_zoom)
 		}
-		
 		
 		if(view.overNode!=prevNodeOver && !view.overNode) view.nodeOut()
 		if(view.overNode!=prevNodeOver && view.overNode) view.nodeOver(view.overNode)
@@ -401,16 +408,24 @@ export default class Draw{
 	drawSuperPressedNode(spNd, spNd2){
      	this.drawNodeOver(spNd, 'black', 8)
 
-      this.k.stroke('rgba(0,0,0,0.5)', 5)
-			this.k.context.setLineDash([7, 10])
+      this.k.stroke('rgba(255,255,255,0.8)', 5)
+			this.k.context.setLineDash([11, 6])
 
       if(spNd2){
       	this.k.line(spNd._px, spNd._py, spNd2._px, spNd2._py)
+      	this.k.stroke('rgba(0,0,0,0.8)', 5)
+				this.k.context.setLineDash([7, 10])
+				this.k.line(spNd._px, spNd._py, spNd2._px, spNd2._py)
+
       	this.k.context.setLineDash([])
         this.drawNodeOver(spNd2, 'black', 6)
       } else {
       	//this.k._line(spNd._px, spNd._py, this.k.mX, this.k.mY)
       	this.k.line(spNd._px, spNd._py, this.k.mX, this.k.mY)
+      	this.k.stroke('rgba(0,0,0,0.8)', 5)
+				this.k.context.setLineDash([7, 10])
+				this.k.line(spNd._px, spNd._py, this.k.mX, this.k.mY)
+
       	this.k.context.setLineDash([])
       }
 

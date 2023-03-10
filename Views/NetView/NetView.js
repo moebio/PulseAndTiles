@@ -17,6 +17,7 @@ export default class NetView{
 		});
 
 		font.load();
+		
 
 		document.fonts.add(font);
 
@@ -98,7 +99,8 @@ export default class NetView{
 			k:0.01,
 			dEqSprings:130,
 			dEqRepulsors:220,
-			attractionToCenter:false
+			attractionToCenter:false,
+			attractionToCenterFactor:0.000004
 		},
 		view:{
 			background:'white',
@@ -133,7 +135,7 @@ export default class NetView{
 	}
 
 	receiveData(dataObj){
-		//console.log("Net receiveData:", dataObj)
+		//console.log("NetView receiveDatas:", dataObj)
 		let node
 
 		switch(dataObj.type){
@@ -176,6 +178,7 @@ export default class NetView{
 				if(dataObj.value=="center") this.receiveData({type:"layout", value:"center"})
 				break
 			case "nodes zoom":
+			case "nodes_zoom":
 				this.drawMethods.nodes_zoom = Math.max(Math.min(dataObj.value, this.config.view.nodes_zoom_max), this.config.view.nodes_zoom_min)
 				break
 			case "load_image":
@@ -215,12 +218,15 @@ export default class NetView{
 				if(!dataObj.value.includes("free") || dataObj.value=="center") this.layout_value = dataObj.value
 				switch(dataObj.value){
 					case "clusters":
+						this.nodeUnSelected()
 						this.layouts.placeNodesInClusters()
 						break
 					case "clusters category"://should be done for any property
+						this.nodeUnSelected()
 						this.layouts.placeNodesInClusters("category")
 						break
 					case "cloud"://should be done for any property
+						this.nodeUnSelected()
 						this.layouts.placeNodesInCloud()
 						break
 					case "xy":
@@ -279,7 +285,6 @@ export default class NetView{
 			net = _.createRandomNetwork(net.nodes, net.relations)
 		}
 
-
 		//network to be parsed
 		if(net["type"]!="Net" && net["type"]!="Tr") net = _.parseNet(net)
 
@@ -317,7 +322,9 @@ export default class NetView{
 
 			if(allCoordinatesZero) nodesHaveCoordinates=false
 			//console.log("--_>>>> forces, nodesHaveCoordinates", nodesHaveCoordinates)
-			this.forces.forcesForNetwork(net, nodesHaveCoordinates?0:200, new _.P(500,400), null, null, this.config.physics.attractionToCenter)
+			this.forces.forcesForNetwork(net, nodesHaveCoordinates?0:200, new _.P(500,400), undefined, undefined, this.config.physics.attractionToCenter)
+			this.forces.attractionToCenterFactor = this.config.physics.attractionToCenterFactor
+
 			this.k.context.font = "12px "+this.config.nodes.font
 			this.net.nodes.forEach(nd=>{
 				if(this.config.nodes.fixed_width>0){
@@ -489,7 +496,9 @@ export default class NetView{
 		let changeInDEqSprings = this.forces.dEqSprings != this.config.physics.dEqSprings
 		if(changeInDEqSprings){
 			this.forces.dEqSprings = this.config.physics.dEqSprings
-			this.forces.equilibriumDistances = Array(this.forces.equilibriumDistances.length).fill(this.forces.dEqSprings).tonL()
+			//this.forces.equilibriumDistances = Array(this.forces.equilibriumDistances.length).fill(this.forces.dEqSprings).tonL()
+			//this.forces.equilibriumDistances = Array(this.forces.equilibriumDistances.length).fill(this.forces.dEqSprings).tonL()
+			this.forces.forces.forEach(f=>f.equilibriumDistance = this.forces.dEqSprings)
 		}
 
 		
@@ -618,16 +627,16 @@ export default class NetView{
 		let paths_combined = new _.ndL()
 		paths.forEach(nl=>paths_combined = paths_combined.concat(nl))//.getWithoutRepetitions()
 
-		console.log("paths_combined:", paths_combined.map(n=>n.name).join(","))
+		//console.log("paths_combined:", paths_combined.map(n=>n.name).join(","))
 
 		paths_combined = paths_combined.getWithoutRepetitions()
 
-		console.log("paths_combined:", paths_combined.map(n=>n.name).join(","))
+		//console.log("paths_combined:", paths_combined.map(n=>n.name).join(","))
 
 		let relations = _.getRelationsBetweenNodeLists(this.net, paths_combined, paths_combined, false)
 
-		console.log("relations.length:", relations.length)
-		console.log("relations:", relations.map(n=>n.name).join(","))
+		//console.log("relations.length:", relations.length)
+		//console.log("relations:", relations.map(n=>n.name).join(","))
 
 
 

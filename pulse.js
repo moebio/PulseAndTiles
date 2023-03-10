@@ -573,14 +573,15 @@ function ndL() {
 }
 
 ndL.toL=function(array, forceToNode) {
-forceToNode = forceToNode == null ? false : forceToNode;
-  var list = L.toL(array);
-   if(forceToNode) {
-   var lengthList = list.length;
-    for(var i = 0; i < lengthList; i++) {
-     list[i] = _typeOf(list[i]) == "Nd" ? list[i] : (new Nd(String(list[i]), String(list[i])));
-   }
-}
+
+    forceToNode = forceToNode == null ? false : forceToNode;
+      var list = L.toL(array);
+       if(forceToNode) {
+       var lengthList = list.length;
+        for(var i = 0; i < lengthList; i++) {
+         list[i] = _typeOf(list[i]) == "Nd" ? list[i] : (new Nd(String(list[i]), String(list[i])));
+       }
+    }
  
  list.type = "ndL";
  list.ids = {};
@@ -694,6 +695,7 @@ function Net() {
       this.nodes = new ndL();
       this.relations = new relL();
 }
+
 
 Tr.prototype = new Net();
 Tr.prototype.constructor = Tr
@@ -924,11 +926,13 @@ function Forces(configuration) {
 
       this.nodes = new ndL();
 
-      this.forcesList = new L();
-      this.equilibriumDistances = new nL();
-      this.forcesTypeList = new L();
-      this.from = new ndL();
-      this.to = new ndL();
+      // this.forcesList = new L();
+      // this.equilibriumDistances = new nL();
+      // this.forcesTypeList = new L();
+      // this.from = new ndL();
+      // this.to = new ndL();
+
+      this.forces = new L()
 
       this._i0 = 0;
 }
@@ -3209,11 +3213,17 @@ Nd.prototype.getLeaves=function() {
    addLeaves(this);
    return leaves;
 }
-Nd.prototype.loadImage=function(urlImage) {
- Loader.loadImage(urlImage, function(e) {
-   this.image = e.result;
- }, this);
+
+Nd.prototype.loadImage=function(urlImage, callBack) {
+    urlImage = urlImage||this.urlImage||this.imageUrl
+    let node = this
+    loadImage(urlImage, function(e) {
+        node.image = e.result
+        //console.log("  [*] loaded image, url: "+urlImage+" / image: "+node.image+ "/ event: ",e)
+        if(callBack) callBack(node, e)
+    }, this)
 }
+
 Nd.prototype.clone=function(extraPropertyNames) {
  let newNode = new Nd(this.id, this.name);
   newNode.x = this.x;
@@ -3657,6 +3667,9 @@ Rel.prototype.clone=function(propertyNames, inNewNet) {
 
   return relation;
 }
+
+
+
 Net.prototype.getNodes=function() {
  return this.nodes;
 }
@@ -4969,7 +4982,7 @@ MetaCanvas.prototype._init=function (autoStart) {
  this.WHEEL_CHANGE = 0; //differnt from 0 if mousewheel (or pad) moves / STATE
  this.NF_DOWN = undefined; //number of frame of last mousedown event
  this.NF_UP = undefined; //number of frame of last mouseup event
- this.MOUSE_PRESSED = undefined; //true if mouse pressed / STATE
+ this.MOUSE_PRESSED = false; //true if mouse pressed / STATE
  this.MOUSE_IN_DOCUMENT = true; //true if cursor is inside document / STATE
  this.mX_DOWN = undefined; // cursor x position on last mousedown event
  this.mY_DOWN = undefined; // cursor x position on last mousedown event
@@ -4993,6 +5006,9 @@ MetaCanvas.prototype._init=function (autoStart) {
  this.COMMAND_PRESSED = false
 
  this.IS_TOUCH = (('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0));
+ this.PINCHING = false
+ this.pinchDiamater_last = 0
+
  this.force = 0; //in touchscreen cases, measures touch force, between 0 and 1
 
  this.cursorStyle = 'auto';
@@ -5035,7 +5051,8 @@ MetaCanvas.prototype._init=function (autoStart) {
   // YY TODO allow user to bind to these events as well. Probably
  // through a generic event mechanism. c.f. global addInteractionEventListener
  let boundMouseOrKeyboard = this._onMouseOrKeyBoard.bind(this);
-   if (this.IS_TOUCH) {
+
+if (this.IS_TOUCH) {
    this.canvas.addEventListener("touchstart", boundMouseOrKeyboard, false);
    this.canvas.addEventListener("touchend", boundMouseOrKeyboard, false);
    this.canvas.addEventListener("touchmove", boundMouseOrKeyboard, false);
@@ -5112,30 +5129,63 @@ MetaCanvas.prototype._getRelativeMousePos=function (evt) {
  };
 }
 MetaCanvas.prototype._onMouseOrKeyBoard=function (e) {
- let pos;
-  if (this.IS_TOUCH) {
-   var touches = e.touches != null && e.touches[0] != null ? e.touches[0] : e.targetTouches[0]
- }
-  switch (e.type) {
-   case "touchmove":
-     this.force = touches.force;
-   case "mousemove":
-     if (e.type == "mousemove") {
-       pos = this._getRelativeMousePos(e);
-     } else {
-       pos = { x: touches.clientX == null ? touches.pageX : touches.clientX, y: touches.clientY == null ? touches.clientY : touches.clientY };
-     }
-      this.mX = pos.x;
-     this.mY = pos.y;
-      this.mP.x = this.mX;
-     this.mP.y = this.mY;
-      this.MOUSE_IN_DOCUMENT = true;
-     break;
+    let pos;
+    // if (this.IS_TOUCH) {
+    //     //var touches = (e.touches != null && e.touches.length>0 && e.touches[0] != null) ? e.touches[0] : e.targetTouches[0]
+    //     this.PINCHING = false
+    // }
+    this.PINCHING = false
+    switch (e.type) {
+        case "touchmove":
+            this.force = e.touches.force;
+            pos = {
+                x: e.touches[0].clientX,
+                y: e.touches[0].clientY
+            }
+
+            //pinching
+            if(e.touches.length==2){
+                this.MOUSE_PRESSED = false
+                this.T_MOUSE_PRESSED = 0
+                this.MOUSE_IN_DOCUMENT = true
+                this.PINCHING = true
+                let point0Pinch = {
+                    x:e.touches[0].clientX,
+                    y:e.touches[0].clientY
+                }
+                let point1Pinch = {
+                    x:e.touches[1].clientX,
+                    y:e.touches[1].clientY
+                }
+                this.centerPinchX = (point0Pinch.x+point1Pinch.x)*0.5
+                this.centerPinchY = (point0Pinch.y+point1Pinch.y)*0.5
+                
+                this.pinchDiamater = Math.sqrt((point1Pinch.x-point0Pinch.x)**2 + (point1Pinch.y-point0Pinch.y)**2)
+                if(this.pinchDiamater_last){
+                    this.WHEEL_CHANGE = (this.pinchDiamater - this.pinchDiamater_last)*0.01
+
+                    pos = {
+                        x:this.centerPinchX,
+                        y:this.centerPinchY
+                    }
+                }
+                this.pinchDiamater_last = this.pinchDiamater
+            }
+    case "mousemove":
+            if (e.type == "mousemove") pos = this._getRelativeMousePos(e)
+            this.mX = pos.x
+            this.mY = pos.y
+            this.mP.x = this.mX
+            this.mP.y = this.mY
+            this.MOUSE_IN_DOCUMENT = true
+        break;
    case "mousedown":
    case "touchstart":
      if (e.type == "touchstart") {
-       this.mX = touches.clientX;
-       this.mY = touches.clientY;
+       this.mX = e.touches[0].clientX;
+       this.mY = e.touches[0].clientY;
+       this.PREV_mX = this.mX
+       this.PREV_mY = this.mY
      }
       this.NF_DOWN = this.nF;
      this.MOUSE_PRESSED = true;
@@ -5144,6 +5194,8 @@ MetaCanvas.prototype._onMouseOrKeyBoard=function (e) {
      this.mX_DOWN = this.mX;
      this.mY_DOWN = this.mY;
      this.MOUSE_IN_DOCUMENT = true;
+     this.MOUSE_UP = false;
+     this.MOUSE_DOWN = true;
       break;
    case "mouseup":
    case "touchend":
@@ -5154,6 +5206,9 @@ MetaCanvas.prototype._onMouseOrKeyBoard=function (e) {
      this.mY_UP = this.mY;
      this.MOUSE_IN_DOCUMENT = true;
      this.MOUSE_UP = true;
+     this.MOUSE_DOWN = false;
+     this.pinchDiamater_last = 0
+     this.WHEEL_CHANGE = 0
      break;
    case "mouseenter":
      this.MOUSE_IN_DOCUMENT = true;
@@ -5336,8 +5391,9 @@ MetaCanvas.prototype._onCycle=function () {
   this.setCursor('default');
   this.MOUSE_DOWN = this.NF_DOWN == this.nF;
  this.MOUSE_UP = this.NF_UP == this.nF;
+ 
  this.MOUSE_UP_FAST = !this.MOUSE_UP_FAST && this.MOUSE_UP && (this.nF - this.NF_DOWN) < this.N_FRAMES_MOUSE_UP_FAST;
-  this.DX_MOUSE = this.mX - this.PREV_mX;
+    this.DX_MOUSE = this.mX - this.PREV_mX;
  this.DY_MOUSE = this.mY - this.PREV_mY;
  this.MOUSE_MOVED = this.DX_MOUSE !== 0 || this.DY_MOUSE !== 0;
   if (this.MOUSE_PRESSED) {
@@ -5461,15 +5517,18 @@ MetaCanvas.prototype.on=function (eventName, callback, context) {
  callback.__context = context;
  this._listeners[eventName].push(callback);
 }
+
 MetaCanvas.prototype.off=function (eventName, callback) {
  let index = this._listeners[eventName].indexOf(callback);
  if (index > -1) {
    this._listeners[eventName].splice(index, 1);
  }
 }
+
 MetaCanvas.prototype.clearCanvas=function () {
  this.context.clearRect(0, 0, this.W, this.H);
 }
+
 MetaCanvas.prototype.setBackgroundColor=function (color) {
  if (typeof color === "number") {
    if (arguments.length > 3) {
@@ -5483,6 +5542,7 @@ MetaCanvas.prototype.setBackgroundColor=function (color) {
  this.backGroundColor = color;
  this.backGroundColorRGB = colorStringToRGB(this.backGroundColor);
 }
+
 MetaCanvas.prototype.setBackgroundAlpha=function (backgroundAlpha) {//TODO: this is not alpha background, is alpha refresh…
  this._alphaRefresh = backgroundAlpha;
 }
@@ -6441,22 +6501,17 @@ MetaCanvas.prototype.mapCanvas=function(recCoordinates){
    return y*recCoordinates.height/this.H + recCoordinates.y;
  };
 }
-Forces.prototype.forcesForNetwork=function(network, initRadius, initCenter, eqDistancesMode, addShortRepulsorsOnRelated, attractionToCenter) {
- initRadius = initRadius || 0;
- initCenter = initCenter || new P(0, 0);
- eqDistancesMode = eqDistancesMode == null ? 0 : eqDistancesMode;
- addShortRepulsorsOnRelated = addShortRepulsorsOnRelated == null ? false : addShortRepulsorsOnRelated;
+Forces.prototype.forcesForNetwork=function(network, initRadius=0, initCenter, eqDistancesMode=0, addShortRepulsorsOnRelated=false, attractionToCenter) {
+ initCenter = initCenter || new P(0, 0)
     this.attractionToCenter = attractionToCenter
 
-    this.forcesList = new L();
- this.equilibriumDistances = new nL();
- this.forcesTypeList = new L();
+    this.attractionToCenterFactor = 0.000004
 
- this.from = new ndL();
- this.to = new ndL();
+    //new
+    this.forces = new L()
 
- ////testing:
- this.nodes = new ndL()
+    ////testing:
+    this.nodes = new ndL()
 
   var node0;
  let node1;
@@ -6466,12 +6521,13 @@ Forces.prototype.forcesForNetwork=function(network, initRadius, initCenter, eqDi
  let relations = network.relations;
  let angle;
   //use positions from previous network if find nodes with same id
+  //console.log("forcesForNetwork this.previousNetwork", this.previousNetwork)
   if(this.previousNetwork){
    initRadius = 0;
-   var x0=100000;
-   var x1=-100000;
-   var y0=100000;
-   var y1=-100000;
+   var x0=900000;
+   var x1=-900000;
+   var y0=900000;
+   var y1=-900000;
    for(i=0; i<this.previousNetwork.nodes.length; i++){
      x0 = Math.min(x0, this.previousNetwork.nodes[i].x);
      x1 = Math.max(x1, this.previousNetwork.nodes[i].x);
@@ -6488,7 +6544,6 @@ Forces.prototype.forcesForNetwork=function(network, initRadius, initCenter, eqDi
        nodei.x = node0.x;
        nodei.y = node0.y;
      } else {
-
        for(j=0; j<nodei.nodes.length; j++){//improve this by choosing barycenter of all found connected nodes
          node0 = this.previousNetwork.nodes.get(nodei.nodes[j].id);
          if(node0){
@@ -6502,17 +6557,19 @@ Forces.prototype.forcesForNetwork=function(network, initRadius, initCenter, eqDi
          nodei.y = y0 + dy*Math.random();
        }
      }
+     //console.log("-->", nodei.x, nodei.vx, nodei.ax,  node0!=null)
    }
  }
 
-  network.nodes.forEach((n,i)=>{if(n.x==null){
-    if(!n.x){
-      n.x = 100*(Math.random()-0.5);
-      n.y = 100*(Math.random()-0.5)}
-      n.vx = 0
-      n.vy = 0
-      n.ax = 0
-      n.ay = 0
+ //initial random position
+  network.nodes.forEach((n,i)=>{
+    if(n.x==null){
+        //if(!n.x){
+          n.x = 100*(Math.random()-0.5);
+          n.y = 100*(Math.random()-0.5)
+        //}
+      n.vx = n.vy = n.ax = n.ay = 0
+      n.mass = n.mass||1
     }
   })
 
@@ -6524,32 +6581,47 @@ Forces.prototype.forcesForNetwork=function(network, initRadius, initCenter, eqDi
      this.addNode(network.nodes[i], new P(initCenter.x + initRadius * Math.cos(angle), initCenter.y + initRadius * Math.sin(angle)));
    }
  }
-  for(i = 0; i < nNodes - 1; i++) {
+
+ 
+ for(i = 0; i < nNodes - 1; i++) {
    node0 = network.nodes[i];
    for(j = i + 1; j < nNodes; j++) {
      node1 = network.nodes[j];
-     if(relations.nodesAreConnected(node0, node1)) {
-       switch(eqDistancesMode) {
-         case 0:
-           this.equilibriumDistances.push(this.dEqSprings);
-           break;
-         case 1:
-           this.equilibriumDistances.push((1.1 - relations.getFirstRelationByIds(node0.id, node1.id, false).weight) * this.dEqSprings);
-           break;
-         case 2:
-           this.equilibriumDistances.push(Math.sqrt(Math.min(node0.nodes.length, node1.nodes.length)) * this.dEqSprings * 0.1);
-           break;
-       }
-        this.addForce(node0, node1, "Spring")
+     let relation = relations.get(node0.id+"_"+node1.id)
+     if(relation==null) relation = relations.get(node1.id+"_"+node0.id)
+
+     //if(relations.nodesAreConnected(node0, node1)) {
+    if(relation){
         if(addShortRepulsorsOnRelated) {
-         //this.equilibriumDistances.push(this.dEqRepulsors * 0.5);
-         this.addForce(node0, node1, "Repulsor", this.dEqRepulsors * 0.5)
-       }
-      } else {
+            //this.equilibriumDistances.push(this.dEqRepulsors * 0.5);
+            this.addForce(node0, node1, "Repulsor", this.dEqRepulsors * 0.5, relation)
+        } else {
+            let eqDistance
+            switch(eqDistancesMode) {
+             case 0:
+               //this.equilibriumDistances.push(this.dEqSprings);
+               eqDistance = this.dEqSprings
+               break;
+             case 1:
+               //this.equilibriumDistances.push((1.1 - relations.getFirstRelationByIds(node0.id, node1.id, false).weight) * this.dEqSprings);
+               eqDistance = (1.1 - relations.getFirstRelationByIds(node0.id, node1.id, false).weight) * this.dEqSprings
+               break;
+             case 2:
+               //this.equilibriumDistances.push(Math.sqrt(Math.min(node0.nodes.length, node1.nodes.length)) * this.dEqSprings * 0.1);
+               eqDistance = Math.sqrt(Math.min(node0.nodes.length, node1.nodes.length)) * this.dEqSprings * 0.1
+               break;
+            }
+            this.addForce(node0, node1, "Spring", eqDistance, relation)
+        }
+    } else {
          this.addForce(node0, node1, "Repulsor", this.dEqRepulsors)
-      }
+    }
    }
   }
+  
+
+
+
   this.previousNetwork = network
 }
 
@@ -6563,93 +6635,134 @@ Forces.prototype.addNode=function(node, initPosition, initSpeed) {
  node.vy = initSpeed.y
  node.ax = 0
  node.ay = 0
- node.r = 1
+ node.r = node.r||1
+ node.mass = node.mass||1
 }
 
-Forces.prototype.addForce=function(node0, node1, type, equilibriumDistance) {
- this.from.addNode(node0);
- this.to.addNode(node1);
- this.forcesList.push(node0.id + "*" + node1.id + "*" + type);
- this.forcesTypeList.push(type);
- if(equilibriumDistance != null) this.equilibriumDistances.push(equilibriumDistance);
+Forces.prototype.addForce=function(node0, node1, type, equilibriumDistance, relation) {
+ // this.from.addNode(node0);
+ // this.to.addNode(node1);
+ // this.forcesList.push(node0.id + "*" + node1.id + "*" + type);
+ // this.forcesTypeList.push(type);
+
+ let force = {
+    from:node0,
+    to:node1,
+    type,
+    equilibriumDistance,
+    kFactor:1,
+    dFactor:1,
+    relation
+ }
+
+ this.forces.push(force)
+
+ if(relation) relation.force = force
+
+ //if(equilibriumDistance != null) this.equilibriumDistances.push(equilibriumDistance);
  //this.equilibriumDistances.push(equilibriumDistance); //testing
 }
 Forces.prototype.calculate=function() {
- let i;
- let node0, node1;
- let type;
- let force;
- let dx, dy, d;
- let eqDistance;
-  // 1. reset accelerations
- //this._resetAccelerations(); //TODO: this can be removed if accelerations are resetd in applyForces [!]
-  // 2. calculate new accelerations from forces
+    let i
+    let node0, node1
+    let type
+    let force
+    let dx, dy, d
+    let kForce, eqDistance, strength
+    // 1. reset accelerations
+    //this._resetAccelerations(); //TODO: this can be removed if accelerations are resetd in applyForces [!]
+    // 2. calculate new accelerations from forces
 
- for(i = 0; this.forcesList[i] != null; i++) {
-   node0 = this.from[i];
-   node1 = this.to[i];
-   type = this.forcesTypeList[i];
-   dx = node1.x - node0.x;
-   dy = node1.y - node0.y;
-   d = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))
-   eqDistance = this.equilibriumDistances[i]
+    //for(i = 0; this.forcesList[i] != null; i++) {
+    for(i = 0; this.forces[i] != null; i++) {
+        // node0 = this.from[i];
+        // node1 = this.to[i];
+        // type = this.forcesTypeList[i];
 
-   if(type == 'Repulsor' && d > eqDistance) continue;
-   if(type == 'Attractor' && d < eqDistance) continue;
-    switch(type) {
-     case "Spring":
-     case "Repulsor":
-     case "Attractor":
-       force = this.k * (d - eqDistance) / d;
-       node0.ax += force * dx;
-       node0.ay += force * dy;
-       node1.ax -= force * dx;
-       node1.ay -= force * dy;
-       break;
-     case "DirectedSpring":
-       force = this.k * (d - eqDistance) / d;
-       node1.ax -= force * dx;
-       node1.ay -= force * dy;
-       break;
-     case "DirectedRepulsor":
-       if(d < eqDistance) {
-         force = this.k * (d - eqDistance) / d;
-         node1.ax -= force * dx;
-         node1.ay -= force * dy;
-       }
-       break;
-   }
- }
+        node0 = this.forces[i].from
+        //if(node0.name == "Saúde") console.log("calculate 1", node0.x, node0.y, node0.vx, node0.vy, node0.ax, node0.ay, node0._px, node0._py)
+        node1 = this.forces[i].to
+
+        if(node0.mass<0.01 || node1.mass<0.01) continue
+
+        type = this.forces[i].type
+        //kForce = this.k*this.forces[i].kFactor
+        eqDistance = this.forces[i].equilibriumDistance*this.forces[i].dFactor
+
+        dx = node1.x - node0.x
+        dy = node1.y - node0.y
+        d = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))
+
+        strength = this.k*this.forces[i].kFactor * (d - eqDistance) / d
+
+        //if(type=="Spring" && Math.random()<0.01) console.log(type, d < eqDistance, strength)
+        //if(node0.name == "Saúde") console.log("strength, eqDistance, this.forces[i].kFactor, this.k", strength, eqDistance, this.forces[i].kFactor, this.k)
+
+        if(type == 'Repulsor' && d > eqDistance) continue;
+        if(type == 'Attractor' && d < eqDistance) continue;
+
+        //strength *= node0.mass*node1.mass
+        //if(Math.abs(strength<0.0001)) continue// console.log(strength)
+
+        switch(type) {
+        case "Attractor":
+            //strength*=node0.mass*node1.mass
+         case "Spring":
+         case "Repulsor":
+           //force = kForce * (d - eqDistance) / d;
+           node0.ax += (strength * dx)/(node0.mass+0.01)
+           node0.ay += (strength * dy)/(node0.mass+0.01)
+           node1.ax -= (strength * dx)/(node1.mass+0.01)
+           node1.ay -= (strength * dy)/(node1.mass+0.01)
+           break
+         case "DirectedSpring":
+           //force = kForce * (d - eqDistance) / d;
+           node1.ax -= (strength * dx)/(node1.mass+0.01)
+           node1.ay -= (strength * dy)/(node1.mass+0.01)
+           break
+         case "DirectedRepulsor":
+           if(d < eqDistance) {
+             //force = kForce * (d - eqDistance) / d;
+             node1.ax -= (strength * dx)/(node1.mass+0.01)
+             node1.ay -= (strength * dy)/(node1.mass+0.01)
+           }
+           break
+        }
+
+        //if(node0.name == "Saúde") console.log("calculate 2", node0.x, node0.y, node0.vx, node0.vy, node0.ax, node0.ay, node0._px, node0._py)
+    }
 }
+
 Forces.prototype.applyForces=function() {
-    var node;
-    for(var i = 0; i<this.nodes.length; i++) {
-      node = this.nodes[i]
-      if(node.fixed_x!=null){
-         node.x = 0.95*node.x + 0.05*node.fixed_x
-         node.ax=0
-         node.vx=0
-      }
-      if(node.fixed_y!=null){
-         node.y = 0.95*node.y + 0.05*node.fixed_y
-         node.ay=0
-         node.vy=0
-      }
-      if(node.fixed_x!=null && node.fixed_y!=null) continue
-     node.vx += node.ax
-     node.vy += node.ay
-     node.vx *= this.friction
-     node.vy *= this.friction
-     node.x += node.vx
-     node.y += node.vy
-     node.ax=0
-     node.ay=0
+    let node;
+    //console.log("applyForces")
+    for(let i = 0; i<this.nodes.length; i++) {
+        node = this.nodes[i]
+        if(node.fixed_x!=null){
+            node.x = 0.95*node.x + 0.05*node.fixed_x
+            node.ax=0
+            node.vx=0
+        }
+        if(node.fixed_y!=null){
+            node.y = 0.95*node.y + 0.05*node.fixed_y
+            node.ay=0
+            node.vy=0
+        }
+        if(node.fixed_x!=null && node.fixed_y!=null) continue
+        node.vx += node.ax
+        node.vy += node.ay
+        node.vx *= this.friction
+        node.vy *= this.friction
+        node.x += node.vx
+        node.y += node.vy
+        node.ax=0
+        node.ay=0
    }
  }
 
  Forces.prototype.calculateAndApplyForces=function() {
      this.calculate()
-     if(this.attractionToCenter) this.attractionToPoint(new P(500,400), 0.000004)
+     if(this.attractionToCenter) this.attractionToPoint(new P(500,400), this.attractionToCenterFactor)//0.000004)
      this.applyForces()
  }
 
@@ -6684,22 +6797,21 @@ Forces.prototype.attractionToPoint=function(point, strength=1, limit) {
 }
 
 Forces.prototype.avoidOverlapping=function(delta=0) {
-  var i;
- let node0;
- let node1;
+    let node0, node1
  let x0l, y0t, x0r, y0b, x1l, y1t, x1r, y1b;
  let vx;
  let vy;
  let dM = delta * 0.5;
  let l = this.nodes.length;
+ let l_short = l-1
 
-  for(i = 0; this.nodes[i + 1] != null; i++) {
+  for(let i = 0; i<l_short; i++) {
    node0 = this.nodes[(i + this._i0) % l];
    x0l = node0.x - node0.width * 0.5 - dM;
    x0r = node0.x + node0.width * 0.5 + dM;
    y0t = node0.y - node0.height * 0.5 - dM;
    y0b = node0.y + node0.height * 0.5 + dM;
-   for(var j = i + 1; this.nodes[j] != null; j++) {
+   for(let j = i + 1; j<l; j++) {
      node1 = this.nodes[(j + this._i0 + i) % l];
      x1l = node1.x - node1.width * 0.5 - dM;
      x1r = node1.x + node1.width * 0.5 + dM;
@@ -6732,21 +6844,23 @@ Forces.prototype.avoidOverlapping=function(delta=0) {
  }
  this._i0++;
 }
+
 Forces.prototype.avoidOverlappingRadial=function(delta=0, K=1) {
- let node0, node1
+    let node0, node1
  let l = this.nodes.length
+ let l_short = l-1
  let vx, vy
  let d, dMin
  let k;
  let delta2 = delta * 2;
-  for(let i = 0; this.nodes[i + 1] != null; i++) {
+  for(let i = 0; i<l_short; i++) {
    node0 = this.nodes[(i + this._i0) % l];
-   for(let j = i + 1; this.nodes[j] != null; j++) {
+   for(let j = i + 1; j<l; j++) {
      node1 = this.nodes[(j + this._i0 + i) % l];
      vx = node1.x - node0.x;
      vy = node1.y - node0.y;
-     d = Math.pow(vx, 2) + Math.pow(vy, 2);
-     dMin = Math.pow(node0.r + node1.r + delta2, 2);
+     d = vx**2 + vy**2;
+     dMin = (node0.r + node1.r + delta2)**2;
      if(d < dMin) {
        dMin = Math.sqrt(dMin);
        d = Math.sqrt(d);
@@ -11489,7 +11603,7 @@ let replaceSectionInTable=function(table, elementListOrTable, column0, column1, 
 }
 let replaceNullsInTable=function(table, modeForNumbers, modeForNotnumbers, number, element, nullElement){
  if(table==null) return;
-  if(number!=null) modeForNumbers = modeForNumbers==null?0:modeForNumbers;
+if(number!=null) modeForNumbers = modeForNumbers==null?0:modeForNumbers;
  if(element!=null) modeForNotnumbers = modeForNotnumbers==null?0:modeForNotnumbers;
  number = (number==null && modeForNumbers!=null)?0:number;
  element = (element==null && modeForNotnumbers!=null)?"-":element;
@@ -14949,8 +15063,8 @@ let decodeTextNet=function(code) {
                 regex = _regexWordForTextNet(otherNode.id);
                index = relationName.search(regex);
                relationName = "… " + relationName.substr(0, index).trim() + " …";
-                id = line;
-               relation = new Rel(line, relationName, node, otherNode);
+                id = node.id+"_"+otherNode.id// line;
+               relation = new Rel(id, relationName, node, otherNode);
                 content = relation.node0.name + " " + line;
                 if(line.indexOf("- ")==0){
                     relation.color = "red"
@@ -18241,10 +18355,10 @@ let nlsToIntervalList=function(nl0, nl1, bAmplitude) {
   return intervalList;
 }
 
-let fillTextRectangle=function(text, x, y, width, height, lineHeight, returnHeight, ellipsis, graphics, bHorizontalCenter, bVerticalCenter) {
+let fillTextRectangle=function(text, x, y, width, height, lineHeight, returnHeight, ellipsis, metacanvas, bHorizontalCenter, bVerticalCenter) {
  bHorizontalCenter = bHorizontalCenter == null ? false : bHorizontalCenter;
  bVerticalCenter = bVerticalCenter == null ? false : bVerticalCenter;
- let textLines = textWordWrapReturnLines(text, width, height, lineHeight, ellipsis, graphics);
+ let textLines = textWordWrapReturnLines(text, width, height, lineHeight, ellipsis, metacanvas);
  if(bVerticalCenter){
    // the 16 and 600 defaults come from textWordWrapReturnLines
    var lh = lineHeight == null ? 16 : lineHeight;
@@ -18252,26 +18366,26 @@ let fillTextRectangle=function(text, x, y, width, height, lineHeight, returnHeig
    var hText = lh*textLines.length;
    y += (h - hText)/2;
  }
- let alignPrev = graphics.context.textAlign; // preserve because we want to set it back
+ let alignPrev = metacanvas.context.textAlign; // preserve because we want to set it back
  if(bHorizontalCenter){
-   graphics.context.textAlign = 'center';
+   metacanvas.context.textAlign = 'center';
    var w = width == null ? 100 : width;
    x += w/2;
  }
- let ret = fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight, graphics);
- graphics.context.textAlign = alignPrev;
+ let ret = fillTextRectangleWithTextLines(textLines, x, y, height, lineHeight, returnHeight, metacanvas);
+ metacanvas.context.textAlign = alignPrev;
  return ret;
 }
-let fillTextRectangleWithTextLines=function(textLines, x, y, height, lineHeight, returnHeight, graphics) {
+let fillTextRectangleWithTextLines=function(textLines, x, y, height, lineHeight, returnHeight, metacanvas) {
  height = height === 0 || height == null ? 99999 : height;
   for(var i = 0; textLines[i] != null; i++) {
-   graphics.context.fillText(textLines[i], x, y + i * lineHeight);
+   metacanvas.context.fillText(textLines[i], x, y + i * lineHeight);
    if((i + 2) * lineHeight > height) break;
  }
  if(returnHeight) return textLines.length * lineHeight;
  return textLines.length;
 }
-let textWordWrapReturnLines=function(text, fitWidth, fitHeight, lineHeight, ellipsis, graphics) {
+let textWordWrapReturnLines=function(text, fitWidth, fitHeight, lineHeight, ellipsis, metacanvas) {
  fitWidth = fitWidth || 100;
  fitHeight = fitHeight || 600;
  lineHeight = lineHeight || 16;
@@ -18296,7 +18410,7 @@ let textWordWrapReturnLines=function(text, fitWidth, fitHeight, lineHeight, elli
      continue;
    }
    // shortcut to avoid measuring word by word, performance opt
-   if(graphics.context.measureText(sentences[i]).width < fitWidth && lines.length < nLinesLimit){
+   if(metacanvas.context.measureText(sentences[i]).width < fitWidth && lines.length < nLinesLimit){
      lines.push(sentences[i]);
      continue;
    }
@@ -18304,7 +18418,7 @@ let textWordWrapReturnLines=function(text, fitWidth, fitHeight, lineHeight, elli
    idx = 1;
    while(words.length > 0 && idx <= words.length) {
      str = words.slice(0, idx).join(' ');
-     w = graphics.context.measureText(str).width;
+     w = metacanvas.context.measureText(str).width;
      if(w > fitWidth) {
        if(idx == 1) idx = 2;
        sentence = words.slice(0, idx - 1).join(' ');
@@ -18312,7 +18426,7 @@ let textWordWrapReturnLines=function(text, fitWidth, fitHeight, lineHeight, elli
        if(lines.length == nLinesLimit) {
          if(ellipsis) {
            var lastLine = lines[lines.length - 1];
-           if(graphics.context.measureText(lastLine + "…").width <= fitWidth) {
+           if(metacanvas.context.measureText(lastLine + "…").width <= fitWidth) {
              lines[lines.length - 1] += "…";
            } else {
              words = lastLine.split(" ");
@@ -20749,7 +20863,7 @@ let resizeImage=function(img, width, height, method, colorBackground) {
  height = height == null || Math.round(height) <= 0 ? Math.round(width/img.width*img.height) : Math.round(height);
  method = method == null || (method!=0 && method!=1) ? 0 : method;
  colorBackground = colorBackground == null ? 'topleft' : colorBackground;
-  // make temporary graphics object
+  // make temporary metacanvas object
  let gt = new MetaCanvas({
    container: null,
    dimensions: {width: width, height: height},
@@ -21048,23 +21162,23 @@ exports.loadDatas = function(urls, callbackEach, callBackAll, parse, parseParams
 }
 
 let loadImage = function(url, callback){
-  if(url==null) return;
+  if(url==null) return
 
-  var img = document.createElement('img');
+  var img = document.createElement('img')
   img.onload = function() {
       let resultObject = {
           path:url,
           result:img
       }
-      callback.call(this, resultObject);
-  };
-  img.onerror=function() {
-      let resultObject = {
+      if(callback) callback.call(this, resultObject);
+  }
+  img.onerror=function(e) {
+    let resultObject = {
           path:url,
           result:null
       }
-      callback.call(this, resultObject);
-  };
+      if(callback) callback.call(this, resultObject);
+  }
   img.src = url
 }
 

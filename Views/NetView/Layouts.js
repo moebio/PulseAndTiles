@@ -1,4 +1,4 @@
-import '../../pulse.js'
+//import '../../pulse.js'
 export default class Layouts{
 
 	constructor(view) {
@@ -218,6 +218,8 @@ export default class Layouts{
 
 			
 		}
+
+		this.view.callBackSendData({type:'layout', value:'clusters on'})
 	}
 
 	placeNodesInCloud = function(){
@@ -356,6 +358,8 @@ export default class Layouts{
 		this.view.net.nodes.forEach(n=>n.fixed_y=null)
 		this._FORCES_ACTIVE = true
 		this.view.forces.friction = this.view.config.physics.friction
+		this.view.layoutClusters = false
+		this.view.layout_value = null
 	}
 
 	fitInWindow = function(){
@@ -399,7 +403,7 @@ export default class Layouts{
 		
 	}
 
-	goto = function(x, y, zoom, smooth=true){
+	goto = function(x, y, zoom, smooth=true, projectionReference=false){
 		if(zoom==null) zoom = this.drawMethods.zoom
 
 		if(this.interval) clearInterval(this.interval)
@@ -418,7 +422,8 @@ export default class Layouts{
 					}
 				}
 				let zoomOrDrag = this.k.MOUSE_DOWN || this.k.WHEEL_CHANGE
-				if((Math.abs(this.drawMethods.x0-x)||0)+(Math.abs(this.drawMethods.y0-y)||0)+(Math.abs(this.drawMethods.zoom-zoom)||0)<0.05 || zoomOrDrag) clearInterval(this.interval)
+				let closeEnoughToStop = (Math.abs(this.drawMethods.x0-x)||0)+(Math.abs(this.drawMethods.y0-y)||0)+(Math.abs(this.drawMethods.zoom-zoom)||0)<0.05
+				if(closeEnoughToStop || zoomOrDrag) clearInterval(this.interval)
 			}, 40)
 		} else {
 			if(x!=null) this.drawMethods.x0=x
@@ -435,7 +440,18 @@ export default class Layouts{
 	}
 
 	gotoNode = function(node){
-		this.goto(this.drawMethods.fX(this.drawMethods.invfX(this.k.cX)-node.x), this.drawMethods.fY(this.drawMethods.invfY(this.k.cY)-node.y))
+		if(this.interval) clearInterval(this.interval)
+
+		//code quite repetitive
+		this.interval = setInterval(()=>{
+			let x = this.drawMethods.fX(this.drawMethods.invfX(this.k.cX)-node.x)
+			let y = this.drawMethods.fY(this.drawMethods.invfY(this.k.cY)-node.y)
+			this.drawMethods.x0=0.97*this.drawMethods.x0+0.03*x
+			this.drawMethods.y0=0.97*this.drawMethods.y0+0.03*y
+			let zoomOrDrag = this.k.MOUSE_DOWN || this.k.WHEEL_CHANGE
+			let closeEnoughToStop = (Math.abs(this.drawMethods.x0-x)||0)+(Math.abs(this.drawMethods.y0-y)||0)<0.05
+			if(closeEnoughToStop || zoomOrDrag) clearInterval(this.interval)
+		}, 40)
 	}
 
 	
