@@ -640,7 +640,7 @@ export default class NetView{
 
 
 
-		relations.forEach(r=>r._thickFactor=2.5)
+		//relations.forEach(r=>r._thickFactor=2.5)
 		
 		this.pairSelected.path_relations.forEach(r=>r._thickFactor=3.2)
 

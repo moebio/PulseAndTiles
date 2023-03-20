@@ -147,6 +147,7 @@ export default class Draw{
 				view.layoutClusters = false
 				view.layout_value = null
 			}
+			
 		}
 		//console.log(this.superPressedNode0!=null, view.overNode!=null, this.k.T_MOUSE_PRESSED>100, this.k.DX_MOUSE_DRAGGED<20,this.k.DY_MOUSE_DRAGGED<20)
 		if(this.superPressedNode0 && view.overNode && view.overNode!=this.superPressedNode0) this.superPressedNode1 = view.overNode
@@ -476,7 +477,7 @@ export default class Draw{
 			rel._pcentery = (rel.node0._py+rel.node1._py)*0.5
 		}
 		
-		let weight = 0.5*rel._size
+		let weight = 0.5*(rel._size||1)
 
 		if(view.DRAW_CLOSE_RELATIONS){
 			let minDistance2 = Math.min(rel.node0._distanceToCursor2||99999, rel.node1._distanceToCursor2||99999)
