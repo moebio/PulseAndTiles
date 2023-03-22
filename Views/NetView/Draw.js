@@ -147,7 +147,7 @@ export default class Draw{
 				view.layoutClusters = false
 				view.layout_value = null
 			}
-			
+
 		}
 		//console.log(this.superPressedNode0!=null, view.overNode!=null, this.k.T_MOUSE_PRESSED>100, this.k.DX_MOUSE_DRAGGED<20,this.k.DY_MOUSE_DRAGGED<20)
 		if(this.superPressedNode0 && view.overNode && view.overNode!=this.superPressedNode0) this.superPressedNode1 = view.overNode
@@ -273,6 +273,10 @@ export default class Draw{
 		//console.log("draw node | mode, nd._px, nd._py", mode, nd._px, nd._py)
 
 		switch(mode){
+		case 'circle':
+				k.fill(nd.color)
+				k.fCircle(nd._px, nd._py, nd._w*0.5)
+				break
 			case 'image_circle_with_frame':
 				k.fill(nd.color)
 				k.fCircle(nd._px, nd._py, nd._w*0.5+2)
@@ -400,7 +404,14 @@ export default class Draw{
 		this.drawNode(nd)//, dim)
 		this.k.stroke(color?color:this.view.config.nodes.box_border_color, thick?thick:2*this.nodesSize)
 		//this.k._sRect(nd._px-nd._w*.5, nd._py-nd._h*.5, nd._w, nd._h)
-		this.k.sRect(nd._px-nd._w*.5, nd._py-nd._h*.5, nd._w, nd._h)
+		
+		let isCircular = (this.view.config.nodes.draw_mode=="image_circle_with_frame" && nd.image) || (this.view.config.nodes.draw_mode=="image_circle" && nd.image)  || this.view.config.nodes.draw_mode=="circle" 
+		if(isCircular){
+			this.k.sCircle(nd._px, nd._py, nd._w*0.5)
+		} else {
+			this.k.sRect(nd._px-nd._w*.5, nd._py-nd._h*.5, nd._w, nd._h)
+		}
+		
 	}
 
 	drawNodeSelected(nd){

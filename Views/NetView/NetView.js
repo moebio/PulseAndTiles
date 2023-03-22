@@ -69,7 +69,7 @@ export default class NetView{
 			box_border_color:'black',
 			box_padding:2,
 			fixed_width:100,
-			draw_mode: 'box',//'image_with_frame', //'box',//text, box, categories
+			draw_mode: 'box',//'image_with_frame', //'image' //'image_circle' //circle //'box',//text, box, categories
 			download_images_automatically:true,
 			font:"Arial",
 			size_property:"weight",
