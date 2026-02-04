@@ -25,7 +25,15 @@ Pulse & Tiles bridges traditional visualization with modern Data Science and imm
 - **Advanced Projections**: Tools for `t-SNE` and other projection techniques to visualize high-dimensional data.
 
 
+## The MetaCanvas Suite
+A powerful abstraction for high-performance canvas manipulation:
+- **Advanced Drawing**: A complete suite of drawing primitives (`fRect`, `sCircle`, `bezier`, `fPolygon`, etc.) with built-in state management.
+- **Interaction Engine**: Native support for mouse and touch interactions, including point-in-shape detection (`mouseIn`, `fsCircleM`) and custom event emitters.
+- **Geometric Transformations**: Robust support for coordinate system transformations, rotation, scaling, and clipping, integrated directly into the drawing pipeline.
+- **Animation Control**: Built-in main loop management with frame-rate control and lifecycle hooks (`init`, `cycle`, `onResize`).
+
 ## Project Structure
+
 - **/libraries**: Core dependencies and data science modules (AI wrappers, Math, Stats).
 - **/Tiles**: Modular visualization components.
 - **/Views**: High-level visual compositions and complex layouts.
