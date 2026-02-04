@@ -1,0 +1,30 @@
+html, body, #example {
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  font-size: 10px;
+  overflow-y: scroll;
+}
+
+html {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0;
+  overflow-y: scroll;
+  font-size: 10px;
+}
+
+body {
+  padding: 0rem;
+  overflow-y: scroll;
+  font-size: 10px;
+}
+
+#example th {
+  font-size: 12px;  /* set the size as per your requirement */
+  overflow: hidden;  /* Hide the overflowing text */
+  text-overflow: ellipsis;  /* Indicate hidden text with an ellipsis */
+  white-space: nowrap;  /* Prevent the text from wrapping onto the next line */
+}

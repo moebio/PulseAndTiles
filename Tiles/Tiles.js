@@ -1,5 +1,5 @@
-let MODULES_LOADED = []
-let MODULES = []
+let TILES_LOADED = []
+let TILES = []
 let tileToRemove
 
 loadTile = function(path, loadedCallBack, dataCallBack, name, detectMouse=true){
@@ -31,10 +31,10 @@ loadTile = function(path, loadedCallBack, dataCallBack, name, detectMouse=true){
       if(x==null){
         x = 0
         y = 0
-        w = document.getElementById('maindiv').clientWidth
-        h = document.getElementById('maindiv').clientHeight
+        w = window.innerWidth// document.getElementById('maindiv').clientWidth
+        h = window.innerHeight//document.getElementById('maindiv').clientHeight
       }
-      iframe.setAttribute('style', `position:absolute; top:${y}px; left:${x}px; width:${w}px; height:${h}px; display:inline; z-index:${zIndex}`);
+      iframe.setAttribute('style', `position:absolute; top:${y}px; left:${x}px; width:${w}px; height:${h}px; display:inline; z-index:${zIndex};  overflow: hidden;`);
     },
     sendData:function(data){
       if(this.scope?._) data = _convertDataToMo(data, this.scope)
@@ -81,7 +81,7 @@ loadTile = function(path, loadedCallBack, dataCallBack, name, detectMouse=true){
     // console.log("path:", path)
     // console.log("isView:", isView)
     // if(isView) iframe.contentWindow.activateView(viewClass)
-    MODULES_LOADED.push(tile)
+    TILES_LOADED.push(tile)
     //console.log("    tilee/view --> loadedCallBack")
     loadedCallBack(tile)
   }, false)
@@ -89,7 +89,7 @@ loadTile = function(path, loadedCallBack, dataCallBack, name, detectMouse=true){
   
   if(detectMouse){
     iframe.addEventListener('mouseover', function(){
-      MODULES_LOADED.forEach(mdl=>{
+      TILES_LOADED.forEach(mdl=>{
         mdl.mouseIsOver = mdl==tile
         //mdl.sendData({type:mdl.mouseIsOver?"mouse_over_tile":"mouse_out_tile"})
         if(mdl.mouseIsOver){
@@ -98,14 +98,14 @@ loadTile = function(path, loadedCallBack, dataCallBack, name, detectMouse=true){
       })
     })
     iframe.addEventListener('mouseout', function(){
-      MODULES_LOADED.forEach(mdl=>{
+      TILES_LOADED.forEach(mdl=>{
         mdl.mouseIsOver = mdl!=tile
         if(!mdl.mouseIsOver) mdl.sendData({type:"mouse_out_tile"})
       })
     })
   }
 
-  MODULES.push(tile)
+  TILES.push(tile)
 
   return tile
 }
@@ -167,7 +167,8 @@ _buildIframe = function(){
   var main = document.body//.getElementById('maindiv');
   var ifrm = document.createElement('iframe')
 
-  ifrm.setAttribute('scrolling', 'yes');
+  //ifrm.setAttribute('scrolling', 'yes'); //why this was a yes?????
+
   ifrm.setAttribute('id', "id_frame");
 
   ifrm.setAttribute('allowtransparency', 'true');

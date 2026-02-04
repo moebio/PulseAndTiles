@@ -1,4 +1,5 @@
 import '../../pulse.js'
+import './tsne.js'
 import Draw from './Draw.js'
 import Layouts from './Layouts.js'
 //import Element from '../../Elements/Element.js'
@@ -19,13 +20,13 @@ export default class NetView{
 		font.load();
 		
 
-		document.fonts.add(font);
+		document.fonts.add(font)
 
 		//k.context.font = "80px myfont"
 
 		document.fonts.ready.then(() => {
 		  //console.log("font ready", font)
-		});
+		})
 
 
 		this.k = k
@@ -51,6 +52,9 @@ export default class NetView{
   
 		this.zoomPoint = new _.P(k.cX, k.cY)
 
+
+		this.scaleX = 1
+
 		this.pairSelected
 		this.layout_value
   
@@ -70,12 +74,14 @@ export default class NetView{
 			box_padding:2,
 			fixed_width:100,
 			draw_mode: 'box',//'image_with_frame', //'image' //'image_circle' //circle //'box',//text, box, categories
-			download_images_automatically:true,
+			download_images_automatically:true, //requires property urlImage on nodes
 			font:"Arial",
 			size_property:"weight",
 			draggable:true,
 			tooltip:false,
 			tooltip_property:'description',
+			tooltip_width:200,
+			tooltip_font_size:16,
 			useColorsTable:false, //requires that node has property colorsTable
 			maxSize:1,
 			minSize:0.05
@@ -96,9 +102,11 @@ export default class NetView{
 		physics:{
 			friction:0.9,
 			frictionDecay:0.995,
+			minFriction:0.2,
 			k:0.01,
-			dEqSprings:130,
-			dEqRepulsors:220,
+			dEqSprings:100,
+			dEqRepulsors:500,
+			equilibrimDistance:100,
 			attractionToCenter:false,
 			attractionToCenterFactor:0.000004
 		},
@@ -139,6 +147,9 @@ export default class NetView{
 		let node
 
 		switch(dataObj.type){
+			case null:
+			case undefined:
+			case "net":
 			case "network":
 			case "data":
 				this.setNetwork(dataObj.value)
@@ -151,14 +162,17 @@ export default class NetView{
 				this.nodeSelected(dataObj.value)
 				break
 			case "select by name":
+			case "select_by_name":
 				this.layoutClusters = false
 				this.nodeSelected(this.net.getByName(dataObj.value))
 				break
 			case "over":
 				node = typeof(dataObj.value)=="string"?this.net.get(dataObj.value):dataObj.value
-				this.k.mX = node._px+2
-				this.k.mY = node._py+2
-				this.drawMethods.draw(true)
+				if(node){
+					this.k.mX = node._px+2
+					this.k.mY = node._py+2
+					//this.drawMethods.draw(true)
+				}
 				//this.k.stop()
 				break
 			case "unselect":
@@ -168,7 +182,16 @@ export default class NetView{
 				this.setNewDrawNodeFunction(dataObj.value)
 				break
 			case "position":
-
+				if(dataObj.value.type=="Nd"){
+					this.layouts.gotoNode(dataObj.value)
+					break
+				} else if(typeof(dataObj.value)=="string"){
+					const node = this.net.get(dataObj.value)
+					if(node){
+						this.layouts.gotoNode(node)
+						break
+					}
+				}
 				let xF = dataObj.value.x//!=null?dataObj.value.x:this.drawMethods.invfX(this.k.cX)
 				let yF = dataObj.value.y//!=null?dataObj.value.y:this.drawMethods.invfY(this.k.cY)
 				let zoomF = dataObj.value.zoom//!=null?dataObj.value.zoom:this.drawMethods.zoom
@@ -214,6 +237,12 @@ export default class NetView{
 						this.layouts.placeNodesInYProperty(dataObj.value)
 				}
 				break
+			case "tsne":
+				//dataObj.value is the name of the property within the nodes
+				//that stores numeric arrays
+				//(typically: "embedding")
+				this.layouts.tsne(dataObj.value)
+				break
 			case "layout":
 				if(!dataObj.value.includes("free") || dataObj.value=="center") this.layout_value = dataObj.value
 				switch(dataObj.value){
@@ -233,6 +262,7 @@ export default class NetView{
 						this.layouts.placeNodesInXY()
 						break
 					case "xy fixed":
+						console.log("xy fixed")
 						this.layouts.placeNodesInXY(true)
 						break
 					case "x":
@@ -265,7 +295,9 @@ export default class NetView{
 						} else {
 							this.layouts.center()
 						}
-						
+						break
+					case "centroid":
+						this.layouts.center(false)
 						break
 				}
 				break
@@ -287,8 +319,6 @@ export default class NetView{
 
 		//network to be parsed
 		if(net["type"]!="Net" && net["type"]!="Tr") net = _.parseNet(net)
-
-		//console.log(">>>net", net)
 
 		let firstNet = net && this.net==null
 
@@ -327,8 +357,11 @@ export default class NetView{
 
 			this.k.context.font = "12px "+this.config.nodes.font
 			this.net.nodes.forEach(nd=>{
-				if(this.config.nodes.fixed_width>0){
+				if(this.config.nodes.draw_mode=="circle"){//probably others
+					nd._w_base = nd._h_base = 100
+				} else if(this.config.nodes.fixed_width>0){
 					this.k.setText(this.config.nodes.box_color, 12, null, "center", "middle")
+					this.k.context.font = "12px "+this.config.nodes.font
 					let textInfo = this.k._textWidthSectionsInfo(nd.name, this.config.nodes.fixed_width)
 					let nLines = textInfo.nLines// this.k.nLines(nd.name, this.config.nodes.fixed_width)
 					//nd._w_base = this.config.nodes.fixed_width+this.config.nodes.box_padding*2
@@ -353,18 +386,10 @@ export default class NetView{
 						nd._h_base = (nd.image.height/nd.image.width)*nd._w_base
 					}
 					
-					// nd._loadingImage=true
-					// _.loadImage(nd.urlImage, o=>{
-					// 	if(!o.result) return
-					// 		console.log("||| 2 this.config.nodes.download_images_automatically, nd.urlImage", this.config.nodes.download_images_automatically, nd.urlImage)
-					// 	nd.image=o.result
-					// 	nd._w_base = 0.8*this.config.nodes.fixed_width
-					// 	nd._h_base = (nd.image.height/nd.image.width)*nd._w_base
-					// })
 				}
 			})
 
-			if(this.config.layout.draw_loops) this.calculateLoops()
+			if(this.config.layout.draw_loops) this.calculateLoops(net)
 
 
 
@@ -381,7 +406,6 @@ export default class NetView{
 							node.x = node.xF = Number(parts[1])
 							node.y = node.yF = Number(parts[2])
 						}
-						console.log(Number(parts[1]))
 					})
 
 					
@@ -463,9 +487,12 @@ export default class NetView{
 
 
 	setConfiguration(config){
+		if(config == null) return
+
 		if(config=="default") {
 			config = JSON.parse(JSON.stringify(NetView.defaultConfig))
 		}
+
 
 		if(config.nodes?.color_mode && !config.nodes?.draw_mode) config.nodes.draw_mode = config.nodes.color_mode
 
@@ -479,7 +506,7 @@ export default class NetView{
 
 		if(change_in_nodes_size_property && this.net) this.net.nodes.forEach(n=>this.assignSizeToNode(n))
 		if(change_in_relations_size_property && this.net) this.net.relations.forEach(r=>r._size = r[this.config.relations.size_property])
-		if(this.config.layout.draw_loops) this.calculateLoops()
+		if(this.config.layout.draw_loops && this.net) this.calculateLoops(this.net)
 
 		this.config.nodes._amplitudeSize = this.config.nodes.maxSize - this.config.nodes.minSize
 
@@ -488,7 +515,12 @@ export default class NetView{
 
 		this.forces.k = this.config.physics.k
 		this.forces.friction = this.config.physics.friction
-		
+
+		// this.forces.dEqSprings = this.config.physics.dEqSprings
+		// this.forces.dEqRepulsors = this.config.physics.dEqRepulsors
+
+
+		this.forces.setEquilibriumDistances(this.config.physics.dEqSprings, this.config.physics.dEqRepulsors)
 		
 		this.forces.dEqRepulsors = this.config.physics.dEqRepulsors
 		this.forces.attractionToCenter = this.config.physics.attractionToCenter
@@ -517,6 +549,8 @@ export default class NetView{
 
 		if( (this.config.relations.tooltip || this.config.nodes.tooltip) && this.tooltip==null){
 			this.tooltip = new Tooltip(this.k)
+			this.tooltip.config.fixedWidth = this.config.nodes.tooltip_width
+			this.tooltip.config.font_size = this.config.nodes.tooltip_font_size
 		}
 
 		//unselect and select to trigger changes such as layout
@@ -661,16 +695,17 @@ export default class NetView{
 		this.callBackSendData({type:'unselected pair', value:""})
 	}
 
-	calculateLoops = function(){
-		console.log("this.config.layout.draw_loops", this.config.layout.draw_loops)
-		if(this.net.loops?.[this.config.layout.draw_loops]) return
-		if(!this.net.loops) this.net.loops=[]
-		let loops = _.loops(this.net, this.config.layout.draw_loops)
+	calculateLoops = function(net){
+		console.log(net)
+		if(net.loops) console.log("this.config.layout.draw_loops", this.config.layout.draw_loops, net.loops)
+		if(net.loops?.[this.config.layout.draw_loops]) return
+		if(!net.loops) net.loops=[]
+		let loops = _.loops(net, this.config.layout.draw_loops)
 		
 		let loop_colors = _.createCategoricalColors(0, loops.length+2, null, 0.1).slice(1)
 		loops.forEach((loop,i)=>loop.color = loop_colors[i])
 
-		this.net.loops[this.config.layout.draw_loops] = loops
+		net.loops[this.config.layout.draw_loops] = loops
 	}
 
 

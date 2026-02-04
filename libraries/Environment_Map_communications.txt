@@ -1,0 +1,34 @@
+Environment → Map
+
+	init
+		project|project
+
+	interaction
+		over|id
+		selected|id
+		unselected
+		content|id		(for new answers, or answer being edited)
+		send|id			(for answers)
+		mode|mode		(big/small… if the map is presented in big or small scale)
+
+
+
+
+Map → Environment
+
+	init
+		questions|questions_array		(with text, explanation, examples)
+		paper_tree|paper_tree			(with explanation)
+
+	interaction
+		over|id							(could be questions or paper nodes)
+		selected|id
+		unselected
+		to_be_completed|id				(soon to go to completing mode)
+		completing|id
+		completed|id
+
+
+
+
+(type|value)

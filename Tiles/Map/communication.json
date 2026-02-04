@@ -1,0 +1,23 @@
+{
+	"receives":[
+		{
+			"type":"network",
+			"value_type":"Net"
+		},
+		{
+			"type":"coordinates",
+			"value_type":"nT"
+		},
+		{
+			"type":"configuration",
+			"value_type":"Object"
+		}
+	],
+	"sends":[
+		{
+			"type":"over",
+			"description":"hovered node",
+			"value_type":"Nd"
+		}
+	]
+}

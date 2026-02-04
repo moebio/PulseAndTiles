@@ -3,6 +3,7 @@ let TREE
 let overNode
 let overRect
 let frame
+let nLevels
 
 let kx = ky = 1
 let x0 = y0 = 0
@@ -18,6 +19,13 @@ let TEXT_AREA_PROPORTION = 0.1
 let following = true
 
 let SELECTED_NODES = []
+let prevOverNode
+
+let weights
+
+let MODE = "navigation"//"treemap"//
+
+let fontName = "Arial"
 
 init=function(){
   k = new _.MetaCanvas({
@@ -34,17 +42,69 @@ init=function(){
 cycle=function(){
   if(!TREE) return
 
+  let prevOverNode = overNode
   overNode = null
 
+  switch(MODE){
+    case "treemap":
+      cycleTreemap()
+      break
+    case "navigation":
+      cycleNavigation()
+      //cycleNavigation()
+      break
+  }
 
+  if(prevOverNode!=overNode && mouse_in_tile){
+    if(overNode){
+      sendData({type:'over', value:overNode})
+    } else {
+      sendData({type:'out', value:null})
+    }
+  }
+}
+
+
+//////////////////////////////
+let prevMX, prevMY
+let xByLevel
+let dx=1
+//let x0 = 10
+cycleNavigation=function(){
+  // prevMX = k.mX
+  // prevMY = k.mY
+
+  xByLevel = new _.nL();
+  xByLevel[0] = k.W/TREE.nLevels;
+
+  dx = k.W/TREE.nLevels
+
+  if(!mouse_in_tile){
+    let mXF = externalOverNode?(externalOverNode.level+0.5)*dx:dx*0.3
+    k.mX = 0.9*k.mX + 0.1*mXF
+  }
+
+  drawNodeNavigation(TREE.nodes[0], y0, k.H)
+
+  for(var i=0; i<TREE.nLevels; i++){
+    if(xByLevel[i]==null){
+      xByLevel[i] = xByLevel[i-1] + (k.W - xByLevel[i-1])/(TREE.nLevels-i);
+    }
+  }
+}
+
+//////////////////////////////
+cycleTreemap=function(){
+  
   ///zoom
   if(k.WHEEL_CHANGE!=0){
     following = false
     let zoomChange = 1 + 0.3*k.WHEEL_CHANGE
+    if( ((kx>=100 || ky>=100) &&  zoomChange>1) || ((kx<=1 || ky<=1) &&  zoomChange<1) ) zoomChange = 1
     if(k.mX>0) kx *= zoomChange
     if(k.mY>0) ky *= zoomChange
-    kx = Math.min(Math.max(kx, 1), 10)
-    ky = Math.min(Math.max(ky, 1), 10)
+    // kx = Math.min(Math.max(kx, 1), 10)
+    // ky = Math.min(Math.max(ky, 1), 10)
     if(k.mX>0) x0 = (x0 - k.mX )*zoomChange + k.mX
     if(k.mY>0) y0 = (y0 - k.mY )*zoomChange + k.mY
   }
@@ -83,6 +143,7 @@ cycle=function(){
     }
     
   }
+  
 
   if(following){
     speed = (kxL<kx?0.98:0.998)*speed + (kxL<kx?0.02:0.002)
@@ -98,10 +159,33 @@ resize = function(){
   //k.W, k.H
   if(!TREE) return
   frame = new _.Rec(M, M, k.W-2*M, k.H-2*M)
-  assignRect(TREE.nodes[0], frame)
+  switch(MODE){
+    case "treemap":
+      assignRectTreemap(TREE.nodes[0], frame)
+      break
+    case "navigation":
+      assignRectNavigation(TREE.nodes[0], new _.Rec(M, M, (k.W-2*M)/TREE.nLevels, k.H-2*M))
+      break
+  }
 }
 
-assignRect = function(node, rect){
+assignRectNavigation = function(node, rect){
+  node.rectangle = rect
+  let y = rect.y
+  node.to.forEach((son,i)=>{
+    const nWeight = node.sonsWeightsN[i]
+    const h = nWeight*rect.height
+    assignRectNavigation(son, new _.Rec(rect.x+rect.width, y  , rect.width, h))
+    y+=h
+  })
+
+  // let rects = _.squarify(new _.Rec(rect.x+mx, rect.y+my+textH, rect.width-2*mx, rect.height-2*my-textH), node.sonsWeightsN)
+  // node.to.forEach((son,i)=>{
+  //   assignRectTreemap(son, new _.Rec(rects[i].x+m2,rects[i].y+m2,rects[i].width-2*m2,rects[i].height-2*m2))
+  // })
+}
+
+assignRectTreemap = function(node, rect){
   let m=1
   let m2=0//0.4
 
@@ -112,7 +196,7 @@ assignRect = function(node, rect){
   node.rectangle = rect
   let rects = _.squarify(new _.Rec(rect.x+mx, rect.y+my+textH, rect.width-2*mx, rect.height-2*my-textH), node.sonsWeightsN)
   node.to.forEach((son,i)=>{
-    assignRect(son, new _.Rec(rects[i].x+m2,rects[i].y+m2,rects[i].width-2*m2,rects[i].height-2*m2))
+    assignRectTreemap(son, new _.Rec(rects[i].x+m2,rects[i].y+m2,rects[i].width-2*m2,rects[i].height-2*m2))
   })
 }
 

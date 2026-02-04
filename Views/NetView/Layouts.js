@@ -212,12 +212,44 @@ export default class Layouts{
 			//console.log(i, _.packingRectangles(recs, bigRecs[i]))
 
 			clusters[i].forEach((node,j)=>{
+				node.cluster = clusters[i]
 				node.xF = newRecs[j].x +  0.5*newRecs[j].width
 				node.yF = newRecs[j].y +  0.5*newRecs[j].height
 			})
 
+			//experiment with forces
+
+
+			//this.view.forces.forces.forEach(force=>{
+			//	if(clusters[i].includes(force.node0) && 
+			//})
+
 			
 		}
+
+		this.view.forces.forces.forEach(force=>{
+
+			if(force.from.cluster==force.to.cluster){
+				switch(force.type){
+					case "Spring":
+						force.equilibriumDistance*=0.88
+						break
+					case "Repulsor":
+						force.equilibriumDistance*=0.93
+						break
+				}
+			} else {
+				force.equilibriumDistance*=1.1
+				//switch(force.type){
+				//	case "Spring":
+				//		break
+				//	case "Repulsor":
+				//		force.equilibriumDistance*=1.2
+				//		break
+				//}
+			}
+
+		})
 
 		this.view.callBackSendData({type:'layout', value:'clusters on'})
 	}
@@ -239,7 +271,7 @@ export default class Layouts{
 		if(isNaN(interval.x) || isNaN(interval.y) || interval.x==interval.y) return null
 
 		let amp = interval.getAmplitude()
-		let k = Math.sqrt(this.view.net.nodes.length/50)*this.k.H/amp
+		let k = this.view.scaleX*Math.sqrt(this.view.net.nodes.length/50)*this.k.H/amp
 		let x0 = !fixed && interval.x>0 && amp>interval.x?0:interval.x
 
 		let large_amp = interval.y - x0
@@ -290,7 +322,7 @@ export default class Layouts{
 	placeNodesInYProperty = function(propertyValue, fixed){
 		propertyValue = this._checkXYProperty(propertyValue)
 		
-		this.view.fixedY = this._fixedAxis(propertyValue, false, fixed)
+		this.view.fixedY = this._fixedAxis(propertyValue, true, fixed)
 		if(this.view.fixedY==null) return
 		this.view.net.nodes.forEach(n=>{
 			if(n[propertyValue]!=null) n.fixed_y = this.view.fixedY.projection(n[propertyValue])
@@ -401,6 +433,24 @@ export default class Layouts{
 
 		this.goto(x0F, y0F, null, smooth)
 		
+	}
+
+
+	tsne = function(vectorPropertyName){
+		var opt = {epsilon: 10}; // epsilon is learning rate (10 = default)
+		var tsne = new tsnejs.tSNE(opt); // create a tSNE instance
+		 
+
+		// initialize data. Here we have 3 points and some example pairwise dissimilarities
+		//var dists = [[1.0, 0.1, 0.2], [1.1, 0.2, 0.3], [0.2, 1.1, 1.0], [20.2, 20.1, 21.0]];
+		//tsne.initDataDist(dists);
+		tsne.initDataRaw(data)
+		//tsne.init({data:dists})
+		 
+		for(var i = 0; i < 200; i++) {
+		  tsne.step(); // every time you call this, solution gets better
+		}
+		var TSNE = tsne.getSolution()
 	}
 
 	goto = function(x, y, zoom, smooth=true, projectionReference=false){
