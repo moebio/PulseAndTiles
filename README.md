@@ -17,11 +17,13 @@ The library provides a modular "Tile" architecture for rapid construction of div
 - **Statistical Visualization**: `Scatter` plots, `Distributions`, `Axis` management, and `TextsMatrix`.
 - **UI Elements**: A set of bespoke interface components like `Tooltip`, `Menu`, and specialized `InputText`.
 
-## Data Science & AI Capabilities
-Pulse & Tiles bridges traditional visualization with modern Data Science:
+## Data Science, AI & 3D Capabilities
+Pulse & Tiles bridges traditional visualization with modern Data Science and immersive environments:
+- **3D Engine**: A dedicated `Engine3D` for spatial computing and 3D visualization, supported by native 3D data types (`P3D`, `Pol3D`). It includes support for custom bases, projections, and complex 3D geometry management.
 - **AI Integration**: High-level wrappers for OpenAI (ChatGPT API), Anthropic (LLMs), and custom LLM systems for agentic data exploration.
 - **Mathematical Foundations**: Includes Principal Component Analysis (`PCA`), Voronoi diagrams, and high-performance numeric processing via `numeric.js`.
 - **Advanced Projections**: Tools for `t-SNE` and other projection techniques to visualize high-dimensional data.
+
 
 ## Project Structure
 - **/libraries**: Core dependencies and data science modules (AI wrappers, Math, Stats).
