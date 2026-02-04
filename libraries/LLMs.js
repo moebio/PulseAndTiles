@@ -1,5 +1,5 @@
 const shift_n_api = ""
-const moebio_api = ""//
+const primary_api = ""//
 const dw_api = ""// ""// ""
 const manu_api = ""
 const kohka_api = ""
@@ -106,7 +106,7 @@ let llm_completion = function(promptObject){//, onLoad, onError){
 	}
 
 	let llm_api_key
-	if(promptObject.use_moebio_proxy){
+	if(promptObject.use_proxy){
 		llm_api_key = CHAT_GPT_API_KEY
 	} else if(model_used.includes("claude")){
 		llm_api_key = null

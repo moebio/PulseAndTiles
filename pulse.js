@@ -7880,7 +7880,7 @@
     let amplitude = interval.getAmplitude();
     var random = seed == -1 ? NumberOperators_random : new _Alea("my", seed, "seeds");
     for (var i = 0; i < nValues; i++) {
-      //seed = (seed*9301+49297) % 233280; //old method, close enough: http://moebio.com/research/randomseedalgorithms/
+      //seed = (seed*9301+49297) % 233280; //old method, close enough
       //nl[i] = interval.x + (seed/233280.0)*amplitude; //old method
       nl[i] = func == null ? (random() * amplitude + interval.x) : func(random() * amplitude + interval.x);
     }
@@ -22548,9 +22548,9 @@
 
     if (!path) {
       path = "data/"
-      absolute = "https://moebio.protozoo.com/dataDropper/" + path
+      absolute = "" + path
     } else if (path?.startsWith("DATA")) {
-      absolute = "https://moebio.protozoo.com/data/" + path.substr(5)
+      absolute = "" + path.substr(5)
       path = "../data/" + path.substr(5)
     }
     if (path != "" && !path.endsWith("/")) {
@@ -22561,7 +22561,7 @@
     path += fileName
     absolute += fileName
 
-    var phpUrl = "https://moebio.protozoo.com/dataDropper/storeData.php"
+    var phpUrl = ""
     var client = new XMLHttpRequest()
     client.onreadystatechange = function () {
       console.log("dataDropper | this.readyState: " + this.readyState)

@@ -40,4 +40,4 @@ A powerful abstraction for high-performance canvas manipulation:
 - **/Elements**: Fundamental UI and visualization primitives.
 
 ---
-*Created and maintained by Santiago Ortiz (Moebio).*
+*Created and maintained by Santiago Ortiz.*

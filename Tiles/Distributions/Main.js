@@ -21,8 +21,8 @@ var dataFrom_data_channel
 
 //////data////////
 
-receiveData = function(dataObj){
-  switch(dataObj.type){
+receiveData = function (dataObj) {
+  switch (dataObj.type) {
     case "data":
       setData(dataObj.value)
       break
@@ -32,29 +32,29 @@ receiveData = function(dataObj){
   }
 }
 
-setData = function(table){
+setData = function (table) {
   TABLE = _.getRandomRows(table, SAMPLE_SIZE)
   ORIGINAL_TABLE = TABLE
-  SAMPLE_PROPORTION = SAMPLE_SIZE/TABLE[0].length
+  SAMPLE_PROPORTION = SAMPLE_SIZE / TABLE[0].length
 
   preprocessTable();
   drawFirst();
 }
 
-setConfiguration = function(confObject){
+setConfiguration = function (confObject) {
 
 }
 
 //to be overriden by however loads the module
-sendData = function(){
+sendData = function () {
 };
 
 //////----////////
 
 
 
-init=function(){
-  
+init = function () {
+
   g = new _.MetaCanvas({
     cycle: cycle,
     resize: resizeWindow
@@ -66,28 +66,28 @@ init=function(){
   //drawFirst();
   //setTimeout(drawFirst, 200);
 
-	draw();
+  draw();
 
   // testing loading images
   // IFRAME_IMAGES = document.createElement('iframe');
-  // IFRAME_IMAGES.src = "https://moebio.protozoo.com/TreeNavigation_thumb.png";
+  // IFRAME_IMAGES.src = "";
   // var main = document.getElementById('maindiv');
   // main.appendChild(IFRAME_IMAGES);
 
   // IFRAME_IMAGES.setAttribute('style', 'position:absolute; top:20px; left:-20px; width:0px; height:0px; display:inline');
 };
 
-cycle=function(){
-	draw();
+cycle = function () {
+  draw();
 };
 
 
 
-resizeWindow = function(){
+resizeWindow = function () {
   drawFirst();
 }
 
 
-window.addEventListener("load", function() {  
+window.addEventListener("load", function () {
   init();
 });

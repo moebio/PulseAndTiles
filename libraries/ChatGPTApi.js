@@ -1,5 +1,5 @@
 const shift_n_api = ""
-const moebio_api = ""//
+const primary_api = ""//
 const dw_api = ""// ""// ""
 const manu_api = ""
 const kohka_api = ""
